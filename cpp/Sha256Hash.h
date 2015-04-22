@@ -1,6 +1,7 @@
 /* 
- * Copyright (c) Project Nayuki
- * http://www.nayuki.io/
+ * Bitcoin cryptography library, copyright (c) Project Nayuki
+ * http://www.nayuki.io/page/bitcoin-cryptography-library
+ * https://github.com/nayuki/Bitcoin-Cryptography-Library
  */
 
 #pragma once
