@@ -62,11 +62,11 @@ public:
 	
 	
 	
-	/* Unsigned big-endian arbitrary-precision arithmetic. Not constant-time. */
-	// Note: This differs from Uint256 because Uint256 is fixed-width, little-endian, and 32-bit-word-oriented
+	/* Unsigned big-endian arbitrary-precision arithmetic functions */
+	// Note: This differs from Uint256 because Uint256 is fixed-width, little-endian, and 32-bit-word-oriented.
 private:
 	
-	// Tests whether the given bigint is zero
+	// Tests whether the given bigint is zero. Not constant-time.
 	static bool isZero(const uint8_t *x, int len) {
 		for (int i = 0; i < len; i++) {
 			if (x[i] != 0)
@@ -76,7 +76,7 @@ private:
 	}
 	
 	
-	// Returns the given bigint modulo 58
+	// Returns the given bigint modulo 58. Not constant-time.
 	static uint8_t mod58(const uint8_t *x, int len) {
 		uint_fast16_t sum = 0;
 		for (int i = 0; i < len; i++)
@@ -85,7 +85,7 @@ private:
 	}
 	
 	
-	// Computes the quotient y = floor(x / 58)
+	// Computes the quotient y = floor(x / 58). Not constant-time.
 	static void divide58(const uint8_t *x, uint8_t *y, int len) {
 		memset(y, 0, len);
 		uint_fast16_t dividend = 0;

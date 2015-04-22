@@ -14,7 +14,7 @@
 
 /* 
  * Computes the SHA-256 hash of a sequence of bytes, returning a Sha256Hash object.
- * Provides just two static methods.
+ * Provides three static methods.
  */
 class Sha256 {
 	

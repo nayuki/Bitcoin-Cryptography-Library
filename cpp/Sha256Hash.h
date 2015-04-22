@@ -72,7 +72,7 @@ public:
 	/* Instance methods */
 public:
 	
-	// Retrieves a single byte of the hash. Not constant-time.
+	// Retrieves a single byte of the hash. Not constant-time with respect to the index.
 	uint8_t getByte(int index) const {
 		assert(0 <= index && index < NUM_BYTES);
 		return value[index];

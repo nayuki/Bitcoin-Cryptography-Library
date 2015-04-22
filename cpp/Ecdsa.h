@@ -14,12 +14,17 @@
 #include "Uint256.h"
 
 
+/* 
+ * Performs ECDSA signature computation. Provides just one static method.
+ */
 class Ecdsa {
 	
 public:
-	// Note: The nonce must be unique, unpredictable, and secret.
-	// Otherwise the ECDSA signature may leak the private key.
-	// Returns true if signing was successful, false if a new nonce must be chosen.
+	// Computes the signature when given the private key, message hash, and random nonce.
+	// Returns true if signing was successful (overwhelming probability), or false if a new nonce must be chosen (vanishing probability).
+	// Note: The nonce must be unique, unpredictable, and secret. Otherwise the signature may leak the private key.
+	// All successful executions are constant-time with respect to the input values; in order words
+	// one successful execution is indistinguishable from another one based on side channel information.
 	static bool sign(const Uint256 &privateKey, const Sha256Hash &msgHash, const Uint256 &nonce, Uint256 &outR, Uint256 &outS) {
 		/* 
 		 * Pseudocode:
@@ -73,6 +78,7 @@ public:
 	
 private:
 	
+	// Computes x = (x * y) % CurvePoint::ORDER.
 	static void multiplyModOrder(Uint256 &x, const Uint256 &y) {
 		// Russian peasant multiplication with modular reduction at each step
 		assert(&x != &y && x < CurvePoint::ORDER);

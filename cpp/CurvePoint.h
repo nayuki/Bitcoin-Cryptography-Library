@@ -13,11 +13,10 @@
 
 /*
  * A point on the secp256k1 elliptic curve for Bitcoin use, in projective coordinates.
- * Contains methods for computing point addition and multiplication.
- * The ordinary affine coordinates of a point is (x/z, y/z).
- * Instances of this class are mutable.
+ * Contains methods for computing point addition, doubling, and multiplication, and testing equality.
+ * The ordinary affine coordinates of a point is (x/z, y/z). Instances of this class are mutable.
  * 
- * Points MUST be normalized before comparing for equality. For example:
+ * Points MUST be normalized before comparing for equality. Example of correct usage:
  *   CurvePoint a(...);
  *   CurvePoint b(...);
  *   CurvePoint c(...);
@@ -63,7 +62,7 @@ private:
 	/* Arithmetic methods */
 public:
 	
-	// Adds the given curve point to this point. Resulting state is
+	// Adds the given curve point to this point. The resulting state is
 	// usually not normalized. Constant-time with respect to both values.
 	void add(const CurvePoint &other) {
 		/* 
@@ -145,7 +144,7 @@ public:
 	}
 	
 	
-	// Doubles this curve point. Resulting state is usually
+	// Doubles this curve point. The resulting state is usually
 	// not normalized. Constant-time with respect to this value.
 	void twice() {
 		/* 
@@ -206,7 +205,7 @@ public:
 	}
 	
 	
-	// Multiplies this point by the given unsigned integer. Resulting state
+	// Multiplies this point by the given unsigned integer. The resulting state
 	// is usually not normalized. Constant-time with respect to both values.
 	void multiply(const Uint256 &n) {
 		// Precompute [this*0, this*1, ..., this*15]
@@ -260,7 +259,7 @@ public:
 	
 	
 	// Tests whether this point is equal to the special zero point. This point need not be normalized. Constant-time with respect to this value.
-	// This method is equivalent to: { CurvePoint temp(*this); temp.normalize(); return temp == ZERO; }
+	// This method is equivalent to, but more convenient than: { CurvePoint temp(*this); temp.normalize(); return temp == ZERO; }
 	bool isZero() const {
 		return (x == FieldInt::ZERO) & (y != FieldInt::ZERO) & (z == FieldInt::ZERO);
 	}
@@ -282,11 +281,11 @@ public:
 	/* Class constants */
 	
 public:
-	static const FieldInt A;       // Equation parameter
-	static const FieldInt B;       // Equation parameter
+	static const FieldInt A;       // Curve equation parameter
+	static const FieldInt B;       // Curve equation parameter
 	static const Uint256 ORDER;    // Order of base point
-	static const CurvePoint G;     // Base point
-	static const CurvePoint ZERO;  // Dummy point at infinity
+	static const CurvePoint G;     // Base point (normalized)
+	static const CurvePoint ZERO;  // Dummy point at infinity (normalized)
 	
 };
 
@@ -297,4 +296,4 @@ const Uint256  CurvePoint::ORDER("fffffffffffffffffffffffffffffffebaaedce6af48a0
 const CurvePoint CurvePoint::G(
 	FieldInt("79be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798"),
 	FieldInt("483ada7726a3c4655da4fbfc0e1108a8fd17b448a68554199c47d08ffb10d4b8"));
-const CurvePoint CurvePoint::ZERO;
+const CurvePoint CurvePoint::ZERO;  // Special default constructor
