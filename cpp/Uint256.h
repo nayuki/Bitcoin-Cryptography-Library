@@ -65,7 +65,7 @@ public:
 	// Adds the given number into this number, modulo 2^256. Mask must be 0x00000000 or 0xFFFFFFFF.
 	// Returns the carry-out, which is 0 or 1. Constant-time with respect to both values.
 	uint32_t add(const Uint256 &other, uint32_t mask) {
-		assert(&other != this && (mask == 0 || mask == MASK_ON));
+		assert(&other != this && (mask == 0 | mask == MASK_ON));
 		uint32_t carry = 0;
 		for (int i = 0; i < NUM_WORDS; i++) {
 			uint64_t sum = static_cast<uint64_t>(value[i]) + (other.value[i] & mask) + carry;
@@ -85,7 +85,7 @@ public:
 	// Subtracts the given number from this number, modulo 2^256. Mask must be 0x00000000 or 0xFFFFFFFF.
 	// Returns the borrow-out, which is 0 or 1. Constant-time with respect to both values.
 	uint32_t subtract(const Uint256 &other, uint32_t mask) {
-		assert(&other != this && (mask == 0 || mask == MASK_ON));
+		assert(&other != this && (mask == 0 | mask == MASK_ON));
 		uint32_t borrow = 0;
 		for (int i = 0; i < NUM_WORDS; i++) {
 			uint64_t diff = static_cast<uint64_t>(value[i]) - (other.value[i] & mask) - borrow;
@@ -119,7 +119,7 @@ public:
 	// Shifts this number right by 1 bit (same as dividing by 2 and flooring).
 	// Mask must be 0x00000000 or 0xFFFFFFFF. Constant-time with respect to this value.
 	void shiftRight1(uint32_t mask) {
-		assert(mask == 0 || mask == MASK_ON);
+		assert(mask == 0 | mask == MASK_ON);
 		uint32_t cur = value[0];
 		for (int i = 0; i < NUM_WORDS - 1; i++) {
 			uint32_t next = value[i + 1];
@@ -181,7 +181,7 @@ public:
 	// Copies the given value into this number if mask is 0xFFFFFFFF, or
 	// does nothing if mask is 0x00000000. Constant-time with respect to both values.
 	void replace(const Uint256 &other, uint32_t mask) {
-		assert(mask == 0 || mask == MASK_ON);
+		assert(mask == 0 | mask == MASK_ON);
 		for (int i = 0; i < NUM_WORDS; i++)
 			value[i] = (other.value[i] & mask) | (value[i] & ~mask);
 	}
@@ -190,7 +190,7 @@ public:
 	// Swaps the value of this number with the given number if mask is 0xFFFFFFFF,
 	// or does nothing if mask is 0x00000000. Constant-time with respect to both values.
 	void swap(Uint256 &other, uint32_t mask) {
-		assert(mask == 0 || mask == MASK_ON);
+		assert(mask == 0 | mask == MASK_ON);
 		for (int i = 0; i < NUM_WORDS; i++) {
 			uint32_t x = this->value[i];
 			uint32_t y = other.value[i];
