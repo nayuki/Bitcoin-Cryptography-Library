@@ -1,5 +1,5 @@
 /* 
- * Runnable main program that tests the functionality of class Ripemd160.
+ * A runnable main program that tests the functionality of class Ripemd160.
  * 
  * Copyright (c) Project Nayuki
  * http://www.nayuki.io/

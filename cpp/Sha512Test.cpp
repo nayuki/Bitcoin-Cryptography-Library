@@ -1,5 +1,5 @@
 /* 
- * Runnable main program that tests the functionality of class Sha512.
+ * A runnable main program that tests the functionality of class Sha512.
  * 
  * Copyright (c) Project Nayuki
  * http://www.nayuki.io/

@@ -1,5 +1,5 @@
 /* 
- * Runnable main program that tests the functionality of class Base58Check.
+ * A runnable main program that tests the functionality of class Base58Check.
  * 
  * Copyright (c) Project Nayuki
  * http://www.nayuki.io/

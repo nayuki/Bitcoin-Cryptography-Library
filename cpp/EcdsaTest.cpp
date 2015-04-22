@@ -1,5 +1,5 @@
 /* 
- * Runnable main program that tests the functionality of class Ecdsa.
+ * A runnable main program that tests the functionality of class Ecdsa.
  * 
  * Copyright (c) Project Nayuki
  * http://www.nayuki.io/

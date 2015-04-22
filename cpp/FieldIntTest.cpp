@@ -1,5 +1,5 @@
 /* 
- * Runnable main program that tests the functionality of class FieldInt.
+ * A runnable main program that tests the functionality of class FieldInt.
  * 
  * Copyright (c) Project Nayuki
  * http://www.nayuki.io/

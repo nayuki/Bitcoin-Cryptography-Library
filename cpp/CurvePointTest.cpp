@@ -1,5 +1,5 @@
 /* 
- * Runnable main program that tests the functionality of class CurvePoint.
+ * A runnable main program that tests the functionality of class CurvePoint.
  * 
  * Copyright (c) Project Nayuki
  * http://www.nayuki.io/

@@ -1,5 +1,5 @@
 /* 
- * Runnable main program that tests the functionality of class Sha256Hash.
+ * A runnable main program that tests the functionality of class Sha256Hash.
  * 
  * Copyright (c) Project Nayuki
  * http://www.nayuki.io/
