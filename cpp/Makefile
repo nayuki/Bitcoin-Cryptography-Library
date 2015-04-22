@@ -1,6 +1,10 @@
 # 
-# Builds and runs the test programs, which check
-# the functionality of the embedded signer C++ code.
+# Builds and runs the C++ test programs, which check the
+# functionality of the C++ cryptography implementations.
+# 
+# Bitcoin cryptography library, copyright (c) Project Nayuki
+# http://www.nayuki.io/page/bitcoin-cryptography-library
+# https://github.com/nayuki/Bitcoin-Cryptography-Library
 # 
 
 # ---- Options ----
