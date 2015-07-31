@@ -291,6 +291,6 @@ public class Uint256 implements Comparable<Uint256> {
 	public static final Uint256 ZERO = new Uint256();
 	public static final Uint256 ONE = new Uint256("0000000000000000000000000000000000000000000000000000000000000001");
 	
-	private static final long LONG_MASK = 0xFFFFFFFFL;
+	protected static final long LONG_MASK = 0xFFFFFFFFL;
 	
 }
