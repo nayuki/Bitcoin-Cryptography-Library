@@ -8,7 +8,7 @@
  * the same as Uint256. It is illegal to set the value to be greater than or equal
  * to MODULUS; undefined behavior will result.
  */
-public final class FieldInt extends Uint256 {
+public final class FieldInt extends AbstractInt256 implements Comparable<FieldInt> {
 	
 	/* Constructors */
 	
@@ -19,6 +19,11 @@ public final class FieldInt extends Uint256 {
 	
 	public FieldInt(FieldInt other) {
 		super(other);
+	}
+	
+	
+	public FieldInt(byte[] b, int off) {
+		super(b, off);
 	}
 	
 	
@@ -155,7 +160,27 @@ public final class FieldInt extends Uint256 {
 	
 	
 	public void reciprocal() {
-		super.reciprocal(MODULUS);
+		super.reciprocal(MODULUS, ZERO, ONE);
+	}
+	
+	
+	public void replace(FieldInt other, int mask) {
+		super.replace(other, mask);
+	}
+	
+	
+	public int compareTo(FieldInt other) {
+		return super.compareTo(other);
+	}
+	
+	
+	public int equalTo(FieldInt other) {
+		return super.equalTo(other);
+	}
+	
+	
+	public int lessThan(FieldInt other) {
+		return super.lessThan(other);
 	}
 	
 	
