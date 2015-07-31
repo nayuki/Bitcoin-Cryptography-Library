@@ -15,15 +15,15 @@
  * Computes the RIPEMD-160 hash of a sequence of bytes. The hash value is 20 bytes long.
  * Provides just one static method.
  */
+#define RIPEMD160_HASH_LEN 20
 class Ripemd160 {
 	
 	#define BLOCK_LEN 64
-	#define HASH_LEN 20
 	
 	/* Static functions */
 	
 public:
-	static void getHash(const uint8_t *msg, size_t len, uint8_t hashResult[HASH_LEN]) {
+	static void getHash(const uint8_t *msg, size_t len, uint8_t hashResult[RIPEMD160_HASH_LEN]) {
 		// Compress whole message blocks
 		uint32_t state[5] = {UINT32_C(0x67452301), UINT32_C(0xEFCDAB89), UINT32_C(0x98BADCFE), UINT32_C(0x10325476), UINT32_C(0xC3D2E1F0)};
 		size_t off = len & ~static_cast<size_t>(BLOCK_LEN - 1);
@@ -45,7 +45,7 @@ public:
 		compress(state, block, BLOCK_LEN);
 		
 		// Uint32 array to bytes in little endian
-		for (int i = 0; i < HASH_LEN; i++)
+		for (int i = 0; i < RIPEMD160_HASH_LEN; i++)
 			hashResult[i] = static_cast<uint8_t>(state[i >> 2] >> ((i & 3) << 3));
 	}
 	
@@ -105,7 +105,7 @@ private:
 			case 2:  return (x | ~y) ^ z;
 			case 3:  return (x & z) | (y & ~z);
 			case 4:  return x ^ (y | ~z);
-			default:  assert(false);
+			default:  assert(false);  return 0;  // Dummy value to please the compiler
 		}
 	}
 	
@@ -115,7 +115,6 @@ private:
 	
 	
 	#undef BLOCK_LEN
-	#undef HASH_LEN
 	
 	/* Class constants */
 	

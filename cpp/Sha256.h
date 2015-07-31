@@ -14,12 +14,10 @@
 
 /* 
  * Computes the SHA-256 hash of a sequence of bytes, returning a Sha256Hash object.
- * Provides three static methods.
+ * Provides three static methods, and an instantiable stateful hasher.
  */
+#define SHA256_BLOCK_LEN 64
 class Sha256 {
-	
-	#define BLOCK_LEN 64
-	#define HASH_LEN 32
 	
 	/* Static functions */
 	
@@ -32,72 +30,72 @@ public:
 	
 	static Sha256Hash getDoubleHash(const uint8_t *msg, size_t len) {
 		Sha256Hash innerHash(getHash(msg, len));
-		return getHash(innerHash.data(), HASH_LEN);
+		return getHash(innerHash.data(), SHA256_HASH_LEN);
 	}
 	
 	
 	static Sha256Hash getHmac(const uint8_t *key, size_t keyLen, const uint8_t *msg, size_t msgLen) {
 		// Preprocess key
-		uint8_t tempKey[BLOCK_LEN] = {};
-		if (keyLen <= BLOCK_LEN)
+		uint8_t tempKey[SHA256_BLOCK_LEN] = {};
+		if (keyLen <= SHA256_BLOCK_LEN)
 			memcpy(tempKey, key, keyLen);
 		else {
 			Sha256Hash keyHash(getHash(key, keyLen));
-			memcpy(tempKey, keyHash.data(), HASH_LEN);
+			memcpy(tempKey, keyHash.data(), SHA256_HASH_LEN);
 		}
 		
 		// Compute inner hash
-		for (int i = 0; i < BLOCK_LEN; i++)
+		for (int i = 0; i < SHA256_BLOCK_LEN; i++)
 			tempKey[i] ^= 0x36;
 		uint32_t state[8];
 		memcpy(state, INITIAL_STATE, sizeof(state));
-		compress(state, tempKey, BLOCK_LEN);
-		Sha256Hash innerHash(getHash(msg, msgLen, state, BLOCK_LEN));
+		compress(state, tempKey, SHA256_BLOCK_LEN);
+		Sha256Hash innerHash(getHash(msg, msgLen, state, SHA256_BLOCK_LEN));
 		
 		// Compute outer hash
-		for (int i = 0; i < BLOCK_LEN; i++)
+		for (int i = 0; i < SHA256_BLOCK_LEN; i++)
 			tempKey[i] ^= 0x36 ^ 0x5C;
 		memcpy(state, INITIAL_STATE, sizeof(state));
-		compress(state, tempKey, BLOCK_LEN);
-		return getHash(innerHash.data(), HASH_LEN, state, BLOCK_LEN);
+		compress(state, tempKey, SHA256_BLOCK_LEN);
+		return getHash(innerHash.data(), SHA256_HASH_LEN, state, SHA256_BLOCK_LEN);
 	}
 	
 	
 private:
-	
 	static Sha256Hash getHash(const uint8_t *msg, size_t len, const uint32_t initState[8], size_t prefixLen) {
 		// Compress whole message blocks
 		uint32_t state[8];
 		memcpy(state, initState, sizeof(state));
-		size_t off = len & ~static_cast<size_t>(BLOCK_LEN - 1);
+		size_t off = len & ~static_cast<size_t>(SHA256_BLOCK_LEN - 1);
 		compress(state, msg, off);
 		
 		// Final blocks, padding, and length
-		uint8_t block[BLOCK_LEN] = {};
+		uint8_t block[SHA256_BLOCK_LEN] = {};
 		memcpy(block, &msg[off], len - off);
-		off = len & (BLOCK_LEN - 1);
+		off = len & (SHA256_BLOCK_LEN - 1);
 		block[off] = 0x80;
 		off++;
-		if (off + 8 > BLOCK_LEN) {
-			compress(state, block, BLOCK_LEN);
-			memset(block, 0, BLOCK_LEN);
+		if (off + 8 > SHA256_BLOCK_LEN) {
+			compress(state, block, SHA256_BLOCK_LEN);
+			memset(block, 0, SHA256_BLOCK_LEN);
 		}
 		uint64_t length = static_cast<uint64_t>(len + prefixLen) << 3;
 		for (int i = 0; i < 8; i++)
-			block[BLOCK_LEN - 1 - i] = static_cast<uint8_t>(length >> (i << 3));
-		compress(state, block, BLOCK_LEN);
+			block[SHA256_BLOCK_LEN - 1 - i] = static_cast<uint8_t>(length >> (i << 3));
+		compress(state, block, SHA256_BLOCK_LEN);
 		
 		// Uint32 array to bytes in big endian
-		uint8_t result[HASH_LEN];
-		for (int i = 0; i < HASH_LEN; i++)
+		uint8_t result[SHA256_HASH_LEN];
+		for (int i = 0; i < SHA256_HASH_LEN; i++)
 			result[i] = static_cast<uint8_t>(state[i >> 2] >> ((3 - (i & 3)) << 3));
-		return Sha256Hash(result, HASH_LEN);
+		return Sha256Hash(result, SHA256_HASH_LEN);
 	}
 	
 	
+public:
 	static void compress(uint32_t state[8], const uint8_t *blocks, size_t len) {
 		#define ROTR32(x, i)  (((x) << (32 - (i))) | ((x) >> (i)))
-		assert(len % BLOCK_LEN == 0);
+		assert(len % SHA256_BLOCK_LEN == 0);
 		uint32_t schedule[64];
 		for (size_t i = 0; i < len; ) {
 			
@@ -146,19 +144,69 @@ private:
 			state[6] += g;
 			state[7] += h;
 		}
+		#undef ROT32
 	}
 	
 	
-	Sha256() {}  // Not instantiable
+	
+	/* Stateful hasher fields and methods */
+	
+private:
+	uint32_t state[8];
+	uint64_t length;
+	uint8_t buffer[SHA256_BLOCK_LEN];
+	int bufferLen;
 	
 	
+public:
+	// Constructs a new SHA-256 hasher with an initially blank message.
+	Sha256() :
+			length(0),
+			buffer(),
+			bufferLen(0) {
+		memcpy(state, INITIAL_STATE, sizeof(state));
+	}
 	
-	#undef BLOCK_LEN
-	#undef HASH_LEN
+	
+	// Appends message bytes to this ongoing hasher.
+	void append(const uint8_t *bytes, int len) {
+		for (int i = 0; i < len; i++) {
+			buffer[bufferLen] = bytes[i];
+			bufferLen++;
+			if (bufferLen == SHA256_BLOCK_LEN) {
+				compress(state, buffer, SHA256_BLOCK_LEN);
+				bufferLen = 0;
+			}
+		}
+		length += len;
+	}
+	
+	
+	// Returns the SHA-256 hash of all the bytes seen. Destroys the state so that no further append() or getHash() will be valid.
+	Sha256Hash getHash() {
+		uint64_t bitLength = length << 3;
+		uint8_t temp = 0x80;
+		append(&temp, 1);
+		temp = 0x00;
+		while (bufferLen != 56)
+			append(&temp, 1);
+		for (int i = 0; i < 8; i++) {
+			temp = static_cast<uint8_t>(bitLength >> ((7 - i) << 3));
+			append(&temp, 1);
+		}
+		uint8_t result[SHA256_HASH_LEN];
+		for (int i = 0; i < SHA256_HASH_LEN; i++)
+			result[i] = static_cast<uint8_t>(state[i >> 2] >> ((3 - (i & 3)) << 3));
+		return Sha256Hash(result, SHA256_HASH_LEN);
+	}
+	
+	
 	
 	/* Class constants */
 	
+public:
 	static const uint32_t INITIAL_STATE[8];
+private:
 	static const uint32_t ROUND_CONSTANTS[64];
 	
 };

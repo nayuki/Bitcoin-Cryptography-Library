@@ -111,6 +111,7 @@ private:
 			state[6] += g;
 			state[7] += h;
 		}
+		#undef ROTR64
 	}
 	
 	

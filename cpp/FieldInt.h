@@ -37,14 +37,14 @@ public:
 public:
 	
 	// Constructs a FieldInt from the given 64-character hexadecimal string. Not constant-time.
-	FieldInt(const char *str) :
+	explicit FieldInt(const char *str) :
 			Uint256(str) {
-		assert(this == &MODULUS || *this < MODULUS);
+		assert(*this < MODULUS);
 	}
 	
 	
 	// Constructs a FieldInt from the given Uint256, reducing it as necessary. Not constant-time.
-	FieldInt(const Uint256 &val) :
+	explicit FieldInt(const Uint256 &val) :
 			Uint256(val) {
 		if (*this >= MODULUS)
 			Uint256::subtract(MODULUS, MASK_ON);
@@ -195,6 +195,9 @@ public:
 	}
 	
 	
+	using Uint256::getBigEndianBytes;
+	
+	
 	/* Equality and inequality operators */
 	
 	bool operator==(const FieldInt &other) const {
@@ -222,11 +225,23 @@ public:
 	}
 	
 	
+private:
+	
+	bool operator<(const Uint256 &other) const {
+		return Uint256::operator<(other);
+	}
+	
+	bool operator>=(const Uint256 &other) const {
+		return Uint256::operator>=(other);
+	}
+	
+	
 	
 	/* Class constants */
 	
+private:
+	static const Uint256 MODULUS;
 public:
-	static const FieldInt MODULUS;
 	static const FieldInt ZERO;
 	static const FieldInt ONE;
 	
@@ -236,6 +251,6 @@ public:
 };
 
 // Static initializers
-const FieldInt FieldInt::MODULUS("fffffffffffffffffffffffffffffffffffffffffffffffffffffffefffffc2f");
+const Uint256  FieldInt::MODULUS("fffffffffffffffffffffffffffffffffffffffffffffffffffffffefffffc2f");
 const FieldInt FieldInt::ZERO   ("0000000000000000000000000000000000000000000000000000000000000000");
 const FieldInt FieldInt::ONE    ("0000000000000000000000000000000000000000000000000000000000000001");

@@ -1,7 +1,8 @@
 # 
-# This script calculates the approximate number of 32-bit arithmetic operations
+# This script calculates and prints the approximate number of 32-bit arithmetic operations
 # needed to perform elliptic curve point multiplication, in the C++ implementation.
 # 
+# For Python 2 and 3. Run with no arguments.
 # Copyright (c) Project Nayuki
 # 
 
@@ -52,16 +53,13 @@ vargroups = [
 	["cpCopy", "cpReplace", "cpIsZero", "cpEquals", "cpTwice", "cpAdd", "cpMultiply", "cpNormalize"],
 ]
 
-def numtostr_with_groups(x):
-	assert isinstance(x, (int, long))
-	s = str(x)
-	result = ""
-	while len(s) > 0:
-		result = s[-3 : ] + " " + result
-		s = s[ : -3]
-	return result[ : -1]
+def inttostr_with_groups(x):
+	result = str(x)
+	for i in range(len(result) - 3, 1, -3):
+		result = result[ : i] + " " + result[i : ]
+	return result
 
 for group in vargroups:
-	for var in group:
-		print("{:>11}  {}".format(numtostr_with_groups(globals()[var]), var))
+	for varname in group:
+		print("{:>11}  {}".format(inttostr_with_groups(globals()[varname]), varname))
 	print("")

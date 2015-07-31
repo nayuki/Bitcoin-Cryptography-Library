@@ -9,12 +9,16 @@
 #include <cassert>
 #include <cstdint>
 #include <cstring>
+#include "Utils.h"
 
 
 /* 
  * An unsigned 256-bit integer, represented as eight 32-bits words in little endian.
  * All arithmetic operations are performed modulo 2^256 (standard unsigned overflow behavior).
  * Instances of this class are mutable.
+ * 
+ * For example, the integer 0x0123456789abcdef000000001111111122222222333333334444444455555555 is represented by
+ * the array {0x55555555, 0x44444444, 0x33333333, 0x22222222, 0x11111111, 0x00000000, 0x89abcdef, 0x01234567}.
  */
 class Uint256 {
 	
@@ -33,36 +37,45 @@ public:
 	
 	/* Constructors */
 	
+	// Constructs a Uint256 initialized to zero. Constant-time.
+	// Only use this constructor if the variable will be overwritten immediately
+	// (pretend that this constructor leaves the value array initialized).
+	// Please explicitly initialize zero values with: Uint256 num(Uint256::ZERO);
+	Uint256() :
+		value() {}
+	
+	
 	// Constructs a Uint256 from the given 64-character hexadecimal string. Not constant-time.
-	Uint256(const char *str) :
+	explicit Uint256(const char *str) :
 			value() {
 		assert(strlen(str) == NUM_WORDS * 8);
 		for (int i = 0; i < NUM_WORDS * 8; i++) {
-			int chr = str[NUM_WORDS * 8 - 1 - i];
-			int digit;
-			if (chr >= '0' && chr <= '9')
-				digit = chr - '0';
-			else if (chr >= 'a' && chr <= 'f')
-				digit = chr - 'a' + 10;
-			else if (chr >= 'A' && chr <= 'F')
-				digit = chr - 'A' + 10;
-			else
-				assert(false);
-			value[i >> 3] |= digit << ((i & 7) << 2);
+			int digit = Utils::parseHexDigit(str[NUM_WORDS * 8 - 1 - i]);
+			assert(digit != -1);
+			value[i >> 3] |= static_cast<uint32_t>(digit) << ((i & 7) << 2);
 		}
+	}
+	
+	
+	// Constructs a Uint256 from the given 32 bytes encoded in big-endian. Constant-time.
+	explicit Uint256(const uint8_t b[32]) :
+			value() {
+		for (int i = 0; i < 32; i++)
+			value[i >> 2] |= static_cast<uint32_t>(b[32 - 1 - i]) << ((i & 3) << 3);
 	}
 	
 	
 	
 	/* Arithmetic methods */
 	
-	// Add the given number into this number, modulo 2^256. Constant-time with respect to both values.
+	// Adds the given number into this number, modulo 2^256. Constant-time with respect to both values.
 	void add(const Uint256 &other) {
 		add(other, MASK_ON);
 	}
 	
 	
-	// Adds the given number into this number, modulo 2^256. Mask must be 0x00000000 or 0xFFFFFFFF.
+	// Adds the given number into this number, modulo 2^256. The other number must be a distinct object.
+	// Mask must be 0xFFFFFFFF to perform the operation or 0x00000000 to do nothing.
 	// Returns the carry-out, which is 0 or 1. Constant-time with respect to both values.
 	uint32_t add(const Uint256 &other, uint32_t mask) {
 		assert(&other != this && static_cast<uint32_t>((mask + 1) >> 1) == 0);
@@ -82,7 +95,8 @@ public:
 	}
 	
 	
-	// Subtracts the given number from this number, modulo 2^256. Mask must be 0x00000000 or 0xFFFFFFFF.
+	// Subtracts the given number from this number, modulo 2^256. The other number must be a distinct object.
+	// Mask must be 0xFFFFFFFF to perform the operation or 0x00000000 to do nothing.
 	// Returns the borrow-out, which is 0 or 1. Constant-time with respect to both values.
 	uint32_t subtract(const Uint256 &other, uint32_t mask) {
 		assert(&other != this && static_cast<uint32_t>((mask + 1) >> 1) == 0);
@@ -117,7 +131,8 @@ public:
 	
 	
 	// Shifts this number right by 1 bit (same as dividing by 2 and flooring).
-	// Mask must be 0x00000000 or 0xFFFFFFFF. Constant-time with respect to this value.
+	// Mask must be 0xFFFFFFFF to perform the operation or 0x00000000 to do nothing.
+	// Constant-time with respect to this value.
 	void shiftRight1(uint32_t mask) {
 		assert(static_cast<uint32_t>((mask + 1) >> 1) == 0);
 		uint32_t cur = value[0];
@@ -135,6 +150,7 @@ public:
 	// The modulus must be odd and coprime to this number. This number must be less than the modulus.
 	void reciprocal(const Uint256 &modulus) {
 		// Extended binary GCD algorithm
+		assert(&modulus != this);
 		Uint256 x(modulus);  // Must be odd
 		Uint256 y(*this);  // Odd or even, and must be less than x
 		Uint256 a(ZERO);
@@ -142,6 +158,7 @@ public:
 		Uint256 halfModulus(modulus);
 		halfModulus.add(ONE);
 		halfModulus.shiftRight1();
+		
 		// Loop invariant: x = a*this mod modulus, and y = b*this mod modulus
 		for (int i = 0; i < NUM_WORDS * 32 * 2; i++) {
 			// Try to reduce a trailing zero of y. Pseudocode:
@@ -200,6 +217,13 @@ public:
 	}
 	
 	
+	// Writes this 256-bit integer as 32 bytes encoded in big endian to the given array. Constant-time.
+	void getBigEndianBytes(uint8_t b[32]) const {
+		for (int i = 0; i < 32; i++)
+			b[i] = static_cast<uint8_t>(value[NUM_WORDS - 1 - (i >> 2)] >> ((3 - (i & 3)) << 3));
+	}
+	
+	
 	/* Equality/inequality operators */
 	
 	// Tests whether this value is equal to the given one. Constant-time with respect to both values.
@@ -251,5 +275,5 @@ public:
 };
 
 // Static initializers
-const Uint256 Uint256::ZERO("0000000000000000000000000000000000000000000000000000000000000000");
-const Uint256 Uint256::ONE ("0000000000000000000000000000000000000000000000000000000000000001");
+const Uint256 Uint256::ZERO;
+const Uint256 Uint256::ONE("0000000000000000000000000000000000000000000000000000000000000001");

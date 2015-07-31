@@ -258,6 +258,20 @@ public:
 	}
 	
 	
+	// Tests whether this point is on the elliptic curve. This point needs to be normalized before the method is called.
+	// Zero is considered to be off the curve. Constant-time with respect to this value.
+	bool isOnCurve() const {
+		FieldInt left(y);
+		left.square();
+		FieldInt right(x);
+		right.square();
+		right.add(A);
+		right.multiply(x);
+		right.add(B);
+		return (left == right) & !isZero();
+	}
+	
+	
 	// Tests whether this point is equal to the special zero point. This point need not be normalized. Constant-time with respect to this value.
 	// This method is equivalent to, but more convenient than: { CurvePoint temp(*this); temp.normalize(); return temp == ZERO; }
 	bool isZero() const {
@@ -275,6 +289,13 @@ public:
 	// Tests whether this point is unequal to the given point. Constant-time with respect to both values.
 	bool operator!=(const CurvePoint &other) const {
 		return !(*this == other);
+	}
+	
+	
+	// Serializes this point in compressed format. Constant-time with respect to this value.
+	void toCompressedPoint(uint8_t output[33]) const {
+		output[0] = (y.value[0] & 1) + 0x02;
+		x.getBigEndianBytes(&output[1]);
 	}
 	
 	

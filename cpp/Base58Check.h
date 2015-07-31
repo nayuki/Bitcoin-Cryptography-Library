@@ -8,63 +8,88 @@
 
 #include <cstdint>
 #include <cstring>
+#include "Ripemd160.h"
 #include "Sha256.h"
 #include "Sha256Hash.h"
+#include "Uint256.h"
 
 
 /* 
- * Converts a sequence of 20 bytes (pubkey hash) into a Base58Check ASCII string.
- * Provides just one static method.
+ * Converts a pubkey hash or a private key into a Base58Check ASCII string.
+ * Provides just two static methods.
  */
 class Base58Check {
 	
 public:
-	// The outStr array must have length >= 35 (including null terminator). Not constant-time.
-	static void pubkeyHashToBase58Check(const uint8_t pubkeyHash[20], char *outStr) {
-		// Form the initial 21 bytes
-		const int FINAL_LEN = 25;
-		uint8_t bytesToEncode[FINAL_LEN];
-		bytesToEncode[0] = 0;  // Version byte
-		memcpy(&bytesToEncode[1], pubkeyHash, 20);
-		
-		// Compute and append final 4 bytes
-		Sha256Hash sha256Hash = Sha256::getDoubleHash(bytesToEncode, 21);
-		for (int i = 0; i < 4; i++)
-			bytesToEncode[i + 21] = sha256Hash.getByte(i);
+	
+	// Exports the given 20-byte public key hash as a public address.
+	// The outStr array must have length >= 35 (including null terminator).
+	// The output text length is between 25 and 34 characters, inclusive. Not constant-time.
+	static void pubkeyHashToBase58Check(const uint8_t pubkeyHash[RIPEMD160_HASH_LEN], char outStr[35]) {
+		uint8_t toEncode[1 + RIPEMD160_HASH_LEN + 4] = {};
+		toEncode[0] = 0x00;  // Version byte
+		memcpy(&toEncode[1], pubkeyHash, RIPEMD160_HASH_LEN);
+		bytesToBase58Check(toEncode, static_cast<int>(sizeof(toEncode) - 4), outStr);
+	}
+	
+	
+	// Exports the given private key as compressed WIF.
+	// The outStr array must have length >= 53 (including null terminator).
+	// The output text length is always 52 characters. Not constant-time.
+	static void privateKeyToBase58Check(const Uint256 &privKey, char outStr[53]) {
+		uint8_t toEncode[1 + 32 + 1 + 4] = {};
+		toEncode[0] = 0x80;  // Version byte
+		privKey.getBigEndianBytes(&toEncode[1]);
+		toEncode[33] = 0x01;  // Compressed marker
+		bytesToBase58Check(toEncode, static_cast<int>(sizeof(toEncode) - 4), outStr);
+	}
+	
+	
+private:
+	
+	// Computes the 4-byte hash and converts the concatenated data to Base58Check.
+	// This overwrites data[0 <= i < len + 4]. The caller is responsible for the prefix byte,
+	// 4 free bytes starting at data[len], and allocating enough space in outStr. Not constant-time.
+	static void bytesToBase58Check(uint8_t *data, int len, char *outStr) {
+		// Append 4-byte hash
+		#define MAX_TOTAL_BYTES 38  // Including the 4-byte hash
+		assert(0 <= len && len <= MAX_TOTAL_BYTES - 4);
+		Sha256Hash sha256Hash = Sha256::getDoubleHash(data, len);
+		for (int i = 0; i < 4; i++, len++)
+			data[len] = sha256Hash.getByte(i);
 		
 		// Count leading zero bytes
 		int leadingZeros = 0;
-		for (int i = 0; i < FINAL_LEN && bytesToEncode[i] == 0; i++)
+		for (int i = 0; i < len && data[i] == 0; i++)
 			leadingZeros++;
 		
 		// Encode to Base 58
 		int outLen = 0;
-		while (!isZero(bytesToEncode, FINAL_LEN)) {
-			outStr[outLen] = ALPHABET[mod58(bytesToEncode, FINAL_LEN)];
+		while (!isZero(data, len)) {  // Extract digits in little-endian
+			outStr[outLen] = ALPHABET[mod58(data, len)];
 			outLen++;
-			uint8_t quotient[FINAL_LEN];
-			divide58(bytesToEncode, quotient, FINAL_LEN);
-			memcpy(bytesToEncode, quotient, FINAL_LEN);
+			uint8_t quotient[MAX_TOTAL_BYTES] = {};
+			divide58(data, quotient, len);  // quotient = floor(data / 58)
+			memcpy(data, quotient, len);  // data = quotient
 		}
-		for (int i = 0; i < leadingZeros; i++) {
+		for (int i = 0; i < leadingZeros; i++) {  // Append leading zeros
 			outStr[outLen] = ALPHABET[0];
 			outLen++;
 		}
 		outStr[outLen] = '\0';
 		
-		// Reverse string
+		// Reverse the string
 		for (int i = 0, j = outLen - 1; i < j; i++, j--) {
 			char temp = outStr[i];
 			outStr[i] = outStr[j];
 			outStr[j] = temp;
 		}
+		#undef MAX_TOTAL_BYTES
 	}
-	
 	
 	
 	/* Unsigned big-endian arbitrary-precision arithmetic functions */
 	// Note: This differs from Uint256 because Uint256 is fixed-width, little-endian, and 32-bit-word-oriented.
-private:
 	
 	// Tests whether the given bigint is zero. Not constant-time.
 	static bool isZero(const uint8_t *x, int len) {
