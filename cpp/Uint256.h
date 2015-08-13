@@ -78,7 +78,7 @@ public:
 	// Mask must be 0xFFFFFFFF to perform the operation or 0x00000000 to do nothing.
 	// Returns the carry-out, which is 0 or 1. Constant-time with respect to both values.
 	uint32_t add(const Uint256 &other, uint32_t mask) {
-		assert(&other != this && static_cast<uint32_t>((mask + 1) >> 1) == 0);
+		assert(&other != this && (static_cast<uint32_t>(mask + 1) >> 1) == 0);
 		uint32_t carry = 0;
 		for (int i = 0; i < NUM_WORDS; i++) {
 			uint64_t sum = static_cast<uint64_t>(value[i]) + (other.value[i] & mask) + carry;
@@ -99,7 +99,7 @@ public:
 	// Mask must be 0xFFFFFFFF to perform the operation or 0x00000000 to do nothing.
 	// Returns the borrow-out, which is 0 or 1. Constant-time with respect to both values.
 	uint32_t subtract(const Uint256 &other, uint32_t mask) {
-		assert(&other != this && static_cast<uint32_t>((mask + 1) >> 1) == 0);
+		assert(&other != this && (static_cast<uint32_t>(mask + 1) >> 1) == 0);
 		uint32_t borrow = 0;
 		for (int i = 0; i < NUM_WORDS; i++) {
 			uint64_t diff = static_cast<uint64_t>(value[i]) - (other.value[i] & mask) - borrow;
@@ -134,7 +134,7 @@ public:
 	// Mask must be 0xFFFFFFFF to perform the operation or 0x00000000 to do nothing.
 	// Constant-time with respect to this value.
 	void shiftRight1(uint32_t mask) {
-		assert(static_cast<uint32_t>((mask + 1) >> 1) == 0);
+		assert((static_cast<uint32_t>(mask + 1) >> 1) == 0);
 		uint32_t cur = value[0];
 		for (int i = 0; i < NUM_WORDS - 1; i++) {
 			uint32_t next = value[i + 1];
@@ -198,7 +198,7 @@ public:
 	// Copies the given value into this number if mask is 0xFFFFFFFF, or
 	// does nothing if mask is 0x00000000. Constant-time with respect to both values.
 	void replace(const Uint256 &other, uint32_t mask) {
-		assert(static_cast<uint32_t>((mask + 1) >> 1) == 0);
+		assert((static_cast<uint32_t>(mask + 1) >> 1) == 0);
 		for (int i = 0; i < NUM_WORDS; i++)
 			value[i] = (other.value[i] & mask) | (value[i] & ~mask);
 	}
@@ -207,7 +207,7 @@ public:
 	// Swaps the value of this number with the given number if mask is 0xFFFFFFFF,
 	// or does nothing if mask is 0x00000000. Constant-time with respect to both values.
 	void swap(Uint256 &other, uint32_t mask) {
-		assert(static_cast<uint32_t>((mask + 1) >> 1) == 0);
+		assert((static_cast<uint32_t>(mask + 1) >> 1) == 0);
 		for (int i = 0; i < NUM_WORDS; i++) {
 			uint32_t x = this->value[i];
 			uint32_t y = other.value[i];
