@@ -32,7 +32,7 @@ public final class Int256MathTest {
 	}
 	
 	
-	@Test public void testAdd() {
+	@Test public void testUintAdd() {
 		String[][] cases = {
 			{"0000000000000000000000000000000000000000000000000000000000000000", "0000000000000000000000000000000000000000000000000000000000000000"},
 			{"0000000000000000000000000000000000000000000000000000000080000000", "0000000000000000000000000000000000000000000000000000000080000000"},
@@ -50,13 +50,15 @@ public final class Int256MathTest {
 			BigInteger a = toBigInt(s);
 			BigInteger b = toBigInt(t);
 			BigInteger c = a.add(b);
-			assertEquals(c.shiftRight(256).intValue(), Int256Math.add(x.val, x.off, y.val, y.off, 1));
+			assertEquals(0, Int256Math.uintAdd(x.val, x.off, y.val, y.off, 0));
+			assertEqualsBigInt256(a, x.val, x.off);
+			assertEquals(c.shiftRight(256).intValue(), Int256Math.uintAdd(x.val, x.off, y.val, y.off, 1));
 			assertEqualsBigInt256(c, x.val, x.off);
 		}
 	}
 	
 	
-	@Test public void testSubtract() {
+	@Test public void testUintSubtract() {
 		String[][] cases = {
 			{"0000000000000000000000000000000000000000000000000000000000000000", "0000000000000000000000000000000000000000000000000000000000000000"},
 			{"0000000000000000000000000000000000000000000000000000000000000003", "0000000000000000000000000000000000000000000000000000000000000002"},
@@ -71,13 +73,15 @@ public final class Int256MathTest {
 			BigInteger a = toBigInt(s);
 			BigInteger b = toBigInt(t);
 			BigInteger c = a.subtract(b);
-			assertEquals(-c.shiftRight(256).intValue(), Int256Math.subtract(x.val, x.off, y.val, y.off, 1));
+			assertEquals(0, Int256Math.uintSubtract(x.val, x.off, y.val, y.off, 0));
+			assertEqualsBigInt256(a, x.val, x.off);
+			assertEquals(-c.shiftRight(256).intValue(), Int256Math.uintSubtract(x.val, x.off, y.val, y.off, 1));
 			assertEqualsBigInt256(c, x.val, x.off);
 		}
 	}
 	
 	
-	@Test public void testShiftLeft1() {
+	@Test public void testUintShiftLeft1() {
 		String[] cases = {
 			"0000000000000000000000000000000000000000000000000000000000000000",
 			"0000000000000000000000000000000000000000000000000000000000000001",
@@ -93,7 +97,31 @@ public final class Int256MathTest {
 			TestInt x = new TestInt(s);
 			BigInteger a = toBigInt(s);
 			BigInteger b = a.shiftLeft(1);
-			assertEquals(a.testBit(255) ? 1 : 0, Int256Math.shiftLeft1(x.val, x.off));
+			assertEquals(a.testBit(255) ? 1 : 0, Int256Math.uintShiftLeft1(x.val, x.off));
+			assertEqualsBigInt256(b, x.val, x.off);
+		}
+	}
+	
+	
+	@Test public void testUintShiftRight1() {
+		String[] cases = {
+			"0000000000000000000000000000000000000000000000000000000000000000",
+			"0000000000000000000000000000000000000000000000000000000000000001",
+			"0000000000000000000000000000000000000000000000000000000080000000",
+			"00000000000000000000000000000000000000000000000000000000ffffffff",
+			"000abcdef0000000000000000000000000000000000000000000000000000000",
+			"8000000000000000000000000000000000000000000000000000000000000000",
+			"ffff000000000000000000000000000000000000000000000000000000000000",
+			"ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+		};
+		for (int i = 0; i < 100000; i++) {
+			String s = i < cases.length ? cases[i] : randomInt256Str();
+			TestInt x = new TestInt(s);
+			BigInteger a = toBigInt(s);
+			BigInteger b = a.shiftRight(1);
+			Int256Math.uintShiftRight1(x.val, x.off, 0);
+			assertEqualsBigInt256(a, x.val, x.off);
+			Int256Math.uintShiftRight1(x.val, x.off, 1);
 			assertEqualsBigInt256(b, x.val, x.off);
 		}
 	}
