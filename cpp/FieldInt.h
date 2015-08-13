@@ -58,7 +58,7 @@ public:
 	// Adds the given number into this number, modulo the prime. Constant-time with respect to both values.
 	void add(const FieldInt &other) {
 		uint32_t c = Uint256::add(other, MASK_ON);  // Perform addition
-		assert((c >>> 1) == 0);
+		assert((c >> 1) == 0);
 		Uint256::subtract(MODULUS, -(c | static_cast<uint32_t>(*this >= MODULUS)));  // Conditionally subtract modulus
 	}
 	
@@ -66,7 +66,7 @@ public:
 	// Subtracts the given number from this number, modulo the prime. Constant-time with respect to both values.
 	void subtract(const FieldInt &other) {
 		uint32_t b = Uint256::subtract(other, MASK_ON);  // Perform subtraction
-		assert((b >>> 1) == 0);
+		assert((b >> 1) == 0);
 		Uint256::add(MODULUS, -b);  // Conditionally add modulus
 	}
 	
@@ -74,7 +74,7 @@ public:
 	// Doubles this number, modulo the prime. Constant-time with respect to this value.
 	void multiply2() {
 		uint32_t c = shiftLeft1();
-		assert((c >>> 1) == 0);
+		assert((c >> 1) == 0);
 		Uint256::subtract(MODULUS, -(c | static_cast<uint32_t>(*this >= MODULUS)));  // Conditionally subtract modulus
 	}
 	
@@ -116,10 +116,10 @@ public:
 						c += static_cast<uint32_t>(sum < prod);
 					}
 				}
+				assert(0 <= c && c <= NUM_WORDS);
 				product0[i] = static_cast<uint32_t>(sum);
 				carry = static_cast<uint64_t>(c) << 32 | sum >> 32;
 			}
-			assert(0 <= c && c <= NUM_WORDS);
 			product0[i] = static_cast<uint32_t>(carry);
 			assert((carry >> 32) == 0);
 		}
@@ -172,7 +172,7 @@ public:
 				uint64_t diff = static_cast<uint64_t>(product0[i]) - product2[i] - borrow;
 				difference[i] = static_cast<uint32_t>(diff);
 				borrow = -static_cast<uint32_t>(diff >> 32);
-				assert((borrow >>> 1) == 0);
+				assert((borrow >> 1) == 0);
 			}
 		}
 		
