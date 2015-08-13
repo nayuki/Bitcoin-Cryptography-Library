@@ -9,7 +9,7 @@
 #include <cassert>
 #include <cstdint>
 #include <cstring>
-#include "Sha256Hash.h"
+#include "Sha256Hash.hpp"
 
 
 /* 

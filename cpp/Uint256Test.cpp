@@ -11,7 +11,7 @@
 #include <cstdio>
 #include <cstring>
 #include "TestHelper.hpp"
-#include "Uint256.h"
+#include "Uint256.hpp"
 
 
 struct BinaryCase {

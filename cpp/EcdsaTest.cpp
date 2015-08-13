@@ -9,10 +9,10 @@
 #undef NDEBUG
 #include <cstddef>
 #include <cstdio>
-#include "Ecdsa.h"
-#include "Sha256Hash.h"
+#include "Ecdsa.hpp"
+#include "Sha256Hash.hpp"
 #include "TestHelper.hpp"
-#include "Uint256.h"
+#include "Uint256.hpp"
 
 
 struct TestCase {

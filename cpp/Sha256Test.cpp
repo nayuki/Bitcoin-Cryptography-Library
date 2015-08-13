@@ -10,8 +10,8 @@
 #include <cstdio>
 #include <cstdint>
 #include <cstring>
-#include "Sha256.h"
-#include "Sha256Hash.h"
+#include "Sha256.hpp"
+#include "Sha256Hash.hpp"
 #include "TestHelper.hpp"
 
 

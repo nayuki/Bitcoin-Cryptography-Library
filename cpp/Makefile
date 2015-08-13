@@ -30,29 +30,29 @@ clean:
 
 # ---- Individual executable files ----
 
-Base58CheckTest:  Base58CheckTest.cpp  Base58Check.h Sha256.h Sha256Hash.h TestHelper.hpp Uint256.h Utils.h
+Base58CheckTest:  Base58CheckTest.cpp  Base58Check.hpp Sha256.hpp Sha256Hash.hpp TestHelper.hpp Uint256.hpp Utils.hpp
 	$(CC) $(CXXFLAGS) -o $@ $<
 
-CurvePointTest:   CurvePointTest.cpp   CurvePoint.h FieldInt.h TestHelper.hpp Uint256.h Utils.h
+CurvePointTest:   CurvePointTest.cpp   CurvePoint.hpp FieldInt.hpp TestHelper.hpp Uint256.hpp Utils.hpp
 	$(CC) $(CXXFLAGS) -o $@ $<
 
-EcdsaTest:        EcdsaTest.cpp        CurvePoint.h Ecdsa.h FieldInt.h Sha256.h Sha256Hash.h TestHelper.hpp Uint256.h Utils.h
+EcdsaTest:        EcdsaTest.cpp        CurvePoint.hpp Ecdsa.hpp FieldInt.hpp Sha256.hpp Sha256Hash.hpp TestHelper.hpp Uint256.hpp Utils.hpp
 	$(CC) $(CXXFLAGS) -o $@ $<
 
-FieldIntTest:     FieldIntTest.cpp     FieldInt.h TestHelper.hpp Uint256.h Utils.h
+FieldIntTest:     FieldIntTest.cpp     FieldInt.hpp TestHelper.hpp Uint256.hpp Utils.hpp
 	$(CC) $(CXXFLAGS) -o $@ $<
 
-Ripemd160Test:    Ripemd160Test.cpp    Ripemd160.h TestHelper.hpp
+Ripemd160Test:    Ripemd160Test.cpp    Ripemd160.hpp TestHelper.hpp
 	$(CC) $(CXXFLAGS) -o $@ $<
 
-Sha256HashTest:   Sha256HashTest.cpp   Sha256Hash.h TestHelper.hpp Utils.h
+Sha256HashTest:   Sha256HashTest.cpp   Sha256Hash.hpp TestHelper.hpp Utils.hpp
 	$(CC) $(CXXFLAGS) -o $@ $<
 
-Sha256Test:       Sha256Test.cpp       Sha256.h Sha256Hash.h TestHelper.hpp Utils.h
+Sha256Test:       Sha256Test.cpp       Sha256.hpp Sha256Hash.hpp TestHelper.hpp Utils.hpp
 	$(CC) $(CXXFLAGS) -o $@ $<
 
-Sha512Test:       Sha512Test.cpp       Sha512.h TestHelper.hpp
+Sha512Test:       Sha512Test.cpp       Sha512.hpp TestHelper.hpp
 	$(CC) $(CXXFLAGS) -o $@ $<
 
-Uint256Test:      Uint256Test.cpp      TestHelper.hpp Uint256.h Utils.h
+Uint256Test:      Uint256Test.cpp      TestHelper.hpp Uint256.hpp Utils.hpp
 	$(CC) $(CXXFLAGS) -o $@ $<

@@ -8,11 +8,11 @@
 
 #include <cassert>
 #include <cstdint>
-#include "CurvePoint.h"
-#include "FieldInt.h"
-#include "Sha256.h"
-#include "Sha256Hash.h"
-#include "Uint256.h"
+#include "CurvePoint.hpp"
+#include "FieldInt.hpp"
+#include "Sha256.hpp"
+#include "Sha256Hash.hpp"
+#include "Uint256.hpp"
 
 
 /* 

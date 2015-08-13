@@ -8,7 +8,7 @@
 
 #undef NDEBUG
 #include <cstdio>
-#include "FieldInt.h"
+#include "FieldInt.hpp"
 #include "TestHelper.hpp"
 
 

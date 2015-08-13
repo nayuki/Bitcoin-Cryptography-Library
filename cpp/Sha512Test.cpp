@@ -10,7 +10,7 @@
 #include <cstdio>
 #include <cstdint>
 #include <cstring>
-#include "Sha512.h"
+#include "Sha512.hpp"
 #include "TestHelper.hpp"
 
 

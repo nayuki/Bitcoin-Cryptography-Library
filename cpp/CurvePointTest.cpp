@@ -8,10 +8,10 @@
 
 #undef NDEBUG
 #include <cstdio>
-#include "CurvePoint.h"
-#include "FieldInt.h"
+#include "CurvePoint.hpp"
+#include "FieldInt.hpp"
 #include "TestHelper.hpp"
-#include "Uint256.h"
+#include "Uint256.hpp"
 
 
 struct TwoStrings {

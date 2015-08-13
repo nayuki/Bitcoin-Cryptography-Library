@@ -10,7 +10,7 @@
 #include <cstdio>
 #include <cstdint>
 #include <cstring>
-#include "Ripemd160.h"
+#include "Ripemd160.hpp"
 #include "TestHelper.hpp"
 
 

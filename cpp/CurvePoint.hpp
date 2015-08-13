@@ -7,8 +7,8 @@
 #pragma once
 
 #include <cstdint>
-#include "FieldInt.h"
-#include "Uint256.h"
+#include "FieldInt.hpp"
+#include "Uint256.hpp"
 
 
 /*

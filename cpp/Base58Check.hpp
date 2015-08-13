@@ -8,10 +8,10 @@
 
 #include <cstdint>
 #include <cstring>
-#include "Ripemd160.h"
-#include "Sha256.h"
-#include "Sha256Hash.h"
-#include "Uint256.h"
+#include "Ripemd160.hpp"
+#include "Sha256.hpp"
+#include "Sha256Hash.hpp"
+#include "Uint256.hpp"
 
 
 /* 

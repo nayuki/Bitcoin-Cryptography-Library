@@ -10,9 +10,9 @@
 #include <cstdio>
 #include <cstdint>
 #include <cstring>
-#include "Base58Check.h"
+#include "Base58Check.hpp"
 #include "TestHelper.hpp"
-#include "Uint256.h"
+#include "Uint256.hpp"
 
 
 struct PublicCase {

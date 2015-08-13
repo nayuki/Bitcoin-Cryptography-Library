@@ -9,7 +9,7 @@
 #undef NDEBUG
 #include <cstdio>
 #include <cstring>
-#include "Sha256Hash.h"
+#include "Sha256Hash.hpp"
 #include "TestHelper.hpp"
 
 
