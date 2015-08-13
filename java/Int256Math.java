@@ -1,4 +1,11 @@
 /* 
+ * Bitcoin cryptography library, copyright (c) Project Nayuki
+ * http://www.nayuki.io/page/bitcoin-cryptography-library
+ * https://github.com/nayuki/Bitcoin-Cryptography-Library
+ */
+
+
+/* 
  * Performs arithmetic on unsigned 256-bit integers, which are represented as 8 consecutive ints.
  */
 public final class Int256Math {

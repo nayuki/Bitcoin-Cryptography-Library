@@ -1,3 +1,9 @@
+/* 
+ * Bitcoin cryptography library, copyright (c) Project Nayuki
+ * http://www.nayuki.io/page/bitcoin-cryptography-library
+ * https://github.com/nayuki/Bitcoin-Cryptography-Library
+ */
+
 import static org.junit.Assert.assertEquals;
 import java.math.BigInteger;
 import java.util.Random;
