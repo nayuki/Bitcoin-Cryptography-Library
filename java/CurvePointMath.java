@@ -181,19 +181,19 @@ public final class CurvePointMath {
 	public static void multiply(int[] p, int pOff, int[] n, int nOff, int[] temp, int tempOff) {
 		// Precompute [p*0, p*1, ..., p*15]
 		int newTempOff = tempOff + 51 * NUM_WORDS;
-		int tableOff = tempOff;  // Uses 16 * 3 * NUM_WORDS elements
-		System.arraycopy(ZERO_POINT, 0, temp, tableOff, 3 * NUM_WORDS);
-		System.arraycopy(p, pOff, temp, tableOff + 3 * NUM_WORDS, 3 * NUM_WORDS);
-		System.arraycopy(p, pOff, temp, tableOff + 6 * NUM_WORDS, 3 * NUM_WORDS);
-		CurvePointMath.twice(temp, tableOff + 6 * NUM_WORDS, temp, newTempOff);
+		int tableOff = tempOff;  // Uses 16 * POINT_WORDS elements
+		System.arraycopy(ZERO_POINT, 0, temp, tableOff, POINT_WORDS);
+		System.arraycopy(p, pOff, temp, tableOff + 1 * POINT_WORDS, POINT_WORDS);
+		System.arraycopy(p, pOff, temp, tableOff + 2 * POINT_WORDS, POINT_WORDS);
+		CurvePointMath.twice(temp, tableOff + 2 * POINT_WORDS, temp, newTempOff);
 		for (int i = 3; i < 16; i++) {
-			System.arraycopy(temp, tableOff + (i - 1) * 3 * NUM_WORDS, temp, tableOff + i * 3 * NUM_WORDS, 3 * NUM_WORDS);
-			CurvePointMath.add(temp, tableOff + i * 3 * NUM_WORDS, p, pOff, temp, newTempOff);
+			System.arraycopy(temp, tableOff + (i - 1) * POINT_WORDS, temp, tableOff + i * POINT_WORDS, POINT_WORDS);
+			CurvePointMath.add(temp, tableOff + i * POINT_WORDS, p, pOff, temp, newTempOff);
 		}
 		
 		// Process 4 bits per iteration (windowed method)
-		System.arraycopy(ZERO_POINT, 0, p, pOff, 3 * NUM_WORDS);
-		int qOff = tempOff + 16 * 3 * NUM_WORDS;
+		System.arraycopy(ZERO_POINT, 0, p, pOff, POINT_WORDS);
+		int qOff = tempOff + 16 * POINT_WORDS;
 		for (int i = 256 - 4; i >= 0; i -= 4) {
 			if (i != 256 - 4) {
 				for (int j = 0; j < 4; j++)
@@ -201,7 +201,7 @@ public final class CurvePointMath {
 			}
 			int inc = (n[nOff + (i >>> 5)] >>> (i & 31)) & 15;
 			for (int j = 0; j < 16; j++)
-				CurvePointMath.replace(temp, qOff, temp, tableOff + j * 3 * NUM_WORDS, Int256Math.equalTo(j, inc));
+				CurvePointMath.replace(temp, qOff, temp, tableOff + j * POINT_WORDS, Int256Math.equalTo(j, inc));
 			CurvePointMath.add(p, pOff, temp, qOff, temp, newTempOff);
 		}
 	}
@@ -213,7 +213,7 @@ public final class CurvePointMath {
 		int nonzero = Int256Math.equalTo(p, pOff + ZCOORD, ZERO, 0) ^ 1;
 		int newTempOff = tempOff + 24;
 		int normOff = tempOff;
-		System.arraycopy(p, pOff, temp, normOff, 3 * NUM_WORDS);
+		System.arraycopy(p, pOff, temp, normOff, POINT_WORDS);
 		Int256Math.reciprocal(temp, normOff + ZCOORD, FIELD_MODULUS, 0, temp, newTempOff);
 		Int256Math.fieldMultiply(temp, normOff + XCOORD, temp, normOff + ZCOORD, temp, newTempOff);
 		Int256Math.fieldMultiply(temp, normOff + YCOORD, temp, normOff + ZCOORD, temp, newTempOff);
@@ -230,7 +230,7 @@ public final class CurvePointMath {
 	// Constant-time with respect to both values and the enable.
 	public static void replace(int[] p, int pOff, int[] q, int qOff, int enable) {
 		int mask = -enable;
-		for (int i = 0; i < 3 * NUM_WORDS; i++)
+		for (int i = 0; i < POINT_WORDS; i++)
 			p[pOff + i] = (q[qOff + i] & mask) | (p[pOff + i] & ~mask);
 	}
 	
@@ -255,6 +255,7 @@ public final class CurvePointMath {
 	
 	// Sizes and offsets
 	private static final int NUM_WORDS = 8;
+	private static final int POINT_WORDS = 3 * NUM_WORDS;
 	private static final int XCOORD = 0 * NUM_WORDS;
 	private static final int YCOORD = 1 * NUM_WORDS;
 	private static final int ZCOORD = 2 * NUM_WORDS;
