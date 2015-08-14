@@ -356,7 +356,7 @@ public final class Int256Math {
 	/*---- Helper methods ----*/
 	
 	// Returns 1 if x == y, otherwise 0.
-	private static int equalTo(int x, int y) {
+	static int equalTo(int x, int y) {
 		int z = x ^ y;
 		return ~(z | -z) >>> 31;
 	}
