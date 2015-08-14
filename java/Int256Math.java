@@ -368,11 +368,11 @@ public final class Int256Math {
 	}
 	
 	
-	private static void checkEnable(int en) {
+	static void checkEnable(int en) {
 		assert (en >>> 1) == 0;
 	}
 	
-	private static void checkArray(int[] arr, int off) {
+	static void checkArray(int[] arr, int off) {
 		assert off >= 0 && (off & 7) == 0 && arr.length - off >= NUM_WORDS;
 	}
 	

@@ -31,6 +31,10 @@ public final class CurvePointMath {
 		 * }
 		 */
 		
+		checkPoint(p, pOff);
+		Int256Math.checkArray(temp, tempOff);
+		assert temp.length - tempOff >= 15 * NUM_WORDS;
+		
 		int zeroResult = CurvePointMath.isZero(p, pOff) | Int256Math.equalTo(p, pOff + XCOORD, ZERO, 0);
 		int newTempOff = tempOff + 6 * NUM_WORDS;
 		
@@ -109,6 +113,11 @@ public final class CurvePointMath {
 		 * }
 		 */
 		
+		checkPoint(p, pOff);
+		checkPoint(q, qOff);
+		Int256Math.checkArray(temp, tempOff);
+		assert temp.length - tempOff >= 22 * NUM_WORDS;
+		
 		int pIsZero = CurvePointMath.isZero(p, pOff);
 		int qIsZero = CurvePointMath.isZero(q, qOff);
 		CurvePointMath.replace(p, pOff, q, qOff, pIsZero);
@@ -180,6 +189,11 @@ public final class CurvePointMath {
 	// Multiplies the given point by the given unsigned integer. Requires 584 words of temporary space.
 	// The resulting state is usually not normalized. Constant-time with respect to both values.
 	public static void multiply(int[] p, int pOff, int[] n, int nOff, int[] temp, int tempOff) {
+		checkPoint(p, pOff);
+		Int256Math.checkArray(n, nOff);
+		Int256Math.checkArray(temp, tempOff);
+		assert temp.length - tempOff >= 73 * NUM_WORDS;
+		
 		// Precompute [p*0, p*1, ..., p*15]
 		int newTempOff = tempOff + 51 * NUM_WORDS;
 		int tableOff = tempOff;  // Uses 16 * POINT_WORDS elements
@@ -211,6 +225,10 @@ public final class CurvePointMath {
 	// Normalizes the coordinates of the given point. If z != 0, then (x', y', z') = (x/z, y/z, 1);
 	// otherwise special logic occurs. Requires 96 words of temporary space. Constant-time with respect to the point.
 	public static void normalize(int[] p, int pOff, int[] temp, int tempOff) {
+		checkPoint(p, pOff);
+		Int256Math.checkArray(temp, tempOff);
+		assert temp.length - tempOff >= 12 * NUM_WORDS;
+		
 		int nonzero = Int256Math.equalTo(p, pOff + ZCOORD, ZERO, 0) ^ 1;
 		int newTempOff = tempOff + 24;
 		int normOff = tempOff;
@@ -230,6 +248,10 @@ public final class CurvePointMath {
 	// Copies the point q into p iff enable is 1.
 	// Constant-time with respect to both values and the enable.
 	public static void replace(int[] p, int pOff, int[] q, int qOff, int enable) {
+		checkPoint(p, pOff);
+		checkPoint(q, qOff);
+		Int256Math.checkEnable(enable);
+		
 		int mask = -enable;
 		for (int i = 0; i < POINT_WORDS; i++)
 			p[pOff + i] = (q[qOff + i] & mask) | (p[pOff + i] & ~mask);
@@ -249,6 +271,13 @@ public final class CurvePointMath {
 	
 	public static int[] getBasePoint() {
 		return BASE_POINT.clone();
+	}
+	
+	
+	/*---- Helper functions ----*/
+	
+	private static void checkPoint(int[] arr, int off) {
+		assert off >= 0 && (off & 7) == 0 && arr.length - off >= POINT_WORDS;
 	}
 	
 	
