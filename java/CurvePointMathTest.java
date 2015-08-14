@@ -58,7 +58,7 @@ public final class CurvePointMathTest {
 			System.arraycopy(toInt256(cs[3]), 0, q, 8, 8);
 			System.arraycopy(INT256_ONE, 0, q, 16, 8);
 			
-			CurvePointMath.add(p, 0, q, 0, new int[224], 0);
+			CurvePointMath.add(p, 0, q, 0, new int[176], 0);
 			CurvePointMath.normalize(p, 0, new int[96], 0);
 			assertArrayEquals(toInt256(cs[4]), Arrays.copyOfRange(p, 0, 8));
 			assertArrayEquals(toInt256(cs[5]), Arrays.copyOfRange(p, 8, 16));
@@ -156,7 +156,7 @@ public final class CurvePointMathTest {
 		};
 		for (String[] cs : cases) {
 			int[] p = CurvePointMath.getBasePoint();
-			CurvePointMath.multiply(p, 0, toInt256(cs[0]), 0, new int[632], 0);
+			CurvePointMath.multiply(p, 0, toInt256(cs[0]), 0, new int[584], 0);
 			CurvePointMath.normalize(p, 0, new int[96], 0);
 			if (cs[1] == null && cs[2] == null)
 				assertArrayEquals(POINT_ZERO, p);
