@@ -47,9 +47,9 @@ static void testReplace() {
 	CurvePoint q(CurvePoint::G);
 	q.twice();
 	assert(p != q);
-	p.replace(q, false);
+	p.replace(q, 0);
 	assert(p != q);
-	p.replace(q, true);
+	p.replace(q, 1);
 	assert(p == q);
 }
 
