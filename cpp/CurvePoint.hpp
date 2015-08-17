@@ -126,7 +126,7 @@ public:
 		t.multiply(w);
 		t.subtract(u1);
 		
-		uint32_t assign = -static_cast<uint32_t>(!thisZero & !otherZero & !sameY);
+		uint32_t assign = static_cast<uint32_t>(!thisZero & !otherZero & !sameY);
 		u.multiply(t);
 		this->x.replace(u, assign);
 		w.multiply(u3);
@@ -243,8 +243,8 @@ public:
 		norm.x.multiply(norm.z);
 		norm.y.multiply(norm.z);
 		norm.z = FieldInt::ONE;
-		x.replace(FieldInt::ONE, -static_cast<uint32_t>(x != FieldInt::ZERO));
-		y.replace(FieldInt::ONE, -static_cast<uint32_t>(y != FieldInt::ZERO));
+		x.replace(FieldInt::ONE, static_cast<uint32_t>(x != FieldInt::ZERO));
+		y.replace(FieldInt::ONE, static_cast<uint32_t>(y != FieldInt::ZERO));
 		this->replace(norm, static_cast<uint32_t>(nonzero));
 	}
 	
@@ -252,10 +252,9 @@ public:
 	// Conditionally replaces this point's coordinates with the given point. Constant-time with respect to both values.
 	void replace(const CurvePoint &other, uint32_t enable) {
 		assert((enable >> 1) == 0);
-		uint32_t mask = -enable;
-		this->x.replace(other.x, mask);
-		this->y.replace(other.y, mask);
-		this->z.replace(other.z, mask);
+		this->x.replace(other.x, enable);
+		this->y.replace(other.y, enable);
+		this->z.replace(other.z, enable);
 	}
 	
 	

@@ -53,7 +53,7 @@ public:
 		Uint256 r;
 		for (int i = 0; i < 8; i++)  // Copy raw value from FieldInt to Uint256
 			r.value[i] = p.x.value[i];
-		r.subtract(order, -static_cast<uint32_t>(r >= order));
+		r.subtract(order, static_cast<uint32_t>(r >= order));
 		if (r == zero)
 			return false;
 		assert(r < order);
@@ -61,8 +61,8 @@ public:
 		Uint256 s(r);
 		Uint256 z(msgHash.data());
 		multiplyModOrder(s, privateKey);
-		uint32_t carry = s.add(z, UINT32_C(0xFFFFFFFF));
-		s.subtract(order, -(carry | static_cast<uint32_t>(s >= order)));
+		uint32_t carry = s.add(z, 1);
+		s.subtract(order, carry | static_cast<uint32_t>(s >= order));
 		
 		Uint256 kInv(nonce);
 		kInv.reciprocal(order);
@@ -72,7 +72,7 @@ public:
 		
 		Uint256 negS(order);
 		negS.subtract(s);
-		s.replace(negS, -static_cast<uint32_t>(negS < s));  // To ensure low S values for BIP 62
+		s.replace(negS, static_cast<uint32_t>(negS < s));  // To ensure low S values for BIP 62
 		outR = r;
 		outS = s;
 		return true;
@@ -105,11 +105,11 @@ private:
 		for (int i = 255; i >= 0; i--) {
 			// Multiply by 2
 			uint32_t c = x.shiftLeft1();
-			x.subtract(mod, -(c | static_cast<uint32_t>(x >= mod)));
+			x.subtract(mod, c | static_cast<uint32_t>(x >= mod));
 			// Conditionally add 'copy'
-			uint32_t mask = -((y.value[i >> 5] >> (i & 31)) & 1);
-			c = x.add(copy, mask);
-			x.subtract(mod, -(c | static_cast<uint32_t>(x >= mod)));
+			uint32_t enable = (y.value[i >> 5] >> (i & 31)) & 1;
+			c = x.add(copy, enable);
+			x.subtract(mod, c | static_cast<uint32_t>(x >= mod));
 			assert(x < mod);
 		}
 	}

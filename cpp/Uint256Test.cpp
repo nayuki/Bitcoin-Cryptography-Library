@@ -69,7 +69,7 @@ static void testAdd() {
 	for (unsigned int i = 0; i < ARRAY_LENGTH(cases); i++) {
 		TernaryCase &tc = cases[i];
 		Uint256 x(tc.x);
-		assert(x.add(Uint256(tc.y), UINT32_C(0xFFFFFFFF)) == tc.bit);
+		assert(x.add(Uint256(tc.y), 1) == tc.bit);
 		assert(x == Uint256(tc.z));
 		numTestCases++;
 	}
@@ -86,7 +86,7 @@ static void testSubtract() {
 	for (unsigned int i = 0; i < ARRAY_LENGTH(cases); i++) {
 		TernaryCase &tc = cases[i];
 		Uint256 x(tc.x);
-		assert(x.subtract(Uint256(tc.y), UINT32_C(0xFFFFFFFF)) == tc.bit);
+		assert(x.subtract(Uint256(tc.y), 1) == tc.bit);
 		assert(x == Uint256(tc.z));
 		numTestCases++;
 	}

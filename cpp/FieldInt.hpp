@@ -24,7 +24,6 @@
 class FieldInt : private Uint256 {
 	
 	#define NUM_WORDS 8
-	#define MASK_ON UINT32_C(0xFFFFFFFF)
 	
 	/* Fields */
 	
@@ -47,7 +46,7 @@ public:
 	explicit FieldInt(const Uint256 &val) :
 			Uint256(val) {
 		if (*this >= MODULUS)
-			Uint256::subtract(MODULUS, MASK_ON);
+			Uint256::subtract(MODULUS, 1);
 	}
 	
 	
@@ -57,17 +56,17 @@ public:
 	
 	// Adds the given number into this number, modulo the prime. Constant-time with respect to both values.
 	void add(const FieldInt &other) {
-		uint32_t c = Uint256::add(other, MASK_ON);  // Perform addition
+		uint32_t c = Uint256::add(other, 1);  // Perform addition
 		assert((c >> 1) == 0);
-		Uint256::subtract(MODULUS, -(c | static_cast<uint32_t>(*this >= MODULUS)));  // Conditionally subtract modulus
+		Uint256::subtract(MODULUS, c | static_cast<uint32_t>(*this >= MODULUS));  // Conditionally subtract modulus
 	}
 	
 	
 	// Subtracts the given number from this number, modulo the prime. Constant-time with respect to both values.
 	void subtract(const FieldInt &other) {
-		uint32_t b = Uint256::subtract(other, MASK_ON);  // Perform subtraction
+		uint32_t b = Uint256::subtract(other, 1);  // Perform subtraction
 		assert((b >> 1) == 0);
-		Uint256::add(MODULUS, -b);  // Conditionally add modulus
+		Uint256::add(MODULUS, b);  // Conditionally add modulus
 	}
 	
 	
@@ -75,7 +74,7 @@ public:
 	void multiply2() {
 		uint32_t c = shiftLeft1();
 		assert((c >> 1) == 0);
-		Uint256::subtract(MODULUS, -(c | static_cast<uint32_t>(*this >= MODULUS)));  // Conditionally subtract modulus
+		Uint256::subtract(MODULUS, c | static_cast<uint32_t>(*this >= MODULUS));  // Conditionally subtract modulus
 	}
 	
 	
@@ -178,8 +177,8 @@ public:
 		
 		// Final conditional subtraction
 		memcpy(value, difference, sizeof(value));
-		uint32_t mask = -static_cast<uint32_t>((difference[NUM_WORDS] != 0) | (*this >= MODULUS));
-		Uint256::subtract(MODULUS, mask);
+		uint32_t enable = static_cast<uint32_t>((difference[NUM_WORDS] != 0) | (*this >= MODULUS));
+		Uint256::subtract(MODULUS, enable);
 	}
 	
 	
@@ -192,10 +191,10 @@ public:
 	
 	/* Miscellaneous methods */
 	
-	// Copies the given value into this number if mask is 0xFFFFFFFF, or
-	// does nothing if mask is 0x00000000. Constant-time with respect to both values.
-	void replace(const FieldInt &other, uint32_t mask) {
-		Uint256::replace(other, mask);
+	// Copies the given value into this number if enable is 1, or
+	// does nothing if enable is 0. Constant-time with respect to both values.
+	void replace(const FieldInt &other, uint32_t enable) {
+		Uint256::replace(other, enable);
 	}
 	
 	
@@ -250,7 +249,6 @@ public:
 	static const FieldInt ONE;
 	
 	#undef NUM_WORDS
-	#undef MASK_ON
 	
 };
 

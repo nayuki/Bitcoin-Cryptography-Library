@@ -23,7 +23,6 @@
 class Uint256 {
 	
 	#define NUM_WORDS 8
-	#define MASK_ON UINT32_C(0xFFFFFFFF)
 	
 public:
 	
@@ -70,15 +69,16 @@ public:
 	
 	// Adds the given number into this number, modulo 2^256. Constant-time with respect to both values.
 	void add(const Uint256 &other) {
-		add(other, MASK_ON);
+		add(other, 1);
 	}
 	
 	
 	// Adds the given number into this number, modulo 2^256. The other number must be a distinct object.
-	// Mask must be 0xFFFFFFFF to perform the operation or 0x00000000 to do nothing.
+	// Enable must be 1 to perform the operation or 0 to do nothing.
 	// Returns the carry-out, which is 0 or 1. Constant-time with respect to both values.
-	uint32_t add(const Uint256 &other, uint32_t mask) {
-		assert(&other != this && (static_cast<uint32_t>(mask + 1) >> 1) == 0);
+	uint32_t add(const Uint256 &other, uint32_t enable) {
+		assert(&other != this && (enable >> 1) == 0);
+		uint32_t mask = -enable;
 		uint32_t carry = 0;
 		for (int i = 0; i < NUM_WORDS; i++) {
 			uint64_t sum = static_cast<uint64_t>(value[i]) + (other.value[i] & mask) + carry;
@@ -91,15 +91,16 @@ public:
 	
 	// Subtracts the given number from this number, modulo 2^256. Constant-time with respect to both values.
 	void subtract(const Uint256 &other) {
-		subtract(other, MASK_ON);
+		subtract(other, 1);
 	}
 	
 	
 	// Subtracts the given number from this number, modulo 2^256. The other number must be a distinct object.
-	// Mask must be 0xFFFFFFFF to perform the operation or 0x00000000 to do nothing.
+	// Enable must be 1 to perform the operation or 0 to do nothing.
 	// Returns the borrow-out, which is 0 or 1. Constant-time with respect to both values.
-	uint32_t subtract(const Uint256 &other, uint32_t mask) {
-		assert(&other != this && (static_cast<uint32_t>(mask + 1) >> 1) == 0);
+	uint32_t subtract(const Uint256 &other, uint32_t enable) {
+		assert(&other != this && (enable >> 1) == 0);
+		uint32_t mask = -enable;
 		uint32_t borrow = 0;
 		for (int i = 0; i < NUM_WORDS; i++) {
 			uint64_t diff = static_cast<uint64_t>(value[i]) - (other.value[i] & mask) - borrow;
@@ -126,15 +127,16 @@ public:
 	// Shifts this number right by 1 bit (same as dividing by 2 and flooring).
 	// Constant-time with respect to this value.
 	void shiftRight1() {
-		shiftRight1(MASK_ON);
+		shiftRight1(1);
 	}
 	
 	
 	// Shifts this number right by 1 bit (same as dividing by 2 and flooring).
-	// Mask must be 0xFFFFFFFF to perform the operation or 0x00000000 to do nothing.
+	// Enable must be 1 to perform the operation or 0 to do nothing.
 	// Constant-time with respect to this value.
-	void shiftRight1(uint32_t mask) {
-		assert((static_cast<uint32_t>(mask + 1) >> 1) == 0);
+	void shiftRight1(uint32_t enable) {
+		assert((enable >> 1) == 0);
+		uint32_t mask = -enable;
 		uint32_t cur = value[0];
 		for (int i = 0; i < NUM_WORDS - 1; i++) {
 			uint32_t next = value[i + 1];
@@ -166,8 +168,8 @@ public:
 			//     y /= 2;
 			//     b = b % 2 == 0 ? b / 2 : modulus - (modulus - b) / 2;
 			// }
-			uint32_t yEven = (y.value[0] & 1) - 1;
-			uint32_t bOdd = -(b.value[0] & 1);
+			uint32_t yEven = (y.value[0] & 1) ^ 1;
+			uint32_t bOdd = b.value[0] & 1;
 			y.shiftRight1(yEven);
 			b.shiftRight1(yEven);
 			b.add(halfModulus, yEven & bOdd);
@@ -181,33 +183,35 @@ public:
 			//     y -= x;
 			//     b -= a;
 			// }
-			uint32_t enable = (-(y.value[0] & 1)) & (static_cast<uint32_t>(y == ONE) - 1);
-			uint32_t swap = enable & (-static_cast<uint32_t>(x > y));
+			uint32_t enable = (y.value[0] & 1) & (static_cast<uint32_t>(y == ONE) ^ 1);
+			uint32_t swap = enable & static_cast<uint32_t>(x > y);
 			x.swap(y, swap);
 			y.subtract(x, enable);
 			a.swap(b, swap);
 			uint32_t borrow = b.subtract(a, enable);
-			b.add(modulus, -borrow);
+			b.add(modulus, borrow);
 		}
-		replace(b, -static_cast<uint32_t>(*this != ZERO));
+		replace(b, static_cast<uint32_t>(*this != ZERO));
 	}
 	
 	
 	/* Miscellaneous methods */
 	
-	// Copies the given value into this number if mask is 0xFFFFFFFF, or
-	// does nothing if mask is 0x00000000. Constant-time with respect to both values.
-	void replace(const Uint256 &other, uint32_t mask) {
-		assert((static_cast<uint32_t>(mask + 1) >> 1) == 0);
+	// Copies the given value into this number if enable is 1, or does
+	// nothing if enable is 0. Constant-time with respect to both values.
+	void replace(const Uint256 &other, uint32_t enable) {
+		assert((enable >> 1) == 0);
+		uint32_t mask = -enable;
 		for (int i = 0; i < NUM_WORDS; i++)
 			value[i] = (other.value[i] & mask) | (value[i] & ~mask);
 	}
 	
 	
-	// Swaps the value of this number with the given number if mask is 0xFFFFFFFF,
-	// or does nothing if mask is 0x00000000. Constant-time with respect to both values.
-	void swap(Uint256 &other, uint32_t mask) {
-		assert((static_cast<uint32_t>(mask + 1) >> 1) == 0);
+	// Swaps the value of this number with the given number if enable is 1,
+	// or does nothing if enable is 0. Constant-time with respect to both values.
+	void swap(Uint256 &other, uint32_t enable) {
+		assert((enable >> 1) == 0);
+		uint32_t mask = -enable;
 		for (int i = 0; i < NUM_WORDS; i++) {
 			uint32_t x = this->value[i];
 			uint32_t y = other.value[i];
@@ -262,7 +266,6 @@ public:
 	
 	
 	#undef NUM_WORDS
-	#undef MASK_ON
 	
 	
 	
