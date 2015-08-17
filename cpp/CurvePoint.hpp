@@ -91,16 +91,16 @@ public:
 		 */
 		bool thisZero  = this->isZero();
 		bool otherZero = other.isZero();
-		replace(other, thisZero);
+		this->replace(other, thisZero);
 		
-		FieldInt u0(x);
+		FieldInt u0(this->x);
 		FieldInt u1(other.x);
-		FieldInt v0(y);
+		FieldInt v0(this->y);
 		FieldInt v1(other.y);
 		u0.multiply(other.z);
-		u1.multiply(z);
+		u1.multiply(this->z);
 		v0.multiply(other.z);
-		v1.multiply(z);
+		v1.multiply(this->z);
 		
 		bool sameX = u0 == u1;
 		bool sameY = v0 == v1;
@@ -111,7 +111,7 @@ public:
 		u.subtract(u1);
 		FieldInt v(v0);
 		v.subtract(v1);
-		FieldInt w(z);
+		FieldInt w(this->z);
 		w.multiply(other.z);
 		
 		FieldInt u2(u);
@@ -128,19 +128,19 @@ public:
 		
 		uint32_t assign = -static_cast<uint32_t>(!thisZero & !otherZero & !sameY);
 		u.multiply(t);
-		x.replace(u, assign);
+		this->x.replace(u, assign);
 		w.multiply(u3);
-		z.replace(w, assign);
+		this->z.replace(w, assign);
 		u0.multiply(u2);
 		u0.subtract(t);
 		u0.multiply(v);
 		v0.multiply(u3);
 		u0.subtract(v0);
-		y.replace(u0, assign);
+		this->y.replace(u0, assign);
 		
 		bool cond = !thisZero & !otherZero & sameY;
-		replace(ZERO  , cond & !sameX);
-		replace(twiced, cond &  sameX);
+		this->replace(ZERO  , cond & !sameX);
+		this->replace(twiced, cond &  sameX);
 	}
 	
 	
@@ -201,7 +201,7 @@ public:
 		u.subtract(s2);
 		y = u;
 		
-		replace(ZERO, zeroResult);
+		this->replace(ZERO, zeroResult);
 	}
 	
 	
@@ -223,13 +223,13 @@ public:
 		for (int i = 256 - 4; i >= 0; i -= 4) {
 			if (i != 256 - 4) {
 				for (int j = 0; j < 4; j++)
-					twice();
+					this->twice();
 			}
 			unsigned int inc = (n.value[i >> 5] >> (i & 31)) & 15;
 			CurvePoint q(ZERO);
 			for (unsigned int j = 0; j < 16; j++)
-				q.replace(table[j], -static_cast<uint32_t>(j == inc));
-			add(q);
+				q.replace(table[j], j == inc);
+			this->add(q);
 		}
 	}
 	
@@ -245,16 +245,16 @@ public:
 		norm.z = FieldInt::ONE;
 		x.replace(FieldInt::ONE, -static_cast<uint32_t>(x != FieldInt::ZERO));
 		y.replace(FieldInt::ONE, -static_cast<uint32_t>(y != FieldInt::ZERO));
-		replace(norm, nonzero);
+		this->replace(norm, nonzero);
 	}
 	
 	
 	// Conditionally replaces this point's coordinates with the given point. Constant-time with respect to both values.
 	void replace(const CurvePoint &other, bool enable) {
 		uint32_t mask = -static_cast<uint32_t>(enable);
-		x.replace(other.x, mask);
-		y.replace(other.y, mask);
-		z.replace(other.z, mask);
+		this->x.replace(other.x, mask);
+		this->y.replace(other.y, mask);
+		this->z.replace(other.z, mask);
 	}
 	
 	
