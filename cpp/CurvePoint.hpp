@@ -29,7 +29,7 @@
  *   c.normalize();
  *   if (a == c) { ... }
  */
-class CurvePoint {
+class CurvePoint final {
 	
 	/* Fields */
 	

@@ -19,7 +19,7 @@
  * Computes an ECDSA signature deterministically.
  * Provides just two static methods.
  */
-class Ecdsa {
+class Ecdsa final {
 	
 public:
 	

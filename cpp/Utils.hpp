@@ -10,7 +10,7 @@
 /* 
  * Miscellaneous utilities used in a variety of places.
  */
-class Utils {
+class Utils final {
 	
 public:
 	

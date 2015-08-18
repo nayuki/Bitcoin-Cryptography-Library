@@ -17,7 +17,7 @@
  * Provides three static methods, and an instantiable stateful hasher.
  */
 #define SHA256_BLOCK_LEN 64
-class Sha256 {
+class Sha256 final {
 	
 	/* Static functions */
 	

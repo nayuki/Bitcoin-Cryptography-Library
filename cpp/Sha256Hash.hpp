@@ -23,7 +23,7 @@
  * - Hex string: "3231302928272625242322212019181716151413121110090807060504030201"
  */
 #define SHA256_HASH_LEN 32
-class Sha256Hash {
+class Sha256Hash final {
 	
 	/* Fields */
 	

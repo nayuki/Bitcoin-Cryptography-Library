@@ -18,7 +18,7 @@
  * Converts a pubkey hash or a private key into a Base58Check ASCII string.
  * Provides just two static methods.
  */
-class Base58Check {
+class Base58Check final {
 	
 public:
 	

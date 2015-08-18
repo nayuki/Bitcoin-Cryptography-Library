@@ -20,7 +20,7 @@
  * the same as Uint256. It is illegal to set the value to be greater than or equal
  * to MODULUS; undefined behavior will result. Instances of this class are mutable.
  */
-class FieldInt : private Uint256 {
+class FieldInt final : private Uint256 {
 	
 	#define NUM_WORDS 8
 	

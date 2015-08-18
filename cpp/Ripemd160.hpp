@@ -16,7 +16,7 @@
  * Provides just one static method.
  */
 #define RIPEMD160_HASH_LEN 20
-class Ripemd160 {
+class Ripemd160 final {
 	
 	#define BLOCK_LEN 64
 	

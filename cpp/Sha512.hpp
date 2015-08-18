@@ -15,7 +15,7 @@
  * Computes the SHA-512 hash of a sequence of bytes. The hash value is 64 bytes long.
  * Provides just one static method.
  */
-class Sha512 {
+class Sha512 final {
 	
 	#define BLOCK_LEN 128
 	#define HASH_LEN 64
