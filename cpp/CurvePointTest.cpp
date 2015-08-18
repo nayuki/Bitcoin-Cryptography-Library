@@ -264,7 +264,7 @@ static void testAdd() {
 static void testMultiply() {
 	ThreeStrings cases[] = {
 		// Small multiples
-		{"0000000000000000000000000000000000000000000000000000000000000000", NULL, NULL},
+		{"0000000000000000000000000000000000000000000000000000000000000000", nullptr, nullptr},
 		{"0000000000000000000000000000000000000000000000000000000000000001", "79be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798", "483ada7726a3c4655da4fbfc0e1108a8fd17b448a68554199c47d08ffb10d4b8"},
 		{"0000000000000000000000000000000000000000000000000000000000000002", "c6047f9441ed7d6d3045406e95c07cd85c778e4b8cef3ca7abac09b95c709ee5", "1ae168fea63dc339a3c58419466ceaeef7f632653266d0e1236431a950cfe52a"},
 		{"0000000000000000000000000000000000000000000000000000000000000003", "f9308a019258c31049344f85f89d5229b531c845836f99b08601f113bce036f9", "388f7b0f632de8140fe337e62a37f3566500a99934c2231b6cb9fd7584b8e672"},
@@ -290,7 +290,7 @@ static void testMultiply() {
 		{"fffffffffffffffffffffffffffffffebaaedce6af48a03bbfd25e8cd036413e", "f9308a019258c31049344f85f89d5229b531c845836f99b08601f113bce036f9", "c77084f09cd217ebf01cc819d5c80ca99aff5666cb3ddce4934602897b4715bd"},
 		{"fffffffffffffffffffffffffffffffebaaedce6af48a03bbfd25e8cd036413f", "c6047f9441ed7d6d3045406e95c07cd85c778e4b8cef3ca7abac09b95c709ee5", "e51e970159c23cc65c3a7be6b99315110809cd9acd992f1edc9bce55af301705"},
 		{"fffffffffffffffffffffffffffffffebaaedce6af48a03bbfd25e8cd0364140", "79be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798", "b7c52588d95c3b9aa25b0403f1eef75702e84bb7597aabe663b82f6f04ef2777"},
-		{"fffffffffffffffffffffffffffffffebaaedce6af48a03bbfd25e8cd0364141", NULL, NULL},
+		{"fffffffffffffffffffffffffffffffebaaedce6af48a03bbfd25e8cd0364141", nullptr, nullptr},
 		{"fffffffffffffffffffffffffffffffebaaedce6af48a03bbfd25e8cd0364142", "79be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798", "483ada7726a3c4655da4fbfc0e1108a8fd17b448a68554199c47d08ffb10d4b8"},
 		{"fffffffffffffffffffffffffffffffebaaedce6af48a03bbfd25e8cd0364143", "c6047f9441ed7d6d3045406e95c07cd85c778e4b8cef3ca7abac09b95c709ee5", "1ae168fea63dc339a3c58419466ceaeef7f632653266d0e1236431a950cfe52a"},
 		{"fffffffffffffffffffffffffffffffebaaedce6af48a03bbfd25e8cd0364144", "f9308a019258c31049344f85f89d5229b531c845836f99b08601f113bce036f9", "388f7b0f632de8140fe337e62a37f3566500a99934c2231b6cb9fd7584b8e672"},
@@ -353,7 +353,7 @@ static void testMultiply() {
 		CurvePoint p(CurvePoint::G);
 		p.multiply(Uint256(tc.a));
 		p.normalize();
-		if (tc.b == NULL && tc.c == NULL)
+		if (tc.b == nullptr && tc.c == nullptr)
 			assert(p == CurvePoint::ZERO);
 		else
 			assert(p == CurvePoint(tc.b, tc.c));

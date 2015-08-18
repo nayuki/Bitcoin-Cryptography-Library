@@ -7,7 +7,6 @@
 #pragma once
 
 #include <cassert>
-#include <cstddef>
 #include <cstdint>
 #include <cstring>
 #include "Utils.hpp"
@@ -50,7 +49,7 @@ public:
 	// If the syntax of the string is invalid, then an assertion will fail.
 	explicit Uint256(const char *str) :
 			value() {
-		assert(str != NULL && strlen(str) == NUM_WORDS * 8);
+		assert(str != nullptr && strlen(str) == NUM_WORDS * 8);
 		for (int i = 0; i < NUM_WORDS * 8; i++) {
 			int digit = Utils::parseHexDigit(str[NUM_WORDS * 8 - 1 - i]);
 			assert(digit != -1);
@@ -63,7 +62,7 @@ public:
 	// Constant-time with respect to the input array values. All possible values are valid.
 	explicit Uint256(const uint8_t b[NUM_WORDS * 4]) :
 				value() {
-		assert(b != NULL);
+		assert(b != nullptr);
 		for (int i = 0; i < 32; i++)
 			value[i >> 2] |= static_cast<uint32_t>(b[32 - 1 - i]) << ((i & 3) << 3);
 	}
@@ -234,7 +233,7 @@ public:
 	// Writes this 256-bit integer as 32 bytes encoded in big endian to the given array.
 	// Constant-time with respect to this value.
 	void getBigEndianBytes(uint8_t b[NUM_WORDS * 4]) const {
-		assert(b != NULL);
+		assert(b != nullptr);
 		for (int i = 0; i < NUM_WORDS * 4; i++)
 			b[NUM_WORDS * 4 - 1 - i] = static_cast<uint8_t>(value[i >> 2] >> ((i & 3) << 3));
 	}

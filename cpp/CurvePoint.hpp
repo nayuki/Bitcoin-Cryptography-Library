@@ -7,7 +7,6 @@
 #pragma once
 
 #include <cassert>
-#include <cstddef>
 #include <cstdint>
 #include "FieldInt.hpp"
 #include "Uint256.hpp"
@@ -309,7 +308,7 @@ public:
 	// Serializes this point in compressed format (header byte, x-coordinate in big-endian).
 	// Constant-time with respect to this value.
 	void toCompressedPoint(uint8_t output[33]) const {
-		assert(output != NULL);
+		assert(output != nullptr);
 		output[0] = (y.value[0] & 1) + 0x02;
 		x.getBigEndianBytes(&output[1]);
 	}
