@@ -288,6 +288,24 @@ static void testReciprocal() {
 }
 
 
+static void testConstructorUint256() {
+	BinaryCase cases[] = {
+		{"0000000000000000000000000000000000000000000000000000000000000000", "0000000000000000000000000000000000000000000000000000000000000000"},
+		{"0000000000000000000000000000000000000000000000000000000000000001", "0000000000000000000000000000000000000000000000000000000000000001"},
+		{"8000000000000000000000000000000000000000000000000000000000000000", "8000000000000000000000000000000000000000000000000000000000000000"},
+		{"fffffffffffffffffffffffffffffffffffffffffffffffffffffffefffffc2f", "0000000000000000000000000000000000000000000000000000000000000000"},
+		{"fffffffffffffffffffffffffffffffffffffffffffffffffffffffefffffc30", "0000000000000000000000000000000000000000000000000000000000000001"},
+		{"fffffffffffffffffffffffffffffffffffffffffffffffffffffffefffffc32", "0000000000000000000000000000000000000000000000000000000000000003"},
+		{"ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff", "00000000000000000000000000000000000000000000000000000001000003d0"},
+	};
+	for (unsigned int i = 0; i < ARRAY_LENGTH(cases); i++) {
+		BinaryCase &tc = cases[i];
+		assert(FieldInt(Uint256(tc.x)) == FieldInt(tc.y));
+		numTestCases++;
+	}
+}
+
+
 int main(int argc, char **argv) {
 	testComparison();
 	testAdd();
@@ -297,6 +315,7 @@ int main(int argc, char **argv) {
 	testMultiply();
 	testSquare();
 	testReciprocal();
+	testConstructorUint256();
 	printf("All %d test cases passed\n", numTestCases);
 	return 0;
 }

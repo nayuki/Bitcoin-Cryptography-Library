@@ -69,7 +69,10 @@ static void testAdd() {
 	for (unsigned int i = 0; i < ARRAY_LENGTH(cases); i++) {
 		TernaryCase &tc = cases[i];
 		Uint256 x(tc.x);
-		assert(x.add(Uint256(tc.y), 1) == tc.bit);
+		Uint256 y(tc.y);
+		assert(x.add(y, 0) == 0);
+		assert(x == Uint256(tc.x));
+		assert(x.add(y, 1) == tc.bit);
 		assert(x == Uint256(tc.z));
 		numTestCases++;
 	}
@@ -86,7 +89,10 @@ static void testSubtract() {
 	for (unsigned int i = 0; i < ARRAY_LENGTH(cases); i++) {
 		TernaryCase &tc = cases[i];
 		Uint256 x(tc.x);
-		assert(x.subtract(Uint256(tc.y), 1) == tc.bit);
+		Uint256 y(tc.y);
+		assert(x.subtract(y, 0) == 0);
+		assert(x == Uint256(tc.x));
+		assert(x.subtract(y, 1) == tc.bit);
 		assert(x == Uint256(tc.z));
 		numTestCases++;
 	}
@@ -100,6 +106,10 @@ static void testShiftLeft1() {
 		{"0000000000000000000000000000000000000000000000000000000080000000", "0000000000000000000000000000000000000000000000000000000100000000", "", 0},
 		{"00000000000000000000000000000000000000000000000000000000ffffffff", "00000000000000000000000000000000000000000000000000000001fffffffe", "", 0},
 		{"000abcdef0000000000000000000000000000000000000000000000000000000", "001579bde0000000000000000000000000000000000000000000000000000000", "", 0},
+		{"09f4be4173c99d20a7ac925a3ed6e95a3d2efa730b4bf7956168f2dea24bfc27", "13e97c82e7933a414f5924b47dadd2b47a5df4e61697ef2ac2d1e5bd4497f84e", "", 0},
+		{"20e44f4466b9bdf9b599eef505df252b7022ffd23a8ebbeb547d12948492345f", "41c89e88cd737bf36b33ddea0bbe4a56e045ffa4751d77d6a8fa2529092468be", "", 0},
+		{"44be7e70ef2d3fd4e40eb8f516f9ed6ccfdffe5e70162528077cbbfe5b24199f", "897cfce1de5a7fa9c81d71ea2df3dad99fbffcbce02c4a500ef977fcb648333e", "", 0},
+		{"8288ba5463d3a027f5bcc6a05fd1d4a1b3c0b0e54b9750cf6c622f90a15e5b66", "051174a8c7a7404feb798d40bfa3a943678161ca972ea19ed8c45f2142bcb6cc", "", 1},
 		{"8000000000000000000000000000000000000000000000000000000000000000", "0000000000000000000000000000000000000000000000000000000000000000", "", 1},
 		{"ffff000000000000000000000000000000000000000000000000000000000000", "fffe000000000000000000000000000000000000000000000000000000000000", "", 1},
 		{"ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff", "fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffe", "", 1},
@@ -111,6 +121,88 @@ static void testShiftLeft1() {
 		assert(x == Uint256(tc.y));
 		numTestCases++;
 	}
+}
+
+
+static void testShiftRight1() {
+	BinaryCase cases[] = {
+		{"0000000000000000000000000000000000000000000000000000000000000000", "0000000000000000000000000000000000000000000000000000000000000000"},
+		{"0000000000000000000000000000000000000000000000000000000000000001", "0000000000000000000000000000000000000000000000000000000000000000"},
+		{"0000000000000000000000000000000000000000000000000000000100000000", "0000000000000000000000000000000000000000000000000000000080000000"},
+		{"00000000000000000000000000000000000000000000000000000000ffffffff", "000000000000000000000000000000000000000000000000000000007fffffff"},
+		{"0d659f38b34258b59e95248e384ec1c13280c3ae4427f6f86a7bba35979b789f", "06b2cf9c59a12c5acf4a92471c2760e0994061d72213fb7c353ddd1acbcdbc4f"},
+		{"58c8e14f273f86a7ee70b95abf8bd7057c50837ff6f4885a822032d571e62ed8", "2c6470a7939fc353f7385cad5fc5eb82be2841bffb7a442d4110196ab8f3176c"},
+		{"d5597aca79b909e0455b908aef1f060fe213f6832d7b9ba28f3a2572b0ce3d00", "6aacbd653cdc84f022adc845778f8307f109fb4196bdcdd1479d12b958671e80"},
+		{"da5dc928fa00d056242652dad1b25d01d8747e0a32a4c99fcab44aff4a2a4b26", "6d2ee4947d00682b1213296d68d92e80ec3a3f05195264cfe55a257fa5152593"},
+		{"000abcdef0000000000000000000000000000000000000000000000000000000", "00055e6f78000000000000000000000000000000000000000000000000000000"},
+		{"ffff000000000000000000000000000000000000000000000000000000000000", "7fff800000000000000000000000000000000000000000000000000000000000"},
+		{"ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff", "7fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"},
+	};
+	for (unsigned int i = 0; i < ARRAY_LENGTH(cases); i++) {
+		BinaryCase &tc = cases[i];
+		Uint256 x(tc.x);
+		x.shiftRight1(0);
+		assert(x == Uint256(tc.x));
+		x.shiftRight1(1);
+		assert(x == Uint256(tc.y));
+		numTestCases++;
+	}
+}
+
+
+static void testReplaceAndSwap() {
+	BinaryCase cases[] = {
+		{"0000000000000000000000000000000000000000000000000000000000000000", "0000000000000000000000000000000000000000000000000000000000000000"},
+		{"0000000000000000000000000000000000000000000000000000000000000000", "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"},
+		{"ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff", "0000000000000000000000000000000000000000000000000000000000000000"},
+		{"ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff", "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"},
+		{"0000000000000100000000000000000000000000000000000000000000000000", "0000000000000000000000000000000000000000000000000000000000000008"},
+		{"12041f8a08b389ea4e0e06af09e0929efb8b1b86dec57d6fdeb3d9d115f6248b", "fa84d9fc056efb0fb361e3e1be0ab792eb1e264f64bc98e430280984076f48e9"},
+		{"eb3031d2e93d9d6a5acc06749cb81e22aa356a2cc993e9a6248ebb894b6433eb", "38c412bd1e74230eb2239752396c184138b71a2098b36982a7abe540f87f9daa"},
+		{"0e1aa5a5161df93a4137bcdcd82e4f0cd0915cb90c5cd06470240f6a2180b8a1", "7b0ccf9e16381bc87ff7aabd209c9245a78eb029241fe3c38723ba8e7e5bb63e"},
+		{"0754d05eae2a7f834400dc2caf9de9703bf68de8239e0250e09922fb4948661e", "29f0dba4ed66f5013a1c73b713ceb46b243769e7cdf6ba535e7cfaec1708f998"},
+		{"16e6f9a0e9fe2bc49e0042bd66e6977b96beecd1acfc9d8a59ddb56e8b2da33e", "8fc4e7fed2002227c5c8816195d2fe95968968085522e147b64914d365a763ec"},
+		{"4f82285de18823579d43e3570f7036a2dcc9ded10556ddd21d98b5ab54016d99", "67c27d521e4ed8c5614d954c270e342ee6c1cf39147411f6d096cba0a9c401bb"},
+		{"56bbc0162e1402a5f93ab30db97508716c40de99bb5aeb5445b0bfe8c20499e7", "a9e5b2315a2e457a9bdbbb2fddcbee9bcd35e6dc9ab782a28828302d3909e1ef"},
+		{"cadeb692ca96963bc61bc9771164fae51c86dd1635840ff60d4358cf67323dad", "413119d653c67245906e421f502a80c12157155ece0bf9da48f6a3bf961c7a91"},
+	};
+	for (unsigned int i = 0; i < ARRAY_LENGTH(cases); i++) {
+		BinaryCase &tc = cases[i];
+		Uint256 a(tc.x);
+		Uint256 b(tc.y);
+		Uint256 x(tc.x);
+		Uint256 y(tc.y);
+		x.replace(b, 0);
+		assert(x == a);
+		x.replace(b, 1);
+		assert(x == b);
+		y.replace(a, 1);
+		assert(y == a);
+		x.swap(y, 0);
+		assert(x == b && y == a);
+		x.swap(y, 1);
+		assert(x == a && y == b);
+		numTestCases++;
+	}
+}
+
+
+static void testConstructorBytes() {
+	uint8_t b[32] = {
+		0x03, 0x4D, 0x03, 0x33,
+		0x2D, 0xCE, 0x3A, 0x5F,
+		0xA5, 0xCA, 0x65, 0x3B,
+		0x54, 0x33, 0x5E, 0x14,
+		0x81, 0x38, 0xB3, 0xA1,
+		0x3C, 0x27, 0x95, 0xA3,
+		0x48, 0xE6, 0x9E, 0xFE,
+		0xA7, 0xCA, 0xC5, 0x16,
+	};
+	Uint256 x(b);
+	assert(x.value[0] == UINT32_C(0xA7CAC516));
+	assert(x.value[1] == UINT32_C(0x48E69EFE));
+	assert(x.value[4] == UINT32_C(0x54335E14));
+	assert(x.value[7] == UINT32_C(0x034D0333));
 }
 
 
@@ -135,6 +227,9 @@ int main(int argc, char **argv) {
 	testAdd();
 	testSubtract();
 	testShiftLeft1();
+	testShiftRight1();
+	testReplaceAndSwap();
+	testConstructorBytes();
 	testGetBigEndianByte();
 	printf("All %d test cases passed\n", numTestCases);
 	return 0;
