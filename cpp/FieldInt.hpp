@@ -14,12 +14,11 @@
 /* 
  * An unsigned 256-bit integer modulo a specific prime number, for Bitcoin and secp256k1.
  * The input and output values of each method are always in the range [0, MODULUS).
- * Instances of this class are mutable.
  * 
- * Some behaviors are specific to FieldInt (such as reciprocal), while others are
+ * Some behaviors are specific to FieldInt (such as reciprocal()), while others are
  * the same as Uint256 (such as comparisons). The number representation format is
  * the same as Uint256. It is illegal to set the value to be greater than or equal
- * to MODULUS; undefined behavior will result.
+ * to MODULUS; undefined behavior will result. Instances of this class are mutable.
  */
 class FieldInt : private Uint256 {
 	
@@ -36,17 +35,18 @@ public:
 public:
 	
 	// Constructs a FieldInt from the given 64-character hexadecimal string. Not constant-time.
+	// If the syntax of the string is invalid, then an assertion will fail.
 	explicit FieldInt(const char *str) :
 			Uint256(str) {
 		assert(*this < MODULUS);
 	}
 	
 	
-	// Constructs a FieldInt from the given Uint256, reducing it as necessary. Not constant-time.
+	// Constructs a FieldInt from the given Uint256, reducing it as necessary.
+	// Constant-time with respect to the given value.
 	explicit FieldInt(const Uint256 &val) :
 			Uint256(val) {
-		if (*this >= MODULUS)
-			Uint256::subtract(MODULUS, 1);
+		Uint256::subtract(MODULUS, static_cast<uint32_t>(*this >= MODULUS));
 	}
 	
 	
@@ -104,13 +104,13 @@ public:
 				uint32_t c = 0;
 				if (i < NUM_WORDS) {
 					for (int j = 0; j <= i; j++) {
-						uint64_t prod = static_cast<uint64_t>(value[j]) * other.value[i - j];
+						uint64_t prod = static_cast<uint64_t>(this->value[j]) * other.value[i - j];
 						sum += prod;
 						c += static_cast<uint32_t>(sum < prod);
 					}
 				} else {
 					for (int j = NUM_WORDS - 1; j >= 0 && i - j < NUM_WORDS; j--) {
-						uint64_t prod = static_cast<uint64_t>(value[i - j]) * other.value[j];
+						uint64_t prod = static_cast<uint64_t>(this->value[i - j]) * other.value[j];
 						sum += prod;
 						c += static_cast<uint32_t>(sum < prod);
 					}
@@ -176,9 +176,9 @@ public:
 		}
 		
 		// Final conditional subtraction
-		memcpy(value, difference, sizeof(value));
-		uint32_t enable = static_cast<uint32_t>((difference[NUM_WORDS] != 0) | (*this >= MODULUS));
-		Uint256::subtract(MODULUS, enable);
+		memcpy(this->value, difference, sizeof(value));
+		uint32_t dosub = static_cast<uint32_t>((difference[NUM_WORDS] != 0) | (*this >= MODULUS));
+		Uint256::subtract(MODULUS, dosub);
 	}
 	
 	
@@ -191,12 +191,9 @@ public:
 	
 	/* Miscellaneous methods */
 	
-	// Copies the given value into this number if enable is 1, or
-	// does nothing if enable is 0. Constant-time with respect to both values.
 	void replace(const FieldInt &other, uint32_t enable) {
 		Uint256::replace(other, enable);
 	}
-	
 	
 	using Uint256::getBigEndianBytes;
 	
@@ -243,7 +240,7 @@ private:
 	/* Class constants */
 	
 private:
-	static const Uint256 MODULUS;
+	static const Uint256 MODULUS;  // Prime number
 public:
 	static const FieldInt ZERO;
 	static const FieldInt ONE;

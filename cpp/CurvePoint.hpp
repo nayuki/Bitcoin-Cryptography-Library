@@ -6,6 +6,8 @@
 
 #pragma once
 
+#include <cassert>
+#include <cstddef>
 #include <cstdint>
 #include "FieldInt.hpp"
 #include "Uint256.hpp"
@@ -40,8 +42,8 @@ public:
 	
 	
 	/* Constructors */
-	
 public:
+	
 	// Constructs a normalized point (z=1) from the given coordinates. Constant-time with respect to the values.
 	CurvePoint(const FieldInt &x_, const FieldInt &y_) :
 		x(x_), y(y_), z(FieldInt::ONE) {}
@@ -52,8 +54,8 @@ public:
 		x(xStr), y(yStr), z(FieldInt::ONE) {}
 	
 	
-private:
 	// Constructs the special "point at infinity" (normalized), which is used by ZERO and in multiply().
+private:
 	CurvePoint() :
 		x(FieldInt::ZERO), y(FieldInt::ONE), z(FieldInt::ZERO) {}
 	
@@ -221,23 +223,33 @@ public:
 		// Process 4 bits per iteration (windowed method)
 		*this = ZERO;
 		for (int i = 256 - 4; i >= 0; i -= 4) {
-			if (i != 256 - 4) {
-				for (int j = 0; j < 4; j++)
-					this->twice();
-			}
 			unsigned int inc = (n.value[i >> 5] >> (i & 31)) & 15;
 			CurvePoint q(ZERO);
 			for (unsigned int j = 0; j < 16; j++)
 				q.replace(table[j], static_cast<uint32_t>(j == inc));
 			this->add(q);
+			if (i != 0) {
+				for (int j = 0; j < 4; j++)
+					this->twice();
+			}
 		}
 	}
 	
 	
-	// Normalizes the coordinates of this point. If z != 0, then (x', y', z') = (x/z, y/z, 1);
-	// otherwise special logic occurs. Constant-time with respect to this value.
+	// Normalizes the coordinates of this point. Idempotent operation.
+	// Constant-time with respect to this value.
 	void normalize() {
-		bool nonzero = z != FieldInt::ZERO;
+		/* 
+		 * if (z != 0) {
+		 *   x /= z;
+		 *   y /= z;
+		 *   z = 1;
+		 * } else {
+		 *   x = x != 0 ? 1 : 0;
+		 *   y = y != 0 ? 1 : 0;
+		 *   z = 0;
+		 * }
+		 */
 		CurvePoint norm(*this);
 		norm.z.reciprocal();
 		norm.x.multiply(norm.z);
@@ -245,11 +257,12 @@ public:
 		norm.z = FieldInt::ONE;
 		x.replace(FieldInt::ONE, static_cast<uint32_t>(x != FieldInt::ZERO));
 		y.replace(FieldInt::ONE, static_cast<uint32_t>(y != FieldInt::ZERO));
-		this->replace(norm, static_cast<uint32_t>(nonzero));
+		this->replace(norm, static_cast<uint32_t>(z != FieldInt::ZERO));
 	}
 	
 	
-	// Conditionally replaces this point's coordinates with the given point. Constant-time with respect to both values.
+	// Conditionally replaces this point's coordinates with the given point.
+	// Constant-time with respect to both values and the enable.
 	void replace(const CurvePoint &other, uint32_t enable) {
 		assert((enable >> 1) == 0);
 		this->x.replace(other.x, enable);
@@ -258,7 +271,8 @@ public:
 	}
 	
 	
-	// Tests whether this point is on the elliptic curve. This point needs to be normalized before the method is called.
+	// Tests whether this point is on the elliptic curve.
+	// This point needs to be normalized before the method is called.
 	// Zero is considered to be off the curve. Constant-time with respect to this value.
 	bool isOnCurve() const {
 		FieldInt left(y);
@@ -272,8 +286,10 @@ public:
 	}
 	
 	
-	// Tests whether this point is equal to the special zero point. This point need not be normalized. Constant-time with respect to this value.
-	// This method is equivalent to, but more convenient than: { CurvePoint temp(*this); temp.normalize(); return temp == ZERO; }
+	// Tests whether this point is equal to the special zero point.
+	// This point need not be normalized. Constant-time with respect to this value.
+	// This method is equivalent to, but more convenient than:
+	// { CurvePoint temp(*this); temp.normalize(); return temp == ZERO; }
 	bool isZero() const {
 		return (x == FieldInt::ZERO) & (y != FieldInt::ZERO) & (z == FieldInt::ZERO);
 	}
@@ -285,15 +301,15 @@ public:
 		return (x == other.x) & (y == other.y) & (z == other.z);
 	}
 	
-	
-	// Tests whether this point is unequal to the given point. Constant-time with respect to both values.
 	bool operator!=(const CurvePoint &other) const {
 		return !(*this == other);
 	}
 	
 	
-	// Serializes this point in compressed format. Constant-time with respect to this value.
+	// Serializes this point in compressed format (header byte, x-coordinate in big-endian).
+	// Constant-time with respect to this value.
 	void toCompressedPoint(uint8_t output[33]) const {
+		assert(output != NULL);
 		output[0] = (y.value[0] & 1) + 0x02;
 		x.getBigEndianBytes(&output[1]);
 	}
@@ -304,7 +320,7 @@ public:
 public:
 	static const FieldInt A;       // Curve equation parameter
 	static const FieldInt B;       // Curve equation parameter
-	static const Uint256 ORDER;    // Order of base point
+	static const Uint256 ORDER;    // Order of base point, which is a prime number
 	static const CurvePoint G;     // Base point (normalized)
 	static const CurvePoint ZERO;  // Dummy point at infinity (normalized)
 	
@@ -317,4 +333,4 @@ const Uint256  CurvePoint::ORDER("fffffffffffffffffffffffffffffffebaaedce6af48a0
 const CurvePoint CurvePoint::G(
 	FieldInt("79be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798"),
 	FieldInt("483ada7726a3c4655da4fbfc0e1108a8fd17b448a68554199c47d08ffb10d4b8"));
-const CurvePoint CurvePoint::ZERO;  // Special default constructor
+const CurvePoint CurvePoint::ZERO;  // Default constructor
