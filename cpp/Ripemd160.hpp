@@ -7,6 +7,7 @@
 #pragma once
 
 #include <cassert>
+#include <cstddef>
 #include <cstdint>
 #include <cstring>
 
@@ -25,6 +26,7 @@ class Ripemd160 final {
 public:
 	static void getHash(const uint8_t *msg, size_t len, uint8_t hashResult[RIPEMD160_HASH_LEN]) {
 		// Compress whole message blocks
+		assert(msg != nullptr && hashResult != nullptr);
 		uint32_t state[5] = {UINT32_C(0x67452301), UINT32_C(0xEFCDAB89), UINT32_C(0x98BADCFE), UINT32_C(0x10325476), UINT32_C(0xC3D2E1F0)};
 		size_t off = len & ~static_cast<size_t>(BLOCK_LEN - 1);
 		compress(state, msg, off);

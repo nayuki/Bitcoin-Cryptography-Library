@@ -7,6 +7,7 @@
 #pragma once
 
 #include <cassert>
+#include <cstddef>
 #include <cstdint>
 #include <cstring>
 #include "Sha256Hash.hpp"
@@ -24,17 +25,21 @@ class Sha256 final {
 public:
 	
 	static Sha256Hash getHash(const uint8_t *msg, size_t len) {
+		assert(msg != nullptr);
 		return getHash(msg, len, INITIAL_STATE, 0);
 	}
 	
 	
 	static Sha256Hash getDoubleHash(const uint8_t *msg, size_t len) {
+		assert(msg != nullptr);
 		Sha256Hash innerHash(getHash(msg, len));
 		return getHash(innerHash.data(), SHA256_HASH_LEN);
 	}
 	
 	
 	static Sha256Hash getHmac(const uint8_t *key, size_t keyLen, const uint8_t *msg, size_t msgLen) {
+		assert(key != nullptr && msg != nullptr);
+		
 		// Preprocess key
 		uint8_t tempKey[SHA256_BLOCK_LEN] = {};
 		if (keyLen <= SHA256_BLOCK_LEN)
@@ -94,8 +99,9 @@ private:
 	
 public:
 	static void compress(uint32_t state[8], const uint8_t *blocks, size_t len) {
-		#define ROTR32(x, i)  (((x) << (32 - (i))) | ((x) >> (i)))
+		assert(state != nullptr && blocks != nullptr);
 		assert(len % SHA256_BLOCK_LEN == 0);
+		#define ROTR32(x, i)  (((x) << (32 - (i))) | ((x) >> (i)))
 		uint32_t schedule[64];
 		for (size_t i = 0; i < len; ) {
 			
@@ -170,6 +176,7 @@ public:
 	
 	// Appends message bytes to this ongoing hasher.
 	void append(const uint8_t *bytes, int len) {
+		assert(bytes != nullptr);
 		for (int i = 0; i < len; i++) {
 			buffer[bufferLen] = bytes[i];
 			bufferLen++;

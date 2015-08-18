@@ -26,6 +26,7 @@ public:
 	// The outStr array must have length >= 35 (including null terminator).
 	// The output text length is between 25 and 34 characters, inclusive. Not constant-time.
 	static void pubkeyHashToBase58Check(const uint8_t pubkeyHash[RIPEMD160_HASH_LEN], char outStr[35]) {
+		assert(pubkeyHash != nullptr && outStr != nullptr);
 		uint8_t toEncode[1 + RIPEMD160_HASH_LEN + 4] = {};
 		toEncode[0] = 0x00;  // Version byte
 		memcpy(&toEncode[1], pubkeyHash, RIPEMD160_HASH_LEN);
@@ -37,6 +38,7 @@ public:
 	// The outStr array must have length >= 53 (including null terminator).
 	// The output text length is always 52 characters. Not constant-time.
 	static void privateKeyToBase58Check(const Uint256 &privKey, char outStr[53]) {
+		assert(outStr != nullptr);
 		uint8_t toEncode[1 + 32 + 1 + 4] = {};
 		toEncode[0] = 0x80;  // Version byte
 		privKey.getBigEndianBytes(&toEncode[1]);

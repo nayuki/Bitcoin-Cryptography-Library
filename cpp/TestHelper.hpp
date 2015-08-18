@@ -9,6 +9,7 @@
 #pragma once
 
 #include <cassert>
+#include <cstddef>
 #include <cstdio>
 #include <cstdint>
 #include <cstring>
