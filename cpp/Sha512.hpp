@@ -26,7 +26,7 @@ class Sha512 final {
 public:
 	static void getHash(const uint8_t *msg, size_t len, uint8_t hashResult[HASH_LEN]) {
 		// Compress whole message blocks
-		assert(msg != nullptr && hashResult != nullptr);
+		assert((msg != nullptr || len == 0) && hashResult != nullptr);
 		uint64_t state[8] = {
 			UINT64_C(0x6A09E667F3BCC908), UINT64_C(0xBB67AE8584CAA73B), UINT64_C(0x3C6EF372FE94F82B), UINT64_C(0xA54FF53A5F1D36F1),
 			UINT64_C(0x510E527FADE682D1), UINT64_C(0x9B05688C2B3E6C1F), UINT64_C(0x1F83D9ABFB41BD6B), UINT64_C(0x5BE0CD19137E2179)};

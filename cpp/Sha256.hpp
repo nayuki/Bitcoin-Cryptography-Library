@@ -25,20 +25,20 @@ class Sha256 final {
 public:
 	
 	static Sha256Hash getHash(const uint8_t *msg, size_t len) {
-		assert(msg != nullptr);
+		assert(msg != nullptr || len == 0);
 		return getHash(msg, len, INITIAL_STATE, 0);
 	}
 	
 	
 	static Sha256Hash getDoubleHash(const uint8_t *msg, size_t len) {
-		assert(msg != nullptr);
+		assert(msg != nullptr || len == 0);
 		Sha256Hash innerHash(getHash(msg, len));
 		return getHash(innerHash.data(), SHA256_HASH_LEN);
 	}
 	
 	
 	static Sha256Hash getHmac(const uint8_t *key, size_t keyLen, const uint8_t *msg, size_t msgLen) {
-		assert(key != nullptr && msg != nullptr);
+		assert((key != nullptr || keyLen == 0) && (msg != nullptr || msgLen == 0));
 		
 		// Preprocess key
 		uint8_t tempKey[SHA256_BLOCK_LEN] = {};
@@ -99,7 +99,7 @@ private:
 	
 public:
 	static void compress(uint32_t state[8], const uint8_t *blocks, size_t len) {
-		assert(state != nullptr && blocks != nullptr);
+		assert(state != nullptr && (blocks != nullptr || len == 0));
 		assert(len % SHA256_BLOCK_LEN == 0);
 		#define ROTR32(x, i)  (((x) << (32 - (i))) | ((x) >> (i)))
 		uint32_t schedule[64];
@@ -176,7 +176,7 @@ public:
 	
 	// Appends message bytes to this ongoing hasher.
 	void append(const uint8_t *bytes, int len) {
-		assert(bytes != nullptr);
+		assert(bytes != nullptr || len == 0);
 		for (int i = 0; i < len; i++) {
 			buffer[bufferLen] = bytes[i];
 			bufferLen++;
