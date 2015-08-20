@@ -6,11 +6,8 @@
 
 #pragma once
 
-#include <cassert>
 #include <cstddef>
 #include <cstdint>
-#include <cstring>
-#include "Utils.hpp"
 
 
 /* 
@@ -39,22 +36,11 @@ public:
 	
 	// Constructs a Sha256Hash from the given array of 32 bytes (len is a dummy parameter that must equal 32).
 	// Constant-time with respect to the given array of values.
-	Sha256Hash(const uint8_t hash[SHA256_HASH_LEN], size_t len) {
-		assert(hash != nullptr && len == SHA256_HASH_LEN);
-		memcpy(value, hash, sizeof(value));
-	}
+	Sha256Hash(const uint8_t hash[SHA256_HASH_LEN], size_t len);
 	
 	
 	// Constructs a Sha256Hash from the given 64-character byte-reversed hexadecimal string. Not constant-time.
-	Sha256Hash(const char *str) :
-				value() {
-		assert(str != nullptr && strlen(str) == SHA256_HASH_LEN * 2);
-		for (int i = 0; i < SHA256_HASH_LEN * 2; i++) {
-			int digit = Utils::parseHexDigit(str[SHA256_HASH_LEN * 2 - 1 - i]);
-			assert(digit != -1);
-			value[i >> 1] |= digit << ((i & 1) << 2);
-		}
-	}
+	Sha256Hash(const char *str);
 	
 	
 	// Business as usual.
@@ -67,31 +53,19 @@ public:
 public:
 	
 	// Retrieves a single byte of the hash. Not constant-time with respect to the index.
-	uint8_t getByte(int index) const {
-		assert(0 <= index && index < SHA256_HASH_LEN);
-		return value[index];
-	}
+	uint8_t getByte(int index) const;
 	
 	
 	// Provides a read-only view of the underlying 32-byte array.
-	const uint8_t *data() const {
-		return &value[0];
-	}
+	const uint8_t *data() const;
 	
 	
 	// Tests whether the given hash is equal to this one. Constant-time with respect to both values.
-	bool operator==(const Sha256Hash &other) const {
-		uint8_t diff = 0;
-		for (int i = 0; i < SHA256_HASH_LEN; i++)
-			diff |= value[i] ^ other.value[i];
-		return diff == 0;
-	}
+	bool operator==(const Sha256Hash &other) const;
 	
 	
 	// Tests whether the given hash is unequal to this one. Constant-time with respect to both values.
-	bool operator!=(const Sha256Hash &other) const {
-		return !(*this == other);
-	}
+	bool operator!=(const Sha256Hash &other) const;
 	
 	
 	// Enforces immutability.
