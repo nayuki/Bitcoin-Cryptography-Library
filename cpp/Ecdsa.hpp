@@ -8,6 +8,7 @@
 
 #include <cassert>
 #include <cstdint>
+#include <cstring>
 #include "CurvePoint.hpp"
 #include "FieldInt.hpp"
 #include "Sha256.hpp"

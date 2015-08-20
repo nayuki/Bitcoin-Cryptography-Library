@@ -97,6 +97,7 @@ private:
 			state[4] = state[0] + bl + cr;
 			state[0] = temp;
 		}
+		#undef ROTL32
 	}
 	
 	

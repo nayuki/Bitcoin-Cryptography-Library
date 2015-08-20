@@ -8,6 +8,7 @@
 
 #include <cassert>
 #include <cstdint>
+#include <cstring>
 #include "Uint256.hpp"
 
 

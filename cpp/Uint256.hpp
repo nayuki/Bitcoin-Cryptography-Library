@@ -71,17 +71,10 @@ public:
 	
 	/* Arithmetic methods */
 	
-	// Adds the given number into this number, modulo 2^256. 
-	// The other number must be a distinct object. Constant-time with respect to both values.
-	void add(const Uint256 &other) {
-		add(other, 1);
-	}
-	
-	
 	// Adds the given number into this number, modulo 2^256. The other number must be a distinct object.
 	// Enable must be 1 to perform the operation or 0 to do nothing. Returns the carry-out bit, which is 0 or 1.
 	// Constant-time with respect to both values and the enable.
-	uint32_t add(const Uint256 &other, uint32_t enable) {
+	uint32_t add(const Uint256 &other, uint32_t enable=1) {
 		assert(&other != this && (enable >> 1) == 0);
 		uint32_t mask = -enable;
 		uint32_t carry = 0;
@@ -95,17 +88,10 @@ public:
 	}
 	
 	
-	// Subtracts the given number from this number, modulo 2^256.
-	// The other number must be a distinct object. Constant-time with respect to both values.
-	void subtract(const Uint256 &other) {
-		subtract(other, 1);
-	}
-	
-	
 	// Subtracts the given number from this number, modulo 2^256. The other number must be a distinct object.
 	// Enable must be 1 to perform the operation or 0 to do nothing. Returns the borrow-out bit, which is 0 or 1.
 	// Constant-time with respect to both values and the enable.
-	uint32_t subtract(const Uint256 &other, uint32_t enable) {
+	uint32_t subtract(const Uint256 &other, uint32_t enable=1) {
 		assert(&other != this && (enable >> 1) == 0);
 		uint32_t mask = -enable;
 		uint32_t borrow = 0;
