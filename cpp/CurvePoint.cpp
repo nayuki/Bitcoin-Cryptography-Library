@@ -250,6 +250,15 @@ void CurvePoint::toCompressedPoint(uint8_t output[33]) const {
 }
 
 
+CurvePoint CurvePoint::privateExponentToPublicPoint(const Uint256 &privExp) {
+	assert((Uint256::ZERO < privExp) & (privExp < CurvePoint::ORDER));
+	CurvePoint result(CurvePoint::G);
+	result.multiply(privExp);
+	result.normalize();
+	return result;
+}
+
+
 // Static initializers
 const FieldInt CurvePoint::A    ("0000000000000000000000000000000000000000000000000000000000000000");
 const FieldInt CurvePoint::B    ("0000000000000000000000000000000000000000000000000000000000000007");

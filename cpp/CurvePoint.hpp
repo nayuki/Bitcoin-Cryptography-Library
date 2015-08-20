@@ -109,6 +109,13 @@ public:
 	void toCompressedPoint(uint8_t output[33]) const;
 	
 	
+	/* Static functions */
+	
+	// Returns a normalized public curve point for the given private exponent key.
+	// Requires 0 < privExp < ORDER. Constant-time with respect to the value.
+	static CurvePoint privateExponentToPublicPoint(const Uint256 &privExp);
+	
+	
 	/* Class constants */
 	
 public:

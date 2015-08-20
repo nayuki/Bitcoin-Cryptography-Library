@@ -501,12 +501,35 @@ static void testMultiplyModOrder() {
 }
 
 
+static void testPrivateExponentToPublicPoint() {
+	ThreeStrings cases[] = {
+		{"0000000000000000000000000000000000000000000000000000000000000001", "79be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798", "483ada7726a3c4655da4fbfc0e1108a8fd17b448a68554199c47d08ffb10d4b8"},
+		{"0000000000000000000000000000000000000000000000000000000000000002", "c6047f9441ed7d6d3045406e95c07cd85c778e4b8cef3ca7abac09b95c709ee5", "1ae168fea63dc339a3c58419466ceaeef7f632653266d0e1236431a950cfe52a"},
+		{"000000000000000000000000000000000000000000000000000000000000000f", "d7924d4f7d43ea965a465ae3095ff41131e5946f3c85f79e44adbcf8e27e080e", "581e2872a86c72a683842ec228cc6defea40af2bd896d3a5c504dc9ff6a26b58"},
+		{"0000000000000000000000000000000000000000000000000000000000000010", "e60fce93b59e9ec53011aabc21c23e97b2a31369b87a5ae9c44ee89e2a6dec0a", "f7e3507399e595929db99f34f57937101296891e44d23f0be1f32cce69616821"},
+		{"fffffffffffffffffffffffffffffffebaaedce6af48a03bbfd25e8cd0364139", "2f01e5e15cca351daff3843fb70f3c2f0a1bdd05e5af888a67784ef3e10a2a01", "a3b25758beac66b6d6c2f7d5ecd2ec4b3d1dec2945a489e84a25d3479342132b"},
+		{"fffffffffffffffffffffffffffffffebaaedce6af48a03bbfd25e8cd036413a", "5cbdf0646e5db4eaa398f365f2ea7a0e3d419b7e0330e39ce92bddedcac4f9bc", "951435bf45daa69f5ce8729279e5ab2457ec2f47ec02184a5af7d9d6f78d9755"},
+		{"fffffffffffffffffffffffffffffffebaaedce6af48a03bbfd25e8cd036413c", "2f8bde4d1a07209355b4a7250a5c5128e88b84bddc619ab7cba8d569b240efe4", "2753ddd9c91a1c292b24562259363bd90877d8e454f297bf235782c459539959"},
+		{"fffffffffffffffffffffffffffffffebaaedce6af48a03bbfd25e8cd036413e", "f9308a019258c31049344f85f89d5229b531c845836f99b08601f113bce036f9", "c77084f09cd217ebf01cc819d5c80ca99aff5666cb3ddce4934602897b4715bd"},
+		{"fffffffffffffffffffffffffffffffebaaedce6af48a03bbfd25e8cd036413f", "c6047f9441ed7d6d3045406e95c07cd85c778e4b8cef3ca7abac09b95c709ee5", "e51e970159c23cc65c3a7be6b99315110809cd9acd992f1edc9bce55af301705"},
+		{"fffffffffffffffffffffffffffffffebaaedce6af48a03bbfd25e8cd0364140", "79be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798", "b7c52588d95c3b9aa25b0403f1eef75702e84bb7597aabe663b82f6f04ef2777"},
+	};
+	for (unsigned int i = 0; i < ARRAY_LENGTH(cases); i++) {
+		ThreeStrings &tc = cases[i];
+		CurvePoint p(CurvePoint::privateExponentToPublicPoint(Uint256(tc.a)));
+		assert(p.x == FieldInt(tc.b) && p.y == FieldInt(tc.c) && p.z == FieldInt::ONE);
+		numTestCases++;
+	}
+}
+
+
 int main(int argc, char **argv) {
 	testReplace();
 	testTwice();
 	testAdd();
 	testMultiply();
 	testMultiplyModOrder();
+	testPrivateExponentToPublicPoint();
 	printf("All %d test cases passed\n", numTestCases);
 	return 0;
 }
