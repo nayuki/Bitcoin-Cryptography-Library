@@ -9,10 +9,9 @@
 #include "Sha512.hpp"
 
 #define BLOCK_LEN 128
-#define HASH_LEN 64
 
 
-void Sha512::getHash(const uint8_t *msg, size_t len, uint8_t hashResult[HASH_LEN]) {
+void Sha512::getHash(const uint8_t *msg, size_t len, uint8_t hashResult[SHA512_HASH_LEN]) {
 	// Compress whole message blocks
 	assert((msg != nullptr || len == 0) && hashResult != nullptr);
 	uint64_t state[8] = {
@@ -39,7 +38,7 @@ void Sha512::getHash(const uint8_t *msg, size_t len, uint8_t hashResult[HASH_LEN
 	compress(state, block, BLOCK_LEN);
 	
 	// Uint64 array to bytes in big endian
-	for (int i = 0; i < HASH_LEN; i++)
+	for (int i = 0; i < SHA512_HASH_LEN; i++)
 		hashResult[i] = static_cast<uint8_t>(state[i >> 3] >> ((7 - (i & 7)) << 3));
 }
 
@@ -107,7 +106,6 @@ Sha512::Sha512() {}
 
 
 #undef BLOCK_LEN
-#undef HASH_LEN
 
 
 // Static initializers

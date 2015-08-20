@@ -313,18 +313,16 @@ int main(int argc, char **argv) {
 		{true, "561BD9D50427B770A24929B7393E0F9D716B9D65736D3335D1C0D010C99E75A5A9B92FFC0BD9943ED819BD4A9AD8B6E5FF2B8F34AB585353307D1D21017DC6A0", hexBytes("E65BA5ED8AE6F5E73C97E167F8D99CE5")},
 	};
 	
-	#define HASH_LEN 64
 	int numTestCases = 0;
 	for (unsigned int i = 0; i < ARRAY_LENGTH(cases); i++) {
 		TestCase &tc = cases[i];
 		Bytes expectHash(hexBytes(tc.expectedHash));
-		assert(expectHash.size() == HASH_LEN);
-		uint8_t actualHash[HASH_LEN] = {};
+		assert(expectHash.size() == SHA512_HASH_LEN);
+		uint8_t actualHash[SHA512_HASH_LEN] = {};
 		Sha512::getHash(tc.message.data(), tc.message.size(), actualHash);
-		assert((memcmp(actualHash, expectHash.data(), HASH_LEN) == 0) == tc.matches);
+		assert((memcmp(actualHash, expectHash.data(), SHA512_HASH_LEN) == 0) == tc.matches);
 		numTestCases++;
 	}
 	printf("All %d test cases passed\n", numTestCases);
 	return 0;
-	#undef HASH_LEN
 }

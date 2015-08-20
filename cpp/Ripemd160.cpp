@@ -82,6 +82,7 @@ void Ripemd160::compress(uint32_t state[5], const uint8_t *blocks, size_t len) {
 		state[4] = state[0] + bl + cr;
 		state[0] = temp;
 	}
+	#undef ROTL32
 }
 
 
