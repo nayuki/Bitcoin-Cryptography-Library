@@ -6,6 +6,7 @@
 
 package io.nayuki.bitcoin.crypto;
 
+import static io.nayuki.bitcoin.crypto.Int256Math.NUM_WORDS;
 import java.util.Arrays;
 
 
@@ -229,7 +230,7 @@ public final class CurvePointMath {
 		int nonzero = Int256Math.isZero(val, pOff + ZCOORD) ^ 1;
 		int newTempOff = tempOff + POINT_WORDS;
 		int normOff = tempOff;
-		System.arraycopy(FIELD_MODULUS, 0, val, tempOff, NUM_WORDS);  // Reuses space
+		System.arraycopy(Int256Math.FIELD_MODULUS, 0, val, tempOff, NUM_WORDS);  // Reuses space
 		Int256Math.reciprocal(val, pOff + ZCOORD, tempOff, normOff + ZCOORD, newTempOff);
 		Int256Math.fieldMultiply(val, pOff + XCOORD, normOff + ZCOORD, normOff + XCOORD, newTempOff);
 		Int256Math.fieldMultiply(val, pOff + YCOORD, normOff + ZCOORD, normOff + YCOORD, newTempOff);
@@ -284,14 +285,10 @@ public final class CurvePointMath {
 	/*---- Constants ----*/
 	
 	// Sizes and offsets
-	private static final int NUM_WORDS = 8;
 	private static final int POINT_WORDS = 3 * NUM_WORDS;
 	private static final int XCOORD = 0 * NUM_WORDS;
 	private static final int YCOORD = 1 * NUM_WORDS;
 	private static final int ZCOORD = 2 * NUM_WORDS;
-	
-	// Unsigned 256-bit integers
-	private static final int[] FIELD_MODULUS = {0xFFFFFC2F, 0xFFFFFFFE, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF};
 	
 	// Elliptic curve points
 	private static final int[] ZERO_POINT = {0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};  // (0, 1, 0)

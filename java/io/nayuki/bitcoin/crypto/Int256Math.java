@@ -427,11 +427,11 @@ public final class Int256Math {
 	
 	/*---- Constants ----*/
 	
-	private static final int NUM_WORDS = 8;
+	static final int NUM_WORDS = 8;
 	private static final long LONG_MASK = 0xFFFFFFFFL;
 	
-	private static final int[] ZERO = {0, 0, 0, 0, 0, 0, 0, 0};
-	private static final int[] ONE  = {1, 0, 0, 0, 0, 0, 0, 0};
-	private static final int[] FIELD_MODULUS = {0xFFFFFC2F, 0xFFFFFFFE, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF};
+	static final int[] ZERO = {0, 0, 0, 0, 0, 0, 0, 0};
+	static final int[] ONE  = {1, 0, 0, 0, 0, 0, 0, 0};
+	static final int[] FIELD_MODULUS = {0xFFFFFC2F, 0xFFFFFFFE, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF};
 	
 }
