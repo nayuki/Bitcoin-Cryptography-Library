@@ -111,13 +111,13 @@ public final class Sha256Hash implements Comparable<Sha256Hash> {
 	
 	/**
 	 * Compares whether this hash is less than, equal to, or greater than the specified hash object.
-	 * <p>The comparison is performed in normal order (not byte-reversed). This means that the comparison
-	 * is in byte-reversed order with respect to the string representations of both hashes.</p>
+	 * <p>The comparison is performed in byte-reversed order, which means the string representations are normally ordered.
+	 * This behavior corresponds to the comparison used in the proof-of-work check for block headers.</p>
 	 * @return a negative number if {@code this < other}, zero if {@code this == other}, or a positive number if {@code this > other}
 	 * @throws NullPointerException if the other object is {@code null}
 	 */
 	public int compareTo(Sha256Hash other) {
-		for (int i = 0; i < hash.length; i++) {
+		for (int i = hash.length - 1; i >= 0; i--) {
 			int temp = (hash[i] & 0xFF) - (other.hash[i] & 0xFF);
 			if (temp != 0)
 				return temp;
