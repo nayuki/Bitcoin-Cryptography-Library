@@ -58,8 +58,10 @@ public final class Int256MathTest {
 			BigInteger a = toBigInt(s);
 			BigInteger b = toBigInt(t);
 			BigInteger c = a.add(b);
-			assertEquals(0, Int256Math.uintAdd(arr.val, arr.xOff, arr.yOff, 0, arr.zOff));
-			assertEqualsBigInt256(a, arr.val, arr.zOff);
+			if (arr.zOff != arr.xOff && arr.zOff != arr.yOff) {
+				assertEquals(0, Int256Math.uintAdd(arr.val, arr.xOff, arr.yOff, 0, arr.zOff));
+				assertEqualsBigInt256(a, arr.val, arr.zOff);
+			}
 			assertEquals(c.shiftRight(256).intValue(), Int256Math.uintAdd(arr.val, arr.xOff, arr.yOff, 1, arr.zOff));
 			assertEqualsBigInt256(c, arr.val, arr.zOff);
 			arr.checkClobber();
@@ -81,8 +83,10 @@ public final class Int256MathTest {
 			BigInteger a = toBigInt(s);
 			BigInteger b = toBigInt(t);
 			BigInteger c = a.subtract(b);
-			assertEquals(0, Int256Math.uintSubtract(arr.val, arr.xOff, arr.yOff, 0, arr.zOff));
-			assertEqualsBigInt256(a, arr.val, arr.zOff);
+			if (arr.zOff != arr.xOff && arr.zOff != arr.yOff) {
+				assertEquals(0, Int256Math.uintSubtract(arr.val, arr.xOff, arr.yOff, 0, arr.zOff));
+				assertEqualsBigInt256(a, arr.val, arr.zOff);
+			}
 			assertEquals(-c.shiftRight(256).intValue(), Int256Math.uintSubtract(arr.val, arr.xOff, arr.yOff, 1, arr.zOff));
 			assertEqualsBigInt256(c, arr.val, arr.zOff);
 			arr.checkClobber();
@@ -129,8 +133,10 @@ public final class Int256MathTest {
 			TestArray arr = new TestArray(s, null, 0);
 			BigInteger a = toBigInt(s);
 			BigInteger b = a.shiftRight(1);
-			Int256Math.uintShiftRight1(arr.val, arr.xOff, 0, arr.zOff);
-			assertEqualsBigInt256(a, arr.val, arr.zOff);
+			if (arr.zOff != arr.xOff) {
+				Int256Math.uintShiftRight1(arr.val, arr.xOff, 0, arr.zOff);
+				assertEqualsBigInt256(a, arr.val, arr.zOff);
+			}
 			Int256Math.uintShiftRight1(arr.val, arr.xOff, 1, arr.zOff);
 			assertEqualsBigInt256(b, arr.val, arr.zOff);
 			arr.checkClobber();
@@ -453,7 +459,7 @@ public final class Int256MathTest {
 				int y = rand.nextInt(numSlots) * 8;
 				int z = rand.nextInt(numSlots) * 8;
 				int t = rand.nextInt(numSlots - tempLen / 8 + 1) * 8;
-				if (x != y && y != z && z != x && (x < t || x >= t + tempLen) && (y < t || y >= t + tempLen) && (z < t || z >= t + tempLen)) {
+				if ((xStr == null || yStr == null || xStr.equals(yStr) || x != y) && (x < t || x >= t + tempLen) && (y < t || y >= t + tempLen) && (z < t || z >= t + tempLen)) {
 					xOff = x;
 					yOff = y;
 					zOff = z;
