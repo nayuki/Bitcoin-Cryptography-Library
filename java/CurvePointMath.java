@@ -4,6 +4,8 @@
  * https://github.com/nayuki/Bitcoin-Cryptography-Library
  */
 
+import java.util.Arrays;
+
 
 /* 
  * Performs arithmetic on elliptic curve points, which are represented as 24 consecutive ints.
@@ -205,6 +207,18 @@ public final class CurvePointMath {
 	// Normalizes the coordinates of the given point. If z != 0, then (x', y', z') = (x/z, y/z, 1);
 	// otherwise special logic occurs. Requires 96 words of temporary space. Constant-time with respect to the point.
 	public static void normalize(int[] val, int pOff, int tempOff) {
+		/* 
+		 * if (z != 0) {
+		 *   x /= z;
+		 *   y /= z;
+		 *   z = 1;
+		 * } else {
+		 *   x = x != 0 ? 1 : 0;
+		 *   y = y != 0 ? 1 : 0;
+		 *   z = 0;
+		 * }
+		 */
+		
 		checkPoint(val, pOff);
 		Int256Math.checkUint(val, tempOff);
 		assert val.length - tempOff >= 12 * NUM_WORDS;
@@ -216,7 +230,9 @@ public final class CurvePointMath {
 		Int256Math.reciprocal(val, pOff + ZCOORD, tempOff, normOff + ZCOORD, newTempOff);
 		Int256Math.fieldMultiply(val, pOff + XCOORD, normOff + ZCOORD, normOff + XCOORD, newTempOff);
 		Int256Math.fieldMultiply(val, pOff + YCOORD, normOff + ZCOORD, normOff + YCOORD, newTempOff);
-		System.arraycopy(ONE, 0, val, normOff + ZCOORD, NUM_WORDS);
+		
+		val[normOff + ZCOORD] = 1;
+		Arrays.fill(val, normOff + ZCOORD + 1, normOff + ZCOORD + NUM_WORDS, 0);
 		Int256Math.replace(val, pOff + XCOORD, normOff + ZCOORD, Int256Math.isZero(val, pOff + XCOORD) ^ 1);
 		Int256Math.replace(val, pOff + YCOORD, normOff + ZCOORD, Int256Math.isZero(val, pOff + YCOORD) ^ 1);
 		CurvePointMath.replace(val, pOff, normOff, nonzero);
@@ -242,6 +258,7 @@ public final class CurvePointMath {
 	// The point need not be normalized. Constant-time with respect to the point.
 	public static int isZero(int[] val, int pOff) {
 		// p.x == 0 && p.y != 0 && p.z == 0
+		checkPoint(val, pOff);
 		return Int256Math.isZero(val, pOff + XCOORD) & Int256Math.isZero(val, pOff + ZCOORD)
 			& (Int256Math.isZero(val, pOff + YCOORD) ^ 1);
 	}
@@ -271,11 +288,10 @@ public final class CurvePointMath {
 	private static final int ZCOORD = 2 * NUM_WORDS;
 	
 	// Unsigned 256-bit integers
-	private static final int[] ONE  = {1, 0, 0, 0, 0, 0, 0, 0};
 	private static final int[] FIELD_MODULUS = {0xFFFFFC2F, 0xFFFFFFFE, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF};
 	
 	// Elliptic curve points
-	private static final int[] ZERO_POINT = {0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+	private static final int[] ZERO_POINT = {0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};  // (0, 1, 0)
 	private static final int[] BASE_POINT = {
 		0x16F81798, 0x59F2815B, 0x2DCE28D9, 0x029BFCDB, 0xCE870B07, 0x55A06295, 0xF9DCBBAC, 0x79BE667E,
 		0xFB10D4B8, 0x9C47D08F, 0xA6855419, 0xFD17B448, 0x0E1108A8, 0x5DA4FBFC, 0x26A3C465, 0x483ADA77,
