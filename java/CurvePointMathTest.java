@@ -6,6 +6,7 @@
 
 import static org.junit.Assert.assertArrayEquals;
 import java.util.Arrays;
+import java.util.Random;
 import org.junit.Test;
 
 
@@ -26,11 +27,19 @@ public final class CurvePointMathTest {
 		};
 		int[] p = CurvePointMath.getBasePoint();
 		for (String[] cs : cases) {
-			CurvePointMath.twice(p, 0, new int[120], 0);
-			CurvePointMath.normalize(p, 0, new int[96], 0);
-			assertArrayEquals(toInt256(cs[0]), Arrays.copyOfRange(p, 0, 8));
-			assertArrayEquals(toInt256(cs[1]), Arrays.copyOfRange(p, 8, 16));
-			assertArrayEquals(INT256_ONE, Arrays.copyOfRange(p, 16, 24));
+			int pOff = rand.nextInt(5) * 8;
+			int tempOff = pOff + 24 + rand.nextInt(5) * 8;
+			int[] arr = new int[tempOff + 104];
+			for (int i = 0; i < arr.length; i++)
+				arr[i] = rand.nextInt();
+			System.arraycopy(p, 0, arr, pOff, 24);
+			
+			CurvePointMath.twice(arr, pOff, tempOff);
+			CurvePointMath.normalize(arr, pOff, tempOff);
+			assertArrayEquals(toInt256(cs[0]), Arrays.copyOfRange(arr, pOff + 0, pOff + 8));
+			assertArrayEquals(toInt256(cs[1]), Arrays.copyOfRange(arr, pOff + 8, pOff + 16));
+			assertArrayEquals(INT256_ONE, Arrays.copyOfRange(arr, pOff + 16, pOff + 24));
+			System.arraycopy(arr, pOff, p, 0, 24);
 		}
 	}
 	
@@ -49,20 +58,25 @@ public final class CurvePointMathTest {
 			{"c152768b4ed3f7e3f0d680838c172402185556ab704ff0b0aa862addad05824e", "cd5f61613c622615f1679d4ae82de6cd886e51989fcbcbc769913f24c3d5252a", "d896c04205cac67544c5176e8f257464ee19364a641442f0921a9e3c883237a5", "1bc74789d084c7c100c74466d9ff0dd5b195c57fb0a172ecdf9cae26168a7d1e", "ad6c4498e4e18a48a905910601472e975ec00cbc89dd8714f27bd730533653ce", "1009ad5abd73bcd7cc5c814ca9d2aee18e90fd4127c8ec30c7217f6e794a7932"},
 		};
 		for (String[] cs : cases) {
-			int[] p = new int[24];
-			int[] q = new int[24];
-			System.arraycopy(toInt256(cs[0]), 0, p, 0, 8);
-			System.arraycopy(toInt256(cs[1]), 0, p, 8, 8);
-			System.arraycopy(INT256_ONE, 0, p, 16, 8);
-			System.arraycopy(toInt256(cs[2]), 0, q, 0, 8);
-			System.arraycopy(toInt256(cs[3]), 0, q, 8, 8);
-			System.arraycopy(INT256_ONE, 0, q, 16, 8);
+			int pOff = rand.nextInt(5) * 8;
+			int qOff = pOff + 24 + rand.nextInt(5) * 8;
+			int tempOff = qOff + 24 + rand.nextInt(5) * 8;
+			int[] arr = new int[tempOff + 176];
+			for (int i = 0; i < arr.length; i++)
+				arr[i] = rand.nextInt();
 			
-			CurvePointMath.add(p, 0, q, 0, new int[176], 0);
-			CurvePointMath.normalize(p, 0, new int[96], 0);
-			assertArrayEquals(toInt256(cs[4]), Arrays.copyOfRange(p, 0, 8));
-			assertArrayEquals(toInt256(cs[5]), Arrays.copyOfRange(p, 8, 16));
-			assertArrayEquals(INT256_ONE, Arrays.copyOfRange(p, 16, 24));
+			toInt256(cs[0], arr, pOff + 0);
+			toInt256(cs[1], arr, pOff + 8);
+			System.arraycopy(INT256_ONE, 0, arr, pOff + 16, 8);
+			toInt256(cs[2], arr, qOff + 0);
+			toInt256(cs[3], arr, qOff + 8);
+			System.arraycopy(INT256_ONE, 0, arr, qOff + 16, 8);
+			
+			CurvePointMath.add(arr, pOff, qOff, tempOff);
+			CurvePointMath.normalize(arr, pOff, tempOff);
+			assertArrayEquals(toInt256(cs[4]), Arrays.copyOfRange(arr, pOff + 0, pOff + 8));
+			assertArrayEquals(toInt256(cs[5]), Arrays.copyOfRange(arr, pOff + 8, pOff + 16));
+			assertArrayEquals(INT256_ONE, Arrays.copyOfRange(arr, pOff + 16, pOff + 24));
 		}
 	}
 	
@@ -155,15 +169,25 @@ public final class CurvePointMathTest {
 			{"59b5e4509b28e1ea788c777c73337e4dc4f465c8772dad204c8ee5fafe2d4645", "51471c106ee9bc9e4d46acf6409fa3c13787835080b2fe921bb2ccf9699636a9", "8272b678eb7e805a0725bc709e2bb2aea7f10f3a53dae3512d6dc8eebf1d137b"},
 		};
 		for (String[] cs : cases) {
-			int[] p = CurvePointMath.getBasePoint();
-			CurvePointMath.multiply(p, 0, toInt256(cs[0]), 0, new int[584], 0);
-			CurvePointMath.normalize(p, 0, new int[96], 0);
+			
+			int pOff = rand.nextInt(5) * 8;
+			int nOff = pOff + 24 + rand.nextInt(5) * 8;
+			int tempOff = nOff + 8 + rand.nextInt(5) * 8;
+			int[] arr = new int[tempOff + 584];
+			for (int i = 0; i < arr.length; i++)
+				arr[i] = rand.nextInt();
+			
+			System.arraycopy(CurvePointMath.getBasePoint(), 0, arr, pOff, 24);
+			toInt256(cs[0], arr, nOff);
+			
+			CurvePointMath.multiply(arr, pOff, nOff, tempOff);
+			CurvePointMath.normalize(arr, pOff, tempOff);
 			if (cs[1] == null && cs[2] == null)
-				assertArrayEquals(POINT_ZERO, p);
+				assertArrayEquals(POINT_ZERO, Arrays.copyOfRange(arr, pOff + 0, pOff + 24));
 			else {
-				assertArrayEquals(toInt256(cs[1]), Arrays.copyOfRange(p, 0, 8));
-				assertArrayEquals(toInt256(cs[2]), Arrays.copyOfRange(p, 8, 16));
-				assertArrayEquals(INT256_ONE, Arrays.copyOfRange(p, 16, 24));
+				assertArrayEquals(toInt256(cs[1]), Arrays.copyOfRange(arr, pOff + 0, pOff + 8));
+				assertArrayEquals(toInt256(cs[2]), Arrays.copyOfRange(arr, pOff + 8, pOff + 16));
+				assertArrayEquals(INT256_ONE, Arrays.copyOfRange(arr, pOff + 16, pOff + 24));
 			}
 		}
 	}
@@ -173,13 +197,21 @@ public final class CurvePointMathTest {
 	
 	private static int[] toInt256(String s) {
 		int[] result = new int[8];
-		for (int i = 0; i < 8; i++)
-			result[i] = (int)Long.parseLong(s.substring((7 - i) * 8, (8 - i) * 8), 16);
+		toInt256(s, result, 0);
 		return result;
+	}
+	
+	
+	private static void toInt256(String s, int[] arr, int off) {
+		for (int i = 0; i < 8; i++)
+			arr[off + i] = (int)Long.parseLong(s.substring((7 - i) * 8, (8 - i) * 8), 16);
 	}
 	
 	
 	private static final int[] INT256_ONE = {1, 0, 0, 0, 0, 0, 0, 0};
 	private static final int[] POINT_ZERO = {0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+	
+	
+	private static Random rand = new Random();
 	
 }

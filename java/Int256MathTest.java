@@ -5,6 +5,7 @@
  */
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import java.math.BigInteger;
 import java.util.Random;
 import org.junit.Test;
@@ -26,14 +27,14 @@ public final class Int256MathTest {
 		for (int i = 0; i < 30000; i++) {
 			String s = i < cases.length ? cases[i][0] : randomInt256Str();
 			String t = i < cases.length ? cases[i][1] : randomInt256Str();
-			TestInt x = new TestInt(s);
-			TestInt y = new TestInt(t);
+			TestArray arr = new TestArray(s, t, 0);
 			BigInteger a = toBigInt(s);
 			BigInteger b = toBigInt(t);
 			int cmp = a.compareTo(b);
-			assertEquals(cmp == 0 ? 1 : 0, Int256Math.equalTo (x.val, x.off, y.val, y.off));
-			assertEquals(cmp <  0 ? 1 : 0, Int256Math.lessThan(x.val, x.off, y.val, y.off));
-			assertEquals(cmp >  0 ? 1 : 0, Int256Math.lessThan(y.val, y.off, x.val, x.off));
+			assertEquals(cmp == 0 ? 1 : 0, Int256Math.equalTo (arr.val, arr.xOff, arr.yOff));
+			assertEquals(cmp <  0 ? 1 : 0, Int256Math.lessThan(arr.val, arr.xOff, arr.yOff));
+			assertEquals(cmp >  0 ? 1 : 0, Int256Math.lessThan(arr.val, arr.yOff, arr.xOff));
+			arr.checkClobber();
 		}
 	}
 	
@@ -51,15 +52,15 @@ public final class Int256MathTest {
 		for (int i = 0; i < 30000; i++) {
 			String s = i < cases.length ? cases[i][0] : randomInt256Str();
 			String t = i < cases.length ? cases[i][1] : randomInt256Str();
-			TestInt x = new TestInt(s);
-			TestInt y = new TestInt(t);
+			TestArray arr = new TestArray(s, t, 0);
 			BigInteger a = toBigInt(s);
 			BigInteger b = toBigInt(t);
 			BigInteger c = a.add(b);
-			assertEquals(0, Int256Math.uintAdd(x.val, x.off, y.val, y.off, 0));
-			assertEqualsBigInt256(a, x.val, x.off);
-			assertEquals(c.shiftRight(256).intValue(), Int256Math.uintAdd(x.val, x.off, y.val, y.off, 1));
-			assertEqualsBigInt256(c, x.val, x.off);
+			assertEquals(0, Int256Math.uintAdd(arr.val, arr.xOff, arr.yOff, 0, arr.zOff));
+			assertEqualsBigInt256(a, arr.val, arr.zOff);
+			assertEquals(c.shiftRight(256).intValue(), Int256Math.uintAdd(arr.val, arr.xOff, arr.yOff, 1, arr.zOff));
+			assertEqualsBigInt256(c, arr.val, arr.zOff);
+			arr.checkClobber();
 		}
 	}
 	
@@ -74,15 +75,15 @@ public final class Int256MathTest {
 		for (int i = 0; i < 30000; i++) {
 			String s = i < cases.length ? cases[i][0] : randomInt256Str();
 			String t = i < cases.length ? cases[i][1] : randomInt256Str();
-			TestInt x = new TestInt(s);
-			TestInt y = new TestInt(t);
+			TestArray arr = new TestArray(s, t, 0);
 			BigInteger a = toBigInt(s);
 			BigInteger b = toBigInt(t);
 			BigInteger c = a.subtract(b);
-			assertEquals(0, Int256Math.uintSubtract(x.val, x.off, y.val, y.off, 0));
-			assertEqualsBigInt256(a, x.val, x.off);
-			assertEquals(-c.shiftRight(256).intValue(), Int256Math.uintSubtract(x.val, x.off, y.val, y.off, 1));
-			assertEqualsBigInt256(c, x.val, x.off);
+			assertEquals(0, Int256Math.uintSubtract(arr.val, arr.xOff, arr.yOff, 0, arr.zOff));
+			assertEqualsBigInt256(a, arr.val, arr.zOff);
+			assertEquals(-c.shiftRight(256).intValue(), Int256Math.uintSubtract(arr.val, arr.xOff, arr.yOff, 1, arr.zOff));
+			assertEqualsBigInt256(c, arr.val, arr.zOff);
+			arr.checkClobber();
 		}
 	}
 	
@@ -100,11 +101,12 @@ public final class Int256MathTest {
 		};
 		for (int i = 0; i < 100000; i++) {
 			String s = i < cases.length ? cases[i] : randomInt256Str();
-			TestInt x = new TestInt(s);
+			TestArray arr = new TestArray(s, null, 0);
 			BigInteger a = toBigInt(s);
 			BigInteger b = a.shiftLeft(1);
-			assertEquals(a.testBit(255) ? 1 : 0, Int256Math.uintShiftLeft1(x.val, x.off));
-			assertEqualsBigInt256(b, x.val, x.off);
+			assertEquals(a.testBit(255) ? 1 : 0, Int256Math.uintShiftLeft1(arr.val, arr.xOff, arr.zOff));
+			assertEqualsBigInt256(b, arr.val, arr.zOff);
+			arr.checkClobber();
 		}
 	}
 	
@@ -122,13 +124,14 @@ public final class Int256MathTest {
 		};
 		for (int i = 0; i < 100000; i++) {
 			String s = i < cases.length ? cases[i] : randomInt256Str();
-			TestInt x = new TestInt(s);
+			TestArray arr = new TestArray(s, null, 0);
 			BigInteger a = toBigInt(s);
 			BigInteger b = a.shiftRight(1);
-			Int256Math.uintShiftRight1(x.val, x.off, 0);
-			assertEqualsBigInt256(a, x.val, x.off);
-			Int256Math.uintShiftRight1(x.val, x.off, 1);
-			assertEqualsBigInt256(b, x.val, x.off);
+			Int256Math.uintShiftRight1(arr.val, arr.xOff, 0, arr.zOff);
+			assertEqualsBigInt256(a, arr.val, arr.zOff);
+			Int256Math.uintShiftRight1(arr.val, arr.xOff, 1, arr.zOff);
+			assertEqualsBigInt256(b, arr.val, arr.zOff);
+			arr.checkClobber();
 		}
 	}
 	
@@ -145,11 +148,11 @@ public final class Int256MathTest {
 				while (!a.gcd(mod).equals(BigInteger.ONE));
 				a = a.mod(mod);
 				
-				TestInt x = new TestInt(String.format("%064x", a));
-				TestInt y = new TestInt(String.format("%064x", mod));
-				Int256Math.reciprocal(x.val, x.off, y.val, y.off, new int[40], 0);
+				TestArray arr = new TestArray(String.format("%064x", a), String.format("%064x", mod), 48);
+				Int256Math.reciprocal(arr.val, arr.xOff, arr.yOff, arr.zOff, arr.tempOff);
 				BigInteger b = a.modInverse(mod);
-				assertEqualsBigInt256(b, x.val, x.off);
+				assertEqualsBigInt256(b, arr.val, arr.zOff);
+				arr.checkClobber();
 			}
 		}
 	}
@@ -171,13 +174,13 @@ public final class Int256MathTest {
 		for (int i = 0; i < 30000; i++) {
 			String s = i < cases.length ? cases[i][0] : randomFieldIntStr();
 			String t = i < cases.length ? cases[i][1] : randomFieldIntStr();
-			TestInt x = new TestInt(s);
-			TestInt y = new TestInt(t);
+			TestArray arr = new TestArray(s, t, 8);
 			BigInteger a = toBigInt(s);
 			BigInteger b = toBigInt(t);
 			BigInteger c = a.add(b).mod(FIELD_MODULUS);
-			Int256Math.fieldAdd(x.val, x.off, y.val, y.off);
-			assertEqualsBigInt256(c, x.val, x.off);
+			Int256Math.fieldAdd(arr.val, arr.xOff, arr.yOff, arr.zOff, arr.tempOff);
+			assertEqualsBigInt256(c, arr.val, arr.zOff);
+			arr.checkClobber();
 		}
 	}
 	
@@ -196,13 +199,13 @@ public final class Int256MathTest {
 		for (int i = 0; i < 30000; i++) {
 			String s = i < cases.length ? cases[i][0] : randomFieldIntStr();
 			String t = i < cases.length ? cases[i][1] : randomFieldIntStr();
-			TestInt x = new TestInt(s);
-			TestInt y = new TestInt(t);
+			TestArray arr = new TestArray(s, t, 8);
 			BigInteger a = toBigInt(s);
 			BigInteger b = toBigInt(t);
 			BigInteger c = a.subtract(b).mod(FIELD_MODULUS);
-			Int256Math.fieldSubtract(x.val, x.off, y.val, y.off);
-			assertEqualsBigInt256(c, x.val, x.off);
+			Int256Math.fieldSubtract(arr.val, arr.xOff, arr.yOff, arr.zOff, arr.tempOff);
+			assertEqualsBigInt256(c, arr.val, arr.zOff);
+			arr.checkClobber();
 		}
 	}
 	
@@ -223,11 +226,12 @@ public final class Int256MathTest {
 		};
 		for (int i = 0; i < 30000; i++) {
 			String s = i < cases.length ? cases[i] : randomFieldIntStr();
-			TestInt x = new TestInt(s);
+			TestArray arr = new TestArray(s, null, 8);
 			BigInteger a = toBigInt(s);
 			BigInteger b = a.shiftLeft(1).mod(FIELD_MODULUS);
-			Int256Math.fieldMultiply2(x.val, x.off);
-			assertEqualsBigInt256(b, x.val, x.off);
+			Int256Math.fieldMultiply2(arr.val, arr.xOff, arr.zOff, arr.tempOff);
+			assertEqualsBigInt256(b, arr.val, arr.zOff);
+			arr.checkClobber();
 		}
 	}
 	
@@ -244,11 +248,12 @@ public final class Int256MathTest {
 		};
 		for (int i = 0; i < 30000; i++) {
 			String s = i < cases.length ? cases[i] : randomFieldIntStr();
-			TestInt x = new TestInt(s);
+			TestArray arr = new TestArray(s, null, 16);
 			BigInteger a = toBigInt(s);
 			BigInteger b = a.multiply(BigInteger.valueOf(3)).mod(FIELD_MODULUS);
-			Int256Math.fieldMultiply3(x.val, x.off, new int[8], 0);
-			assertEqualsBigInt256(b, x.val, x.off);
+			Int256Math.fieldMultiply3(arr.val, arr.xOff, arr.zOff, arr.tempOff);
+			assertEqualsBigInt256(b, arr.val, arr.zOff);
+			arr.checkClobber();
 		}
 	}
 	
@@ -285,11 +290,12 @@ public final class Int256MathTest {
 		};
 		for (int i = 0; i < 30000; i++) {
 			String s = i < cases.length ? cases[i] : randomFieldIntStr();
-			TestInt x = new TestInt(s);
+			TestArray arr = new TestArray(s, null, 72);
 			BigInteger a = toBigInt(s);
 			BigInteger b = a.pow(2).mod(FIELD_MODULUS);
-			Int256Math.fieldSquare(x.val, x.off, new int[72], 0);
-			assertEqualsBigInt256(b, x.val, x.off);
+			Int256Math.fieldSquare(arr.val, arr.xOff, arr.zOff, arr.tempOff);
+			assertEqualsBigInt256(b, arr.val, arr.zOff);
+			arr.checkClobber();
 		}
 	}
 	
@@ -331,25 +337,26 @@ public final class Int256MathTest {
 		for (int i = 0; i < 30000; i++) {
 			String s = i < cases.length ? cases[i][0] : randomFieldIntStr();
 			String t = i < cases.length ? cases[i][1] : randomFieldIntStr();
-			TestInt x = new TestInt(s);
-			TestInt y = new TestInt(t);
+			TestArray arr = new TestArray(s, t, 72);
 			BigInteger a = toBigInt(s);
 			BigInteger b = toBigInt(t);
 			BigInteger c = a.multiply(b).mod(FIELD_MODULUS);
-			Int256Math.fieldMultiply(x.val, x.off, y.val, y.off, new int[72], 0);
-			assertEqualsBigInt256(c, x.val, x.off);
+			Int256Math.fieldMultiply(arr.val, arr.xOff, arr.yOff, arr.zOff, arr.tempOff);
+			assertEqualsBigInt256(c, arr.val, arr.zOff);
+			arr.checkClobber();
 		}
 	}
 	
 	
 	@Test public void testReciprocalForField() {
-		TestInt y = new TestInt(String.format("%064x", FIELD_MODULUS));
+		String modStr = String.format("%064x", FIELD_MODULUS);
 		
 		// Special case for zero
 		{
-			TestInt x = new TestInt("0000000000000000000000000000000000000000000000000000000000000000");
-			Int256Math.reciprocal(x.val, x.off, y.val, y.off, new int[40], 0);
-			assertEqualsBigInt256(BigInteger.ZERO, x.val, x.off);
+			TestArray arr = new TestArray("0000000000000000000000000000000000000000000000000000000000000000", modStr, 48);
+			Int256Math.reciprocal(arr.val, arr.xOff, arr.yOff, arr.zOff, arr.tempOff);
+			assertEqualsBigInt256(BigInteger.ZERO, arr.val, arr.zOff);
+			arr.checkClobber();
 		}
 		
 		// General and random cases
@@ -383,13 +390,14 @@ public final class Int256MathTest {
 		};
 		for (int i = 0; i < 30000; i++) {
 			String s = i < cases.length ? cases[i] : randomFieldIntStr();
-			TestInt x = new TestInt(s);
+			TestArray arr = new TestArray(s, modStr, 48);
 			BigInteger a = toBigInt(s);
 			if (a.signum() == 0)
 				continue;
 			BigInteger b = a.modInverse(FIELD_MODULUS);
-			Int256Math.reciprocal(x.val, x.off, y.val, y.off, new int[40], 0);
-			assertEqualsBigInt256(b, x.val, x.off);
+			Int256Math.reciprocal(arr.val, arr.xOff, arr.yOff, arr.zOff, arr.tempOff);
+			assertEqualsBigInt256(b, arr.val, arr.zOff);
+			arr.checkClobber();
 		}
 	}
 	
@@ -441,21 +449,53 @@ public final class Int256MathTest {
 	
 	
 	
-	private static class TestInt {
+	private static class TestArray {
 		
 		public int[] val;
-		public int off;
+		public final int xOff;
+		public final int yOff;
+		public final int zOff;
+		public final int tempOff;
+		private final int tempLen;
+		private final int[] originalVal;
 		
 		
-		// Constructs an int256 array from the given hexadecimal string,
-		// using a random offset that is a multiple of 8.
-		// The offset ensures that methods under test don't assume
-		// an offset of 0 or mix up offsets of different arguments.
-		public TestInt(String s) {
-			off = rand.nextInt(4) * 8;
-			val = new int[off + 8];
+		public TestArray(String xStr, String yStr, int tempLen) {
+			this.tempLen = tempLen;
+			int valLen = 24 + tempLen + rand.nextInt(64);
+			val = new int[valLen];
+			for (int i = 0; i < val.length; i++)
+				val[i] = rand.nextInt();
+			
+			int numSlots = val.length / 8;
+			while (true) {
+				int x = rand.nextInt(numSlots) * 8;
+				int y = rand.nextInt(numSlots) * 8;
+				int z = rand.nextInt(numSlots) * 8;
+				int t = rand.nextInt(numSlots - tempLen / 8 + 1) * 8;
+				if (x != y && y != z && z != x && (x < t || x >= t + tempLen) && (y < t || y >= t + tempLen) && (z < t || z >= t + tempLen)) {
+					xOff = x;
+					yOff = y;
+					zOff = z;
+					tempOff = t;
+					break;
+				}
+			}
+			if (xStr != null) readInt256(xStr, xOff);
+			if (yStr != null) readInt256(yStr, yOff);
+			originalVal = val.clone();
+		}
+		
+		
+		public void checkClobber() {
+			for (int i = 0; i < val.length; i++)
+				assertTrue(originalVal[i] == val[i] || i >= tempOff && i < tempOff + tempLen || i >= zOff && i < zOff + 8);
+		}
+		
+		
+		private void readInt256(String s, int valOff) {
 			for (int i = 0; i < 8; i++)
-				val[off + i] = (int)Long.parseLong(s.substring((7 - i) * 8, (8 - i) * 8), 16);
+				val[valOff + i] = (int)Long.parseLong(s.substring((7 - i) * 8, (8 - i) * 8), 16);
 		}
 		
 	}
