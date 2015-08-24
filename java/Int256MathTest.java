@@ -268,7 +268,7 @@ public final class Int256MathTest {
 		};
 		for (int i = 0; i < 30000; i++) {
 			String s = i < cases.length ? cases[i] : randomFieldIntStr();
-			TestArray arr = new TestArray(s, null, 72);
+			TestArray arr = new TestArray(s, null, 40);
 			BigInteger a = toBigInt(s);
 			BigInteger b = a.pow(2).mod(FIELD_MODULUS);
 			Int256Math.fieldSquare(arr.val, arr.xOff, arr.zOff, arr.tempOff);
@@ -315,7 +315,7 @@ public final class Int256MathTest {
 		for (int i = 0; i < 30000; i++) {
 			String s = i < cases.length ? cases[i][0] : randomFieldIntStr();
 			String t = i < cases.length ? cases[i][1] : randomFieldIntStr();
-			TestArray arr = new TestArray(s, t, 72);
+			TestArray arr = new TestArray(s, t, 40);
 			BigInteger a = toBigInt(s);
 			BigInteger b = toBigInt(t);
 			BigInteger c = a.multiply(b).mod(FIELD_MODULUS);

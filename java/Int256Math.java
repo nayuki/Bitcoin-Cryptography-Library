@@ -146,7 +146,7 @@ public final class Int256Math {
 			int borrow = uintSubtract(val, dOff, cOff, enable, dOff);
 			uintAdd(val, dOff, yOff, borrow, dOff);
 		}
-		System.arraycopy(ZERO, 0, val, tempOff, NUM_WORDS);
+		System.arraycopy(ZERO, 0, val, tempOff, NUM_WORDS);  // Reuses space
 		replace(val, dOff, tempOff, isZero(val, xOff));
 		System.arraycopy(val, dOff, val, zOff, NUM_WORDS);
 	}
@@ -201,23 +201,23 @@ public final class Int256Math {
 	
 	
 	// Computes z = x^2 mod prime. Offsets must be multiples of 8 and can overlap.
-	// Requires 72 words of temporary space. Constant-time with respect to the value.
+	// Requires 40 words of temporary space. Constant-time with respect to the value.
 	public static void fieldSquare(int[] val, int xOff, int zOff, int tempOff) {
 		fieldMultiply(val, xOff, xOff, zOff, tempOff);
 	}
 	
 	
 	// Computes z = (x * y) mod prime. Offsets must be multiples of 8 and can overlap.
-	// Requires 72 words of temporary space. Constant-time with respect to both values.
+	// Requires 40 words of temporary space. Constant-time with respect to both values.
 	public static void fieldMultiply(int[] val, int xOff, int yOff, int zOff, int tempOff) {
 		checkFieldInt(val, xOff);
 		checkFieldInt(val, yOff);
 		checkUint(val, zOff);
 		checkUint(val, tempOff);
-		assert val.length - tempOff >= 9 * NUM_WORDS;
+		assert val.length - tempOff >= 5 * NUM_WORDS;
 		
 		// Compute raw product of this.value * other.value
-		int product0Off = tempOff + 0 * NUM_WORDS;
+		int product0Off = tempOff + 0 * NUM_WORDS;  // Uses 16 words
 		{
 			long carry = 0;
 			int i;
@@ -247,7 +247,7 @@ public final class Int256Math {
 		
 		// Barrett reduction algorithm begins here.
 		// Multiply by floor(2^512 / MODULUS), which is 2^256 + 2^32 + 0x3D1
-		int product1Off = tempOff + 2 * NUM_WORDS;
+		int product1Off = tempOff + 2 * NUM_WORDS;  // Uses 24 words
 		{
 			int carry = 0;
 			for (int i = 0; i < NUM_WORDS * 3; i++) {
@@ -266,8 +266,8 @@ public final class Int256Math {
 		}
 		
 		// Virtually shift right by 512 bits, then multiply by MODULUS. Note that MODULUS = 2^256 - 2^32 - 0x3D1
-		int p1Shift = product1Off + NUM_WORDS * 2;
-		int product2Off = tempOff + 5 * NUM_WORDS;
+		int p1Shift = product1Off + NUM_WORDS * 2;  // Has 8 words
+		int product2Off = product1Off;  // Uses 16 words, reuses space
 		{
 			int borrow = 0;
 			for (int i = 0; i < NUM_WORDS * 2; i++) {
@@ -286,7 +286,7 @@ public final class Int256Math {
 		}
 		
 		// Compute product0 - product2
-		int differenceOff = tempOff + 7 * NUM_WORDS;  // We use 9 words but allocate 16
+		int differenceOff = product0Off;  // Uses 9 words but we allocate 16, reuses spaces
 		{
 			int borrow = 0;
 			for (int i = 0; i < NUM_WORDS + 1; i++) {
@@ -299,9 +299,9 @@ public final class Int256Math {
 		
 		// Final conditional subtraction
 		System.arraycopy(val, differenceOff, val, zOff, NUM_WORDS);
-		System.arraycopy(FIELD_MODULUS, 0, val, tempOff, NUM_WORDS);  // Reuses temp space at offset 0
-		int enable = (equalTo(val[differenceOff + NUM_WORDS], 0) & lessThan(val, zOff, tempOff)) ^ 1;
-		uintSubtract(val, zOff, tempOff, enable, zOff);
+		System.arraycopy(FIELD_MODULUS, 0, val, tempOff + 2 * NUM_WORDS, NUM_WORDS);  // Reuses space at offset 16
+		int enable = (equalTo(val[differenceOff + NUM_WORDS], 0) & lessThan(val, zOff, tempOff + 2 * NUM_WORDS)) ^ 1;
+		uintSubtract(val, zOff, tempOff + 2 * NUM_WORDS, enable, zOff);
 	}
 	
 	

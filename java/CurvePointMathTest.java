@@ -29,7 +29,7 @@ public final class CurvePointMathTest {
 		for (String[] cs : cases) {
 			int pOff = rand.nextInt(5) * 8;
 			int tempOff = pOff + 24 + rand.nextInt(5) * 8;
-			int[] arr = new int[tempOff + 104];
+			int[] arr = new int[tempOff + 72];
 			for (int i = 0; i < arr.length; i++)
 				arr[i] = rand.nextInt();
 			System.arraycopy(p, 0, arr, pOff, 24);
@@ -61,7 +61,7 @@ public final class CurvePointMathTest {
 			int pOff = rand.nextInt(5) * 8;
 			int qOff = pOff + 24 + rand.nextInt(5) * 8;
 			int tempOff = qOff + 24 + rand.nextInt(5) * 8;
-			int[] arr = new int[tempOff + 176];
+			int[] arr = new int[tempOff + 144];
 			for (int i = 0; i < arr.length; i++)
 				arr[i] = rand.nextInt();
 			
@@ -173,7 +173,7 @@ public final class CurvePointMathTest {
 			int pOff = rand.nextInt(5) * 8;
 			int nOff = pOff + 24 + rand.nextInt(5) * 8;
 			int tempOff = nOff + 8 + rand.nextInt(5) * 8;
-			int[] arr = new int[tempOff + 584];
+			int[] arr = new int[tempOff + 552];
 			for (int i = 0; i < arr.length; i++)
 				arr[i] = rand.nextInt();
 			

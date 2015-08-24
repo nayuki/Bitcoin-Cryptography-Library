@@ -14,7 +14,7 @@ public final class CurvePointMath {
 	
 	/*---- Arithmetic functions ----*/
 	
-	// Doubles the given curve point. Requires 104 words of temporary space.
+	// Doubles the given curve point. Requires 72 words of temporary space.
 	// The resulting point is usually not normalized. Constant-time with respect to the point.
 	public static void twice(int[] val, int pOff, int tempOff) {
 		/* 
@@ -35,7 +35,7 @@ public final class CurvePointMath {
 		
 		checkPoint(val, pOff);
 		Int256Math.checkUint(val, tempOff);
-		assert val.length - tempOff >= 13 * NUM_WORDS;
+		assert val.length - tempOff >= 9 * NUM_WORDS;
 		
 		int zeroResult = CurvePointMath.isZero(val, pOff) | Int256Math.isZero(val, pOff + YCOORD);
 		int newTempOff = tempOff + 4 * NUM_WORDS;
@@ -58,11 +58,12 @@ public final class CurvePointMath {
 		Int256Math.fieldSubtract(val, vOff, tOff, vOff, newTempOff);
 		Int256Math.fieldSubtract(val, vOff, tOff, vOff, newTempOff);
 		
+		// Set x and y
 		Int256Math.fieldMultiply(val, sOff, vOff, pOff + XCOORD, newTempOff);
-		
 		Int256Math.fieldSquare(val, sOff, pOff + ZCOORD, newTempOff);
 		Int256Math.fieldMultiply(val, pOff + ZCOORD, sOff, pOff + ZCOORD, newTempOff);
 		
+		// Set z
 		Int256Math.fieldMultiply(val, pOff + YCOORD, sOff, pOff + YCOORD, newTempOff);
 		Int256Math.fieldSquare(val, pOff + YCOORD, pOff + YCOORD, newTempOff);
 		Int256Math.fieldMultiply2(val, pOff + YCOORD, pOff + YCOORD, newTempOff);
@@ -70,12 +71,12 @@ public final class CurvePointMath {
 		Int256Math.fieldMultiply(val, uOff, tOff, uOff, newTempOff);
 		Int256Math.fieldSubtract(val, uOff, pOff + YCOORD, pOff + YCOORD, newTempOff);
 		
-		System.arraycopy(ZERO_POINT, 0, val, tempOff, POINT_WORDS);
+		System.arraycopy(ZERO_POINT, 0, val, tempOff, POINT_WORDS);  // Reuses space
 		CurvePointMath.replace(val, pOff, tempOff, zeroResult);
 	}
 	
 	
-	// Adds the point q into point p. Requires 176 words of temporary space.
+	// Adds the point q into point p. Requires 144 words of temporary space.
 	// The resulting state is usually not normalized. Constant-time with respect to both points.
 	public static void add(int[] val, int pOff, int qOff, int tempOff) {
 		/* 
@@ -106,7 +107,7 @@ public final class CurvePointMath {
 		checkPoint(val, pOff);
 		checkPoint(val, qOff);
 		Int256Math.checkUint(val, tempOff);
-		assert val.length - tempOff >= 22 * NUM_WORDS;
+		assert val.length - tempOff >= 18 * NUM_WORDS;
 		
 		int pIsZero = CurvePointMath.isZero(val, pOff);
 		int qIsZero = CurvePointMath.isZero(val, qOff);
@@ -162,19 +163,19 @@ public final class CurvePointMath {
 		
 		int cond = (pIsZero ^ 1) & (qIsZero ^ 1) & sameY;
 		int zeroPointOff = twicedOff + POINT_WORDS;
-		System.arraycopy(ZERO_POINT, 0, val, zeroPointOff, POINT_WORDS);
+		System.arraycopy(ZERO_POINT, 0, val, zeroPointOff, POINT_WORDS);  // Reuses space
 		CurvePointMath.replace(val, pOff, zeroPointOff, cond & (sameX ^ 1));
 		CurvePointMath.replace(val, pOff, twicedOff, cond & sameX);
 	}
 	
 	
-	// Multiplies the given point by the given unsigned integer. Requires 584 words of temporary space.
+	// Multiplies the given point by the given unsigned integer. Requires 552 words of temporary space.
 	// The resulting state is usually not normalized. Constant-time with respect to both values.
 	public static void multiply(int[] val, int pOff, int nOff, int tempOff) {
 		checkPoint(val, pOff);
 		Int256Math.checkUint(val, nOff);
 		Int256Math.checkUint(val, tempOff);
-		assert val.length - tempOff >= 73 * NUM_WORDS;
+		assert val.length - tempOff >= 69 * NUM_WORDS;
 		
 		// Precompute [p*0, p*1, ..., p*15]
 		int newTempOff = tempOff + 51 * NUM_WORDS;
@@ -205,7 +206,7 @@ public final class CurvePointMath {
 	
 	
 	// Normalizes the coordinates of the given point. If z != 0, then (x', y', z') = (x/z, y/z, 1);
-	// otherwise special logic occurs. Requires 96 words of temporary space. Constant-time with respect to the point.
+	// otherwise special logic occurs. Requires 72 words of temporary space. Constant-time with respect to the point.
 	public static void normalize(int[] val, int pOff, int tempOff) {
 		/* 
 		 * if (z != 0) {
@@ -221,12 +222,12 @@ public final class CurvePointMath {
 		
 		checkPoint(val, pOff);
 		Int256Math.checkUint(val, tempOff);
-		assert val.length - tempOff >= 12 * NUM_WORDS;
+		assert val.length - tempOff >= 9 * NUM_WORDS;
 		
 		int nonzero = Int256Math.isZero(val, pOff + ZCOORD) ^ 1;
 		int newTempOff = tempOff + POINT_WORDS;
 		int normOff = tempOff;
-		System.arraycopy(FIELD_MODULUS, 0, val, tempOff, NUM_WORDS);
+		System.arraycopy(FIELD_MODULUS, 0, val, tempOff, NUM_WORDS);  // Reuses space
 		Int256Math.reciprocal(val, pOff + ZCOORD, tempOff, normOff + ZCOORD, newTempOff);
 		Int256Math.fieldMultiply(val, pOff + XCOORD, normOff + ZCOORD, normOff + XCOORD, newTempOff);
 		Int256Math.fieldMultiply(val, pOff + YCOORD, normOff + ZCOORD, normOff + YCOORD, newTempOff);
