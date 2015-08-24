@@ -7,12 +7,14 @@
 package io.nayuki.bitcoin.crypto;
 
 
-/* 
+/**
  * Performs arithmetic on unsigned 256-bit integers, which are represented as 8 consecutive ints.
+ * All uint operations (except reciprocal()) have no restrictions on the input values,
+ * whereas all field operations require each input number to be less than the prime modulus.
  */
 public final class Int256Math {
 	
-	/*---- Arithmetic methods ----*/
+	/*---- Uint256 arithmetic methods ----*/
 	
 	// Computes z = (x + (y * enable)) mod 2^256, returning a carry-out of 0 or 1.
 	// Enable must be 0 or 1. Offsets must be multiples of 8 and can overlap.
@@ -307,8 +309,7 @@ public final class Int256Math {
 	}
 	
 	
-	
-	/*---- Miscellaneous methods ----*/
+	/*---- Miscellaneous functions ----*/
 	
 	// Copies the value y into x iff enable is 1. Offsets must be multiples of 8 and can overlap.
 	// Constant-time with respect to both values and the enable.
@@ -372,7 +373,8 @@ public final class Int256Math {
 	}
 	
 	
-	/*---- Helper methods ----*/
+	
+	/*---- Helper functions ----*/
 	
 	// Returns 1 if x == y, otherwise 0. Constant-time with respect to both values.
 	static int equalTo(int x, int y) {

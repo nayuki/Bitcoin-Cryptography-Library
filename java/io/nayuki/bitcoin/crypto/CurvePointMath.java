@@ -10,8 +10,10 @@ import static io.nayuki.bitcoin.crypto.Int256Math.NUM_WORDS;
 import java.util.Arrays;
 
 
-/* 
+/**
  * Performs arithmetic on elliptic curve points, which are represented as 24 consecutive ints.
+ * A curve point is a tuple of 3 field integers (x, y, z) in projective coordinates.
+ * The ordinary affine coordinates of the point is (x/z, y/z), which can be obtained by normalizing.
  */
 public final class CurvePointMath {
 	
@@ -271,6 +273,7 @@ public final class CurvePointMath {
 	public static int[] getBasePoint() {
 		return BASE_POINT.clone();
 	}
+	
 	
 	
 	/*---- Helper functions ----*/
