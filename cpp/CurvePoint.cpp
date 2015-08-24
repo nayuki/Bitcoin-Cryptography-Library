@@ -132,9 +132,10 @@ void CurvePoint::twice() {
 	
 	FieldInt u(x);
 	u.square();
-	u.multiply3();
-	
 	FieldInt v(u);
+	u.multiply2();
+	u.add(v);
+	v = u;
 	v.square();
 	v.subtract(t2);
 	

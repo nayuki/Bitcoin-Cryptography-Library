@@ -44,13 +44,6 @@ void FieldInt::multiply2() {
 }
 
 
-void FieldInt::multiply3() {
-	const FieldInt copy(*this);
-	multiply2();
-	add(copy);
-}
-
-
 void FieldInt::square() {
 	multiply(*this);
 }

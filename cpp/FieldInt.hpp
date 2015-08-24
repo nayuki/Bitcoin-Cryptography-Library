@@ -57,10 +57,6 @@ public:
 	void multiply2();
 	
 	
-	// Triples this number, modulo the prime. Constant-time with respect to this value.
-	void multiply3();
-	
-	
 	// Squares this number, modulo the prime. Constant-time with respect to this value.
 	void square();
 	

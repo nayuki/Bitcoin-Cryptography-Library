@@ -236,28 +236,6 @@ public final class Int256MathTest {
 	}
 	
 	
-	@Test public void testFieldMultiply3() {
-		String[] cases = {
-			"0000000000000000000000000000000000000000000000000000000000000000",
-			"0000000000000000000000000000000000000000000000000000000000000001",
-			"0000000000000000000000000000000000000000000000000000000055555556",
-			"ffff000000000000000000000000000000000000000000000000000000000000",
-			"fffffffffffffffffffffffffffffffffffffffffffffffffffffffefffffc2e",
-			"688622e8382151c73b84b18c844796ae7c2388144451b92d83ee655fbf89d5b0",
-			"9699a5ac8fd7b06058fa84def940aa90e6895e729341a1c2ecf5b0f1d774d87f",
-		};
-		for (int i = 0; i < 30000; i++) {
-			String s = i < cases.length ? cases[i] : randomFieldIntStr();
-			TestArray arr = new TestArray(s, null, 16);
-			BigInteger a = toBigInt(s);
-			BigInteger b = a.multiply(BigInteger.valueOf(3)).mod(FIELD_MODULUS);
-			Int256Math.fieldMultiply3(arr.val, arr.xOff, arr.zOff, arr.tempOff);
-			assertEqualsBigInt256(b, arr.val, arr.zOff);
-			arr.checkClobber();
-		}
-	}
-	
-	
 	@Test public void testFieldSquare() {
 		String[] cases = {
 			"0000000000000000000000000000000000000000000000000000000000000000",

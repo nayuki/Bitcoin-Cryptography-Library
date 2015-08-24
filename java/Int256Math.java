@@ -200,21 +200,6 @@ public final class Int256Math {
 	}
 	
 	
-	// Computes z = (x * 3) mod prime. Offsets must be multiples of 8 and can overlap.
-	// Requires 16 words of temporary space. Constant-time with respect to the value.
-	public static void fieldMultiply3(int[] val, int xOff, int zOff, int tempOff) {
-		checkFieldInt(val, xOff);
-		checkUint(val, zOff);
-		checkUint(val, tempOff);
-		assert val.length - tempOff >= 2 * NUM_WORDS;
-		
-		System.arraycopy(val, xOff, val, tempOff, NUM_WORDS);
-		int newTempOff = tempOff + NUM_WORDS;
-		fieldMultiply2(val, xOff, zOff, newTempOff);
-		fieldAdd(val, tempOff, zOff, zOff, newTempOff);
-	}
-	
-	
 	// Computes z = x^2 mod prime. Offsets must be multiples of 8 and can overlap.
 	// Requires 72 words of temporary space. Constant-time with respect to the value.
 	public static void fieldSquare(int[] val, int xOff, int zOff, int tempOff) {

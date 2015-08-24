@@ -29,7 +29,6 @@ fiAdd        = 1 + 3 + fiLessThan + uiAdd + uiSubtract
 fiSubtract   = 1 + 1 + uiSubtract + uiAdd
 fiNegate     = 1 + 4 + 8*9 + fiEquals
 fiMultiply2  = 1 + 3 + uiShiftLeft1 + uiSubtract
-fiMultiply3  = 1 + fiCopy + fiMultiply2 + fiAdd
 fiMultiply   = 1 + 754 + (1 + 24*28) + (1 + 16*26) + (1 + 9*8) + 10 + 3 + uiLessThan + uiSubtract
 fiSquare     = 1 + fiMultiply
 fiReciprocal = 1 + 4*fiCopy + fiReplace + 512*(11 + 2*fiSwap + 2*uiShiftRight1 + 2*uiAdd + 2*uiSubtract)
@@ -39,7 +38,7 @@ cpCopy      = 1 + 3*fiCopy
 cpReplace   = 1 + 3*fiReplace
 cpIsZero    = 1 + 2 + 3*fiEquals
 cpEquals    = 1 + 1 + 3*fiEquals
-cpTwice     = 1 + 1 + 9*fiCopy + fiEquals + 3*fiSubtract + 4*fiSquare + 4*fiMultiply2 + fiMultiply3 + 7*fiMultiply + cpIsZero + cpReplace
+cpTwice     = 1 + 1 + 10*fiCopy + fiEquals + fiAdd + 3*fiSubtract + 4*fiSquare + 5*fiMultiply2 + 7*fiMultiply + cpIsZero + cpReplace
 cpAdd       = 1 + 10 + 10*fiCopy + 3*fiReplace + 2*fiEquals + fiAdd + 5*fiSubtract + 2*fiSquare + 13*fiMultiply + cpCopy + 3*cpReplace + 2*cpIsZero + cpTwice
 cpMultiply  = 1 + 18*cpCopy + cpTwice + 13*(cpCopy + cpAdd) + 64*(36 + cpCopy + 16*cpReplace + 4*cpTwice + cpAdd) - 4*cpTwice
 cpNormalize = 1 + 1 + fiCopy + 2*fiReplace + 3*fiEquals + 2*fiMultiply + fiReciprocal + cpCopy + cpReplace
@@ -49,7 +48,7 @@ cpNormalize = 1 + 1 + fiCopy + 2*fiReplace + 3*fiEquals + 2*fiMultiply + fiRecip
 
 vargroups = [
 	["uiCopy", "uiReplace", "uiEquals", "uiLessThan", "uiAdd", "uiSubtract", "uiShiftLeft1", "uiShiftRight1"],
-	["fiCopy", "fiReplace", "fiSwap", "fiEquals", "fiLessThan", "fiAdd", "fiSubtract", "fiNegate", "fiMultiply2", "fiMultiply3", "fiMultiply", "fiSquare", "fiReciprocal"],
+	["fiCopy", "fiReplace", "fiSwap", "fiEquals", "fiLessThan", "fiAdd", "fiSubtract", "fiNegate", "fiMultiply2", "fiMultiply", "fiSquare", "fiReciprocal"],
 	["cpCopy", "cpReplace", "cpIsZero", "cpEquals", "cpTwice", "cpAdd", "cpMultiply", "cpNormalize"],
 ]
 

@@ -48,10 +48,10 @@ public final class CurvePointMath {
 		Int256Math.fieldMultiply(val, tOff, pOff + YCOORD, tOff, newTempOff);
 		
 		int uOff = tempOff + 2 * NUM_WORDS;
-		Int256Math.fieldSquare(val, pOff + XCOORD, uOff, newTempOff);
-		Int256Math.fieldMultiply3(val, uOff, uOff, newTempOff);
-		
 		int vOff = tempOff + 3 * NUM_WORDS;
+		Int256Math.fieldSquare(val, pOff + XCOORD, uOff, newTempOff);
+		Int256Math.fieldMultiply2(val, uOff, vOff, newTempOff);
+		Int256Math.fieldAdd(val, uOff, vOff, uOff, newTempOff);
 		Int256Math.fieldSquare(val, uOff, vOff, newTempOff);
 		Int256Math.fieldSubtract(val, vOff, tOff, vOff, newTempOff);
 		Int256Math.fieldSubtract(val, vOff, tOff, vOff, newTempOff);
