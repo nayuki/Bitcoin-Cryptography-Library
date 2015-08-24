@@ -15,10 +15,15 @@ import java.util.Arrays;
  */
 public final class Ripemd160 {
 	
-	private static final int BLOCK_LEN = 64;
+	private static final int BLOCK_LEN = 64;  // In bytes
 	
 	
-	// Returns a 20-byte (160-bit) hash of the given message.
+	/**
+	 * Computes and returns a 20-byte (160-bit) hash of the specified binary message.
+	 * Each call will return a new byte array object instance.
+	 * @param msg the message to compute the hash of
+	 * @return a 20-byte array representing the message's RIPEMD-160 hash
+	 */
 	public static byte[] getHash(byte[] msg) {
 		// Compress whole message blocks
 		int[] state = {0x67452301, 0xEFCDAB89, 0x98BADCFE, 0x10325476, 0xC3D2E1F0};

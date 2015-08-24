@@ -10,13 +10,21 @@ import java.util.Arrays;
 
 
 /**
- * A 32-byte (256-bit) SHA-256 hash value. Immutable.
+ * A 32-byte (256-bit) SHA-256 hash value. Immutable. Operations are not constant-time.
+ * <p>Note that by Bitcoin convention, SHA-256 hash strings are serialized in byte-reversed order.
+ * For example, these three lines all represent the same hash value:</p>
+ * <ul>
+ *   <li>Bigint: 0x0102030405060708091011121314151617181920212223242526272829303132.</li>
+ *   <li>Byte array: {0x01,0x02,0x03,0x04,0x05,0x06,0x07,0x08,0x09,0x10,0x11,0x12,0x13,0x14,0x15,0x16,0x17,0x18,0x19,0x20,0x21,0x22,0x23,0x24,0x25,0x26,0x27,0x28,0x29,0x30,0x31,0x32}.</li>
+ *   <li>Hex string: "3231302928272625242322212019181716151413121110090807060504030201".</li>
+ * <ul>
  * @see Sha256
  */
 public final class Sha256Hash implements Comparable<Sha256Hash> {
 	
 	/* Constants */
 	
+	/** The number of bytes in each SHA-256 hash value. */
 	public static final int HASH_LENGTH = 32;
 	
 	
@@ -29,6 +37,12 @@ public final class Sha256Hash implements Comparable<Sha256Hash> {
 	
 	/* Constructors */
 	
+	/**
+	 * Constructs a SHA-256 hash object from the specified array of bytes.
+	 * The array must be 32 bytes long. All 2<sup>256</sup> possible values are valid.
+	 * @throws IllegalArgumentException if the array is not of length 32
+	 * @throws NullPointerException if the array is {@code null}
+	 */
 	// Length must equal 32
 	public Sha256Hash(byte[] b) {
 		if (b == null)
@@ -39,6 +53,13 @@ public final class Sha256Hash implements Comparable<Sha256Hash> {
 	}
 	
 	
+	/**
+	 * Constructs a SHA-256 hash object from the specified hexadecimal string.
+	 * The string must be 64 characters long and entirely made up of hexadecimal digits.
+	 * All 2<sup>256</sup> possible values are valid.
+	 * @throws IllegalArgumentException if the string is not of length 64 or entirely hexadecimal digits
+	 * @throws NullPointerException if the string is {@code null}
+	 */
 	// String is in byte-reversed order and has length 64
 	public Sha256Hash(String s) {
 		if (s == null)
@@ -54,12 +75,21 @@ public final class Sha256Hash implements Comparable<Sha256Hash> {
 	
 	/* Methods */
 	
+	/**
+	 * Returns a new 32-byte array representing this hash value.
+	 * @return a byte array representing this hash
+	 */
 	public byte[] toBytes() {
 		return hash.clone();
 	}
 	
 	
-	// Not constant-time
+	/**
+	 * Tests whether this hash is equal to the specified object.
+	 * Returns {@code true} if and only if the other object is a {@code Sha256Hash} object with the same byte array values.
+	 * @param obj the object to test equality with
+	 * @return whether the other object is a {@code Sha256Hash} with the same hash value
+	 */
 	public boolean equals(Object obj) {
 		if (obj == this)
 			return true;
@@ -70,12 +100,22 @@ public final class Sha256Hash implements Comparable<Sha256Hash> {
 	}
 	
 	
+	/**
+	 * Returns the hash code of this object.
+	 * @return the hash code of this object
+	 */
 	public int hashCode() {
 		return (hash[0] & 0xFF) | (hash[1] & 0xFF) << 8 | (hash[2] & 0xFF) << 16 | hash[3] << 24;
 	}
 	
 	
-	// Not constant-time
+	/**
+	 * Compares whether this hash is less than, equal to, or greater than the specified hash object.
+	 * <p>The comparison is performed in normal order (not byte-reversed). This means that the comparison
+	 * is in byte-reversed order with respect to the string representations of both hashes.</p>
+	 * @return a negative number if {@code this < other}, zero if {@code this == other}, or a positive number if {@code this > other}
+	 * @throws NullPointerException if the other object is {@code null}
+	 */
 	public int compareTo(Sha256Hash other) {
 		for (int i = 0; i < hash.length; i++) {
 			int temp = (hash[i] & 0xFF) - (other.hash[i] & 0xFF);
@@ -86,7 +126,11 @@ public final class Sha256Hash implements Comparable<Sha256Hash> {
 	}
 	
 	
-	// String is in byte-reversed order, in lowercase, having length 64
+	/**
+	 * Returns the hexadecimal string representation of this hash, in lowercase, 64 digits long.
+	 * Remember that the string is byte-reversed with respect to the byte array.
+	 * @return a 64-digit hexadecimal string of this hash
+	 */
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		for (int i = hash.length - 1; i >= 0; i--)

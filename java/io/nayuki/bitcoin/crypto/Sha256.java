@@ -15,9 +15,14 @@ import java.util.Arrays;
  */
 public final class Sha256 {
 	
-	private static final int BLOCK_LEN = 64;
+	private static final int BLOCK_LEN = 64;  // In bytes
 	
 	
+	/**
+	 * Computes and returns the SHA-256 hash of the specified binary message.
+	 * @param msg the message to compute the hash of
+	 * @return an object representing the message's SHA-256 hash
+	 */
 	public static Sha256Hash getHash(byte[] msg) {
 		// Compress whole message blocks
 		int[] state = {0x6A09E667, 0xBB67AE85, 0x3C6EF372, 0xA54FF53A, 0x510E527F, 0x9B05688C, 0x1F83D9AB, 0x5BE0CD19};
@@ -47,6 +52,11 @@ public final class Sha256 {
 	}
 	
 	
+	/**
+	 * Computes and returns the SHA-256 hash of the SHA-256 hash of the specified binary message.
+	 * @param msg the message to compute the double hash of
+	 * @return an object representing the message's double SHA-256 hash
+	 */
 	public static Sha256Hash getDoubleHash(byte[] msg) {
 		return getHash(getHash(msg).toBytes());
 	}

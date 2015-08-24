@@ -18,7 +18,12 @@ public final class Sha512 {
 	private static final int BLOCK_LEN = 128;  // In bytes
 	
 	
-	// Returns a 64-byte (512-bit) hash of the given message.
+	/**
+	 * Computes and returns a 64-byte (512-bit) hash of the specified binary message.
+	 * Each call will return a new byte array object instance.
+	 * @param msg the message to compute the hash of
+	 * @return a 64-byte array representing the message's SHA-512 hash
+	 */
 	public static byte[] getHash(byte[] msg) {
 		// Compress whole message blocks
 		long[] state = {
@@ -50,6 +55,15 @@ public final class Sha512 {
 	}
 	
 	
+	/**
+	 * Computes and returns a 64-byte (512-bit) message authentication code of the
+	 * specified message with the specified key, using the HMAC-SHA-512 algorithm.
+	 * Each call will return a new byte array object instance.
+	 * @param key the secret key
+	 * @param msg the message
+	 * @throws NullPointerException if the key or message is {@code null}
+	 * @return a 64-byte array representing the HMAC value
+	 */
 	public static byte[] getHmac(byte[] key, byte[] msg) {
 		if (key.length > BLOCK_LEN)
 			key = getHash(key);
