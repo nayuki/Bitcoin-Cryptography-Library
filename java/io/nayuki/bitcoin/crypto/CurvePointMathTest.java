@@ -4,6 +4,8 @@
  * https://github.com/nayuki/Bitcoin-Cryptography-Library
  */
 
+package io.nayuki.bitcoin.crypto;
+
 import static org.junit.Assert.assertArrayEquals;
 import java.util.Arrays;
 import java.util.Random;

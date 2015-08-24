@@ -4,6 +4,8 @@
  * https://github.com/nayuki/Bitcoin-Cryptography-Library
  */
 
+package io.nayuki.bitcoin.crypto;
+
 
 /* 
  * Performs arithmetic on unsigned 256-bit integers, which are represented as 8 consecutive ints.

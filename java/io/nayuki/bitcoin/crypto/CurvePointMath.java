@@ -4,6 +4,8 @@
  * https://github.com/nayuki/Bitcoin-Cryptography-Library
  */
 
+package io.nayuki.bitcoin.crypto;
+
 import java.util.Arrays;
 
 

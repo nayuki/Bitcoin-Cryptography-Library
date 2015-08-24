@@ -4,6 +4,8 @@
  * https://github.com/nayuki/Bitcoin-Cryptography-Library
  */
 
+package io.nayuki.bitcoin.crypto;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import java.math.BigInteger;
