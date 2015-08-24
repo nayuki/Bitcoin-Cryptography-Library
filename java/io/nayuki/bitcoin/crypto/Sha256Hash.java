@@ -117,6 +117,8 @@ public final class Sha256Hash implements Comparable<Sha256Hash> {
 	 * @throws NullPointerException if the other object is {@code null}
 	 */
 	public int compareTo(Sha256Hash other) {
+		if (other == null)
+			throw new NullPointerException();
 		for (int i = hash.length - 1; i >= 0; i--) {
 			int temp = (hash[i] & 0xFF) - (other.hash[i] & 0xFF);
 			if (temp != 0)

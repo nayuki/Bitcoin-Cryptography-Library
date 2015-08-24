@@ -23,9 +23,12 @@ public final class Ripemd160 {
 	 * Each call will return a new byte array object instance.
 	 * @param msg the message to compute the hash of
 	 * @return a 20-byte array representing the message's RIPEMD-160 hash
+	 * @throws NullPointerException if the message is {@code null}
 	 */
 	public static byte[] getHash(byte[] msg) {
 		// Compress whole message blocks
+		if (msg == null)
+			throw new NullPointerException();
 		int[] state = {0x67452301, 0xEFCDAB89, 0x98BADCFE, 0x10325476, 0xC3D2E1F0};
 		int off = msg.length / BLOCK_LEN * BLOCK_LEN;
 		compress(state, msg, off);
