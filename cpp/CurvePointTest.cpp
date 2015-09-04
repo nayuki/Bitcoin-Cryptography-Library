@@ -1,7 +1,9 @@
 /* 
  * A runnable main program that tests the functionality of class CurvePoint.
  * 
- * Bitcoin cryptography library, copyright (c) Project Nayuki
+ * Bitcoin cryptography library
+ * Copyright (c) Project Nayuki
+ * 
  * http://www.nayuki.io/page/bitcoin-cryptography-library
  * https://github.com/nayuki/Bitcoin-Cryptography-Library
  */

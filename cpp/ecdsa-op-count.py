@@ -1,9 +1,13 @@
 # 
 # This script calculates and prints the approximate number of 32-bit arithmetic operations
 # needed to perform elliptic curve point multiplication, in the C++ implementation.
-# 
 # For Python 2 and 3. Run with no arguments.
+# 
+# Bitcoin cryptography library
 # Copyright (c) Project Nayuki
+# 
+# http://www.nayuki.io/page/bitcoin-cryptography-library
+# https://github.com/nayuki/Bitcoin-Cryptography-Library
 # 
 
 

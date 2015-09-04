@@ -1,7 +1,9 @@
 /* 
  * Helper definitions and functions for runnable test suite programs.
  * 
- * Bitcoin cryptography library, copyright (c) Project Nayuki
+ * Bitcoin cryptography library
+ * Copyright (c) Project Nayuki
+ * 
  * http://www.nayuki.io/page/bitcoin-cryptography-library
  * https://github.com/nayuki/Bitcoin-Cryptography-Library
  */

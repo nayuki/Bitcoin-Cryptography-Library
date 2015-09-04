@@ -5,6 +5,12 @@
 # - requires a C++11 compiler, because of features like
 #   move constructors and libraries like cstdint being used.
 # 
+# Bitcoin cryptography library
+# Copyright (c) Project Nayuki
+# 
+# http://www.nayuki.io/page/bitcoin-cryptography-library
+# https://github.com/nayuki/Bitcoin-Cryptography-Library
+# 
 
 # ---- Configuration options ----
 
