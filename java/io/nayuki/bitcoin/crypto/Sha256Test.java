@@ -9,7 +9,6 @@
 package io.nayuki.bitcoin.crypto;
 
 import static org.junit.Assert.assertArrayEquals;
-import java.io.UnsupportedEncodingException;
 import org.junit.Test;
 
 
@@ -19,7 +18,7 @@ import org.junit.Test;
  */
 public final class Sha256Test {
 	
-	@Test public void testSingle() throws UnsupportedEncodingException {
+	@Test public void testSingle() {
 		String[][] testCases = {
 			{"E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855", ""},
 			{"CA978112CA1BBDCAFAC231B39A23DC4DA786EFF8147C4E72B9807785AFEE48BB", "a"},
@@ -159,18 +158,18 @@ public final class Sha256Test {
 		};
 		
 		for (String[] testCase : testCases)
-			assertArrayEquals(Utils.hexToBytes(testCase[0]), Sha256.getHash(testCase[1].getBytes("US-ASCII")).toBytes());
+			assertArrayEquals(Utils.hexToBytes(testCase[0]), Sha256.getHash(Utils.asciiToBytes(testCase[1])).toBytes());
 	}
 	
 	
-	@Test public void testDouble() throws UnsupportedEncodingException {
+	@Test public void testDouble() {
 		String[][] testCases = {
 			{"5DF6E0E2761359D30A8275058E299FCC0381534545F55CF43E41983F5D4C9456", ""},
 			{"4F8B42C22DD3729B519BA6F68D2DA7CC5B2D606D05DAED5AD5128CC03E6C6358", "abc"},
 			{"0CFFE17F68954DAC3A84FB1458BD5EC99209449749B2B308B7CB55812F9563AF", "abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq"},
 		};
 		for (String[] testCase : testCases)
-			assertArrayEquals(Utils.hexToBytes(testCase[0]), Sha256.getDoubleHash(testCase[1].getBytes("US-ASCII")).toBytes());
+			assertArrayEquals(Utils.hexToBytes(testCase[0]), Sha256.getDoubleHash(Utils.asciiToBytes(testCase[1])).toBytes());
 	}
 	
 }

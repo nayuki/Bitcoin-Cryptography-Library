@@ -8,6 +8,8 @@
 
 package io.nayuki.bitcoin.crypto;
 
+import java.io.UnsupportedEncodingException;
+
 
 // Miscellaneous utilities for the test suites.
 final class Utils {
@@ -27,6 +29,15 @@ final class Utils {
 			b[i / 2] = (byte)Integer.parseInt(s.substring(i, i + 2), 16);
 		}
 		return b;
+	}
+	
+	
+	public static byte[] asciiToBytes(String s) {
+		try {
+			return s.getBytes("US-ASCII");
+		} catch (UnsupportedEncodingException e) {
+			throw new AssertionError(e);
+		}
 	}
 	
 	

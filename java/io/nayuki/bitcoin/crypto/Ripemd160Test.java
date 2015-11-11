@@ -9,7 +9,6 @@
 package io.nayuki.bitcoin.crypto;
 
 import static org.junit.Assert.assertArrayEquals;
-import java.io.UnsupportedEncodingException;
 import org.junit.Test;
 
 
@@ -19,7 +18,7 @@ import org.junit.Test;
  */
 public final class Ripemd160Test {
 	
-	@Test public void testBasic() throws UnsupportedEncodingException {
+	@Test public void testBasic() {
 		String[][] testCases = {
 			{"9C1185A5C5E9FC54612808977EE8F548B2258D31", ""},
 			{"0BDC9D2D256B3EE9DAAE347BE6F4DC835A467FFE", "a"},
@@ -161,7 +160,7 @@ public final class Ripemd160Test {
 		};
 		
 		for (String[] testCase : testCases)
-			assertArrayEquals(Utils.hexToBytes(testCase[0]), Ripemd160.getHash(testCase[1].getBytes("US-ASCII")));
+			assertArrayEquals(Utils.hexToBytes(testCase[0]), Ripemd160.getHash(Utils.asciiToBytes(testCase[1])));
 	}
 	
 }

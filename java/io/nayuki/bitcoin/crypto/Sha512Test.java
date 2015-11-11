@@ -8,7 +8,6 @@
 
 package io.nayuki.bitcoin.crypto;
 
-import java.io.UnsupportedEncodingException;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -19,7 +18,7 @@ import org.junit.Test;
  */
 public final class Sha512Test {
 	
-	@Test public void testBasic() throws UnsupportedEncodingException {
+	@Test public void testBasic() {
 		String[][] testCases = {
 			{"CF83E1357EEFB8BDF1542850D66D8007D620E4050B5715DC83F4A921D36CE9CE47D0D13C5D85F2B0FF8318D2877EEC2F63B931BD47417A81A538327AF927DA3E", ""},
 			{"1F40FC92DA241694750979EE6CF582F2D5D7D28E18335DE05ABC54D0560E0F5302860C652BF08D560252AA5E74210546F369FBBBCE8C12CFC7957B2652FE9A75", "a"},
@@ -288,17 +287,17 @@ public final class Sha512Test {
 			{"488BD44D424084040A07CF52D09877EA0D66BC19BDC96A34797271D3BA1B3C853AE606436610B6EF9C9850A1C955D5E82FA1E3565900EE703191F577B6EE46A7", "wUS>$C3#x[[X*`Y11|(,Wc;-G@|Pl,.t}Zwi0[CL#ra/?4#{>K.jtb(d^uN))n,L,a^$;5]6(\"ryU1{s.Ny;b9Xe(={;V(x&SE\\d|bnRCMp.FFA .$W9quq_S(u/O-ieCe}Fu(m[`a+KxGBJgHB1?EFidGn@5aE2p4dZ!9?XX'Y9kFU4SPx@0!Q>MfDw[b<ZWJqhQQs&uvj:;e\"FK{pjs@-q$5Z'{Z'1FXW%/@/SI;59u0IRfo.}.Q_1Kg@&KFs`"},
 		};
 		for (String[] testCase : testCases)
-			Assert.assertArrayEquals(Utils.hexToBytes(testCase[0]), Sha512.getHash(testCase[1].getBytes("US-ASCII")));
+			Assert.assertArrayEquals(Utils.hexToBytes(testCase[0]), Sha512.getHash(Utils.asciiToBytes(testCase[1])));
 	}
 	
 	
-	@Test public void testHmac() throws UnsupportedEncodingException {
+	@Test public void testHmac() {
 		Object[][] testCases = {  // Each entry is (String hexMac, byte[] message, byte[] key)
 			{"87aa7cdea5ef619d4ff0b4241a1d6cb02379f4e2ce4ec2787ad0b30545e17cdedaa833b7d6b8a702038b274eaea3f4e4be9d914eeb61f1702e696c203a126854",
-				"Hi There".getBytes("US-ASCII"),
+				Utils.asciiToBytes("Hi There"),
 				Utils.hexToBytes("0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b")},
 			{"164b7a7bfcf819e2e395fbe73b56e0a387bd64222e831fd610270cd7ea2505549758bf75c05a994a6d034f65f8f0e6fdcaeab1a34d4a6b4b636e070a38bce737",
-				"what do ya want for nothing?".getBytes("US-ASCII"),
+				Utils.asciiToBytes("what do ya want for nothing?"),
 				Utils.hexToBytes("4a656665")},
 			{"fa73b0089d56a284efb0f0756c890be9b1b5dbdd8ee81a3655f83e33b2279d39bf3e848279a722c806b485a47e67c807b946a337bee8942674278859e13292fb",
 				Utils.hexToBytes("dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd"),
@@ -307,13 +306,13 @@ public final class Sha512Test {
 				Utils.hexToBytes("cdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcd"),
 				Utils.hexToBytes("0102030405060708090a0b0c0d0e0f10111213141516171819")},
 			{"415fad6271580a531d4179bc891d87a650188707922a4fbb36663a1eb16da008711c5b50ddd0fc235084eb9d3364a1454fb2ef67cd1d29fe6773068ea266e96b",
-				"Test With Truncation".getBytes("US-ASCII"),
+				Utils.asciiToBytes("Test With Truncation"),
 				Utils.hexToBytes("0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c0c")},
 			{"80b24263c7c1a3ebb71493c1dd7be8b49b46d1f41b4aeec1121b013783f8f3526b56d037e05f2598bd0fd2215d6a1e5295e64f73f63f0aec8b915a985d786598",
-				"Test Using Larger Than Block-Size Key - Hash Key First".getBytes("US-ASCII"),
+				Utils.asciiToBytes("Test Using Larger Than Block-Size Key - Hash Key First"),
 				Utils.hexToBytes("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")},
 			{"e37b6a775dc87dbaa4dfa9f96e5e3ffddebd71f8867289865df5a32d20cdc944b6022cac3c4982b10d5eeb55c3e4de15134676fb6de0446065c97440fa8c6a58",
-				"This is a test using a larger than block-size key and a larger than block-size data. The key needs to be hashed before being used by the HMAC algorithm.".getBytes("US-ASCII"),
+				Utils.asciiToBytes("This is a test using a larger than block-size key and a larger than block-size data. The key needs to be hashed before being used by the HMAC algorithm."),
 				Utils.hexToBytes("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")},
 		};
 		for (Object[] testCase : testCases)
