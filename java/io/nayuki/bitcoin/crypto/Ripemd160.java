@@ -20,6 +20,9 @@ public final class Ripemd160 {
 	private static final int BLOCK_LEN = 64;  // In bytes
 	
 	
+	
+	/*---- Static functions ----*/
+	
 	/**
 	 * Computes and returns a 20-byte (160-bit) hash of the specified binary message.
 	 * Each call will return a new byte array object instance.
@@ -57,6 +60,9 @@ public final class Ripemd160 {
 		return result;
 	}
 	
+	
+	
+	/*---- Private functions ----*/
 	
 	private static void compress(int[] state, byte[] blocks, int len) {
 		if (len % BLOCK_LEN != 0)
@@ -109,6 +115,8 @@ public final class Ripemd160 {
 	}
 	
 	
+	/*---- Class constants ----*/
+	
 	private static final int[] KL = {0x00000000, 0x5A827999, 0x6ED9EBA1, 0x8F1BBCDC, 0xA953FD4E};  // Round constants for left line
 	private static final int[] KR = {0x50A28BE6, 0x5C4DD124, 0x6D703EF3, 0x7A6D76E9, 0x00000000};  // Round constants for right line
 	
@@ -141,6 +149,8 @@ public final class Ripemd160 {
 		 8,  5, 12,  9, 12,  5, 14,  6,  8, 13,  6,  5, 15, 13, 11, 11};
 	
 	
+	
+	/*---- Miscellaneous ----*/
 	
 	private Ripemd160() {}  // Not instantiable
 	

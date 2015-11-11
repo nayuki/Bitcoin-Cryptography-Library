@@ -15,11 +15,14 @@ import org.junit.Test;
 
 
 /**
- * Tests the Base58Check conversion.
+ * Tests the functions of the Base58Check class.
  * @see Base58Check
  */
 public final class Base58CheckTest {
 	
+	/*---- Test cases ----*/
+	
+	// Tests simple fixed test vectors.
 	@Test public void testBasic() {
 		test("", "3QJmnh");
 		test("FF", "VrZDWwe");
@@ -29,6 +32,7 @@ public final class Base58CheckTest {
 	}
 	
 	
+	// Tests a round trip from bytes to Base58Check string and back to bytes.
 	@Test public void testRandom() {
 		for (int i = 0; i < 10000; i++) {
 			byte[] b = new byte[rand.nextInt(300) + 1];
@@ -39,6 +43,7 @@ public final class Base58CheckTest {
 	}
 	
 	
+	// Tests perturbing the checksum.
 	@Test public void testRandomCorrupt() {
 		for (int i = 0; i < 3000; i++) {
 			byte[] b = new byte[rand.nextInt(300) + 1];
@@ -63,6 +68,9 @@ public final class Base58CheckTest {
 		}
 	}
 	
+	
+	
+	/*---- Helper functions ----*/
 	
 	private static void test(String hexBytes, String expectBase58) {
 		byte[] bytes = Utils.hexToBytes(hexBytes);

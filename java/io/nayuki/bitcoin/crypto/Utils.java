@@ -9,8 +9,13 @@
 package io.nayuki.bitcoin.crypto;
 
 
+// Miscellaneous utilities for the test suites.
 final class Utils {
 	
+	/*---- Static functions ----*/
+	
+	// Converts a hex string to a new array of bytes. The string length
+	// must be even. Hexadecimal letters can be uppercase or lowercase.
 	public static byte[] hexToBytes(String s) {
 		if (s.length() % 2 != 0)
 			throw new IllegalArgumentException();
@@ -25,6 +30,8 @@ final class Utils {
 	}
 	
 	
+	
+	/*---- Miscellaneous ----*/
 	
 	private Utils() {}  // Not instantiable
 	

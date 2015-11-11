@@ -14,7 +14,7 @@ import org.junit.Test;
 
 
 /**
- * Tests the SHA-512 hash function.
+ * Tests the SHA-512 hash function class.
  * @see Sha512
  */
 public final class Sha512Test {
@@ -293,7 +293,7 @@ public final class Sha512Test {
 	
 	
 	@Test public void testHmac() throws UnsupportedEncodingException {
-		Object[][] testCases = {
+		Object[][] testCases = {  // Each entry is (String hexMac, byte[] message, byte[] key)
 			{"87aa7cdea5ef619d4ff0b4241a1d6cb02379f4e2ce4ec2787ad0b30545e17cdedaa833b7d6b8a702038b274eaea3f4e4be9d914eeb61f1702e696c203a126854",
 				"Hi There".getBytes("US-ASCII"),
 				Utils.hexToBytes("0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b0b")},

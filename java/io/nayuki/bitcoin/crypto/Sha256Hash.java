@@ -12,7 +12,7 @@ import java.util.Arrays;
 
 
 /**
- * A 32-byte (256-bit) SHA-256 hash value. Immutable. Operations are not constant-time.
+ * A 32-byte (256-bit) SHA-256 hash value. Immutable.
  * <p>Note that by Bitcoin convention, SHA-256 hash strings are serialized in byte-reversed order.
  * For example, these three lines all represent the same hash value:</p>
  * <ul>
@@ -42,6 +42,7 @@ public final class Sha256Hash implements Comparable<Sha256Hash> {
 	/**
 	 * Constructs a SHA-256 hash object from the specified array of bytes.
 	 * The array must be 32 bytes long. All 2<sup>256</sup> possible values are valid.
+	 * Constant-time with respect to the specified value.
 	 * @throws IllegalArgumentException if the array is not of length 32
 	 * @throws NullPointerException if the array is {@code null}
 	 */
@@ -58,7 +59,7 @@ public final class Sha256Hash implements Comparable<Sha256Hash> {
 	/**
 	 * Constructs a SHA-256 hash object from the specified hexadecimal string.
 	 * The string must be 64 characters long and entirely made up of hexadecimal digits.
-	 * All 2<sup>256</sup> possible values are valid.
+	 * All 2<sup>256</sup> possible values are valid. Not constant-time.
 	 * @throws IllegalArgumentException if the string is not of length 64 or entirely hexadecimal digits
 	 * @throws NullPointerException if the string is {@code null}
 	 */
@@ -78,7 +79,7 @@ public final class Sha256Hash implements Comparable<Sha256Hash> {
 	/*---- Methods ----*/
 	
 	/**
-	 * Returns a new 32-byte array representing this hash value.
+	 * Returns a new 32-byte array representing this hash value. Constant-time with respect to this hash value.
 	 * @return a byte array representing this hash
 	 */
 	public byte[] toBytes() {
@@ -87,8 +88,8 @@ public final class Sha256Hash implements Comparable<Sha256Hash> {
 	
 	
 	/**
-	 * Tests whether this hash is equal to the specified object.
-	 * Returns {@code true} if and only if the other object is a {@code Sha256Hash} object with the same byte array values.
+	 * Tests whether this hash is equal to the specified object. Returns {@code true} if and only if the
+	 * other object is a {@code Sha256Hash} object with the same byte array values. Not constant-time.
 	 * @param obj the object to test equality with
 	 * @return whether the other object is a {@code Sha256Hash} with the same hash value
 	 */
@@ -103,7 +104,7 @@ public final class Sha256Hash implements Comparable<Sha256Hash> {
 	
 	
 	/**
-	 * Returns the hash code of this object.
+	 * Returns the hash code of this object. Constant-time with respect to this hash value.
 	 * @return the hash code of this object
 	 */
 	public int hashCode() {
@@ -112,7 +113,7 @@ public final class Sha256Hash implements Comparable<Sha256Hash> {
 	
 	
 	/**
-	 * Compares whether this hash is less than, equal to, or greater than the specified hash object.
+	 * Compares whether this hash is less than, equal to, or greater than the specified hash object. Not constant-time.
 	 * <p>The comparison is performed in byte-reversed order, which means the string representations are normally ordered.
 	 * This behavior corresponds to the comparison used in the proof-of-work check for block headers.</p>
 	 * @return a negative number if {@code this < other}, zero if {@code this == other}, or a positive number if {@code this > other}
@@ -132,7 +133,7 @@ public final class Sha256Hash implements Comparable<Sha256Hash> {
 	
 	/**
 	 * Returns the hexadecimal string representation of this hash, in lowercase, 64 digits long.
-	 * Remember that the string is byte-reversed with respect to the byte array.
+	 * Remember that the string is byte-reversed with respect to the byte array. Not constant-time.
 	 * @return a 64-digit hexadecimal string of this hash
 	 */
 	public String toString() {

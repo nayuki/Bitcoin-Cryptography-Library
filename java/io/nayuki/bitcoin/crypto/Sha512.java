@@ -20,6 +20,9 @@ public final class Sha512 {
 	private static final int BLOCK_LEN = 128;  // In bytes
 	
 	
+	
+	/*---- Static functions ----*/
+	
 	/**
 	 * Computes and returns a 64-byte (512-bit) hash of the specified binary message.
 	 * Each call will return a new byte array object instance.
@@ -93,6 +96,9 @@ public final class Sha512 {
 	}
 	
 	
+	
+	/*---- Private functions ----*/
+	
 	private static void compress(long[] state, byte[] blocks, int len) {
 		if (len < 0 || len % BLOCK_LEN != 0)
 			throw new IllegalArgumentException();
@@ -141,6 +147,8 @@ public final class Sha512 {
 	}
 	
 	
+	/*---- Class constants ----*/
+	
 	private static final long[] ROUND_CONSTANTS = {
 		0x428A2F98D728AE22L, 0x7137449123EF65CDL, 0xB5C0FBCFEC4D3B2FL, 0xE9B5DBA58189DBBCL,
 		0x3956C25BF348B538L, 0x59F111F1B605D019L, 0x923F82A4AF194F9BL, 0xAB1C5ED5DA6D8118L,
@@ -165,6 +173,8 @@ public final class Sha512 {
 	};
 	
 	
+	
+	/*---- Miscellaneous ----*/
 	
 	private Sha512() {}  // Not instantiable
 	

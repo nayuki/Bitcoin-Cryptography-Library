@@ -14,6 +14,9 @@ import java.util.Random;
 import org.junit.Test;
 
 
+/**
+ * Tests the functions of the CurvePointMath class.
+ */
 public final class CurvePointMathTest {
 	
 	@Test public void testTwice() {

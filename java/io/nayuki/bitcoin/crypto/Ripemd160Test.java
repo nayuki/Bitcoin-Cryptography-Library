@@ -14,7 +14,7 @@ import org.junit.Test;
 
 
 /**
- * Tests the RIPEMD-160 hash function.
+ * Tests the RIPEMD-160 hash function class.
  * @see Ripemd160
  */
 public final class Ripemd160Test {

@@ -287,7 +287,7 @@ public final class CurvePointMath {
 	}
 	
 	
-	/*---- Constants ----*/
+	/*---- Class constants ----*/
 	
 	// Sizes and offsets
 	private static final int POINT_WORDS = 3 * NUM_WORDS;

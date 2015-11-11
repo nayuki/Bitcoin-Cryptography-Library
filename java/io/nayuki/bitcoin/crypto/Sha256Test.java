@@ -14,7 +14,7 @@ import org.junit.Test;
 
 
 /**
- * Tests the SHA-256 hash function.
+ * Tests the SHA-256 hash function class.
  * @see Sha256
  */
 public final class Sha256Test {

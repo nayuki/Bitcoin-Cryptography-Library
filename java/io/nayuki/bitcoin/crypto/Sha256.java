@@ -20,6 +20,9 @@ public final class Sha256 {
 	private static final int BLOCK_LEN = 64;  // In bytes
 	
 	
+	
+	/*---- Static functions ----*/
+	
 	/**
 	 * Computes and returns the SHA-256 hash of the specified binary message.
 	 * @param msg the message to compute the hash of
@@ -67,6 +70,9 @@ public final class Sha256 {
 		return getHash(getHash(msg).toBytes());
 	}
 	
+	
+	
+	/*---- Private functions ----*/
 	
 	private static void compress(int[] state, byte[] blocks, int len) {
 		if (len < 0 || len % BLOCK_LEN != 0)
@@ -116,6 +122,8 @@ public final class Sha256 {
 	}
 	
 	
+	/*---- Class constants ----*/
+	
 	private static final int[] ROUND_CONSTANTS = {
 		0x428A2F98, 0x71374491, 0xB5C0FBCF, 0xE9B5DBA5,
 		0x3956C25B, 0x59F111F1, 0x923F82A4, 0xAB1C5ED5,
@@ -136,6 +144,8 @@ public final class Sha256 {
 	};
 	
 	
+	
+	/*---- Miscellaneous ----*/
 	
 	private Sha256() {}  // Not instantiable
 	

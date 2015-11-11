@@ -15,6 +15,9 @@ import java.util.Random;
 import org.junit.Test;
 
 
+/**
+ * Tests the functions of the Int256Math class.
+ */
 public final class Int256MathTest {
 	
 	@Test public void testComparison() {

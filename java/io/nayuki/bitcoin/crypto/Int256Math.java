@@ -16,7 +16,7 @@ package io.nayuki.bitcoin.crypto;
  */
 public final class Int256Math {
 	
-	/*---- Uint256 arithmetic methods ----*/
+	/*---- Uint256 arithmetic functions ----*/
 	
 	// Computes z = (x + (y * enable)) mod 2^256, returning a carry-out of 0 or 1.
 	// Enable must be 0 or 1. Offsets must be multiples of 8 and can overlap.
@@ -158,7 +158,7 @@ public final class Int256Math {
 	}
 	
 	
-	/*---- Field arithmetic methods ----*/
+	/*---- Field arithmetic functions ----*/
 	
 	// Computes z = (x + y) mod prime. Offsets must be multiples of 8 and can overlap.
 	// Requires 8 words of temporary space. Constant-time with respect to both values.
@@ -429,7 +429,7 @@ public final class Int256Math {
 	}
 	
 	
-	/*---- Constants ----*/
+	/*---- Class constants ----*/
 	
 	static final int NUM_WORDS = 8;
 	private static final long LONG_MASK = 0xFFFFFFFFL;
