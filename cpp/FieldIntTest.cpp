@@ -8,10 +8,9 @@
  * https://github.com/nayuki/Bitcoin-Cryptography-Library
  */
 
-#undef NDEBUG
+#include "TestHelper.hpp"
 #include <cstdio>
 #include "FieldInt.hpp"
-#include "TestHelper.hpp"
 
 
 struct BinaryCase {

@@ -10,6 +10,7 @@
 
 #pragma once
 
+#undef NDEBUG
 #include <cassert>
 #include <cstddef>
 #include <cstdio>

@@ -8,11 +8,10 @@
  * https://github.com/nayuki/Bitcoin-Cryptography-Library
  */
 
-#undef NDEBUG
+#include "TestHelper.hpp"
 #include <cstdio>
 #include <cstring>
 #include "Sha256Hash.hpp"
-#include "TestHelper.hpp"
 
 
 struct TestCase {

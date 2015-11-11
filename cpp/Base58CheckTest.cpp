@@ -8,12 +8,11 @@
  * https://github.com/nayuki/Bitcoin-Cryptography-Library
  */
 
-#undef NDEBUG
+#include "TestHelper.hpp"
 #include <cstdio>
 #include <cstdint>
 #include <cstring>
 #include "Base58Check.hpp"
-#include "TestHelper.hpp"
 #include "Uint256.hpp"
 
 
