@@ -19,7 +19,7 @@ import java.util.Arrays;
  */
 public final class Base58Check {
 	
-	/* Static functions */
+	/*---- Static functions ----*/
 	
 	// Adds the checksum and converts to Base58Check. Note that the caller needs to prepend the version byte(s).
 	public static String bytesToBase58(byte[] data) {
@@ -102,13 +102,13 @@ public final class Base58Check {
 	}
 	
 	
-	/* Constants */
+	/*---- Constants ----*/
 	
 	public static final String ALPHABET = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz";  // Everything except 0OIl
 	private static final BigInteger ALPHABET_SIZE = BigInteger.valueOf(ALPHABET.length());
 	
 	
-	/* Miscellaneous */
+	/*---- Miscellaneous ----*/
 	
 	private Base58Check() {}  // Not instantiable
 	

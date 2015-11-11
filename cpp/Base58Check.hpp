@@ -60,7 +60,7 @@ private:
 	
 	
 	
-	/* Class constants */
+	/*---- Class constants ----*/
 	
 	static const char *ALPHABET;
 	

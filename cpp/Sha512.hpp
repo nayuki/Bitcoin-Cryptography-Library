@@ -19,7 +19,7 @@
 #define SHA512_HASH_LEN 64
 class Sha512 final {
 	
-	/* Static functions */
+	/*---- Static functions ----*/
 	
 public:
 	static void getHash(const uint8_t *msg, size_t len, uint8_t hashResult[SHA512_HASH_LEN]);
@@ -32,7 +32,7 @@ private:
 	Sha512();  // Not instantiable
 	
 	
-	/* Class constants */
+	/*---- Class constants ----*/
 	
 	static const uint64_t ROUND_CONSTANTS[80];
 	

@@ -24,20 +24,20 @@ import java.util.Arrays;
  */
 public final class Sha256Hash implements Comparable<Sha256Hash> {
 	
-	/* Constants */
+	/*---- Constants ----*/
 	
 	/** The number of bytes in each SHA-256 hash value. */
 	public static final int HASH_LENGTH = 32;
 	
 	
 	
-	/* Fields */
+	/*---- Fields ----*/
 	
 	private final byte[] hash;
 	
 	
 	
-	/* Constructors */
+	/*---- Constructors ----*/
 	
 	/**
 	 * Constructs a SHA-256 hash object from the specified array of bytes.
@@ -75,7 +75,7 @@ public final class Sha256Hash implements Comparable<Sha256Hash> {
 	
 	
 	
-	/* Methods */
+	/*---- Methods ----*/
 	
 	/**
 	 * Returns a new 32-byte array representing this hash value.

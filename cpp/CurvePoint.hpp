@@ -32,7 +32,7 @@
  */
 class CurvePoint final {
 	
-	/* Fields */
+	/*---- Fields ----*/
 	
 public:
 	FieldInt x;
@@ -41,7 +41,7 @@ public:
 	
 	
 	
-	/* Constructors */
+	/*---- Constructors ----*/
 public:
 	
 	// Constructs a normalized point (z=1) from the given coordinates. Constant-time with respect to the values.
@@ -58,7 +58,7 @@ private:
 	
 	
 	
-	/* Arithmetic methods */
+	/*---- Arithmetic methods ----*/
 public:
 	
 	// Adds the given curve point to this point. The resulting state is
@@ -111,14 +111,14 @@ public:
 	void toCompressedPoint(uint8_t output[33]) const;
 	
 	
-	/* Static functions */
+	/*---- Static functions ----*/
 	
 	// Returns a normalized public curve point for the given private exponent key.
 	// Requires 0 < privExp < ORDER. Constant-time with respect to the value.
 	static CurvePoint privateExponentToPublicPoint(const Uint256 &privExp);
 	
 	
-	/* Class constants */
+	/*---- Class constants ----*/
 	
 public:
 	static const FieldInt A;       // Curve equation parameter

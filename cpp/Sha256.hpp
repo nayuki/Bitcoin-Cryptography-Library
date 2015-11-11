@@ -20,7 +20,7 @@
 #define SHA256_BLOCK_LEN 64
 class Sha256 final {
 	
-	/* Static functions */
+	/*---- Static functions ----*/
 	
 public:
 	
@@ -42,7 +42,7 @@ public:
 	
 	
 	
-	/* Stateful hasher fields and methods */
+	/*---- Stateful hasher fields and methods ----*/
 	
 private:
 	uint32_t state[8];
@@ -65,7 +65,7 @@ public:
 	
 	
 	
-	/* Class constants */
+	/*---- Class constants ----*/
 	
 public:
 	static const uint32_t INITIAL_STATE[8];

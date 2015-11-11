@@ -26,14 +26,14 @@
 #define SHA256_HASH_LEN 32
 class Sha256Hash final {
 	
-	/* Fields */
+	/*---- Fields ----*/
 	
 private:
 	uint8_t value[SHA256_HASH_LEN];
 	
 	
 	
-	/* Constructors */
+	/*---- Constructors ----*/
 public:
 	
 	// Constructs a Sha256Hash from the given array of 32 bytes (len is a dummy parameter that must equal 32).
@@ -51,7 +51,7 @@ public:
 	
 	
 	
-	/* Instance methods */
+	/*---- Instance methods ----*/
 public:
 	
 	// Retrieves a single byte of the hash. Not constant-time with respect to the index.

@@ -19,7 +19,7 @@
 #define RIPEMD160_HASH_LEN 20
 class Ripemd160 final {
 	
-	/* Static functions */
+	/*---- Static functions ----*/
 	
 public:
 	static void getHash(const uint8_t *msg, size_t len, uint8_t hashResult[RIPEMD160_HASH_LEN]);
@@ -35,7 +35,7 @@ private:
 	
 	
 	
-	/* Class constants */
+	/*---- Class constants ----*/
 	
 	static const uint32_t KL[5];       // Round constants for left line
 	static const uint32_t KR[5];       // Round constants for right line

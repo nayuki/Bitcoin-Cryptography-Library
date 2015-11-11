@@ -23,7 +23,7 @@ class Uint256 {
 	
 	#define NUM_WORDS 8
 	
-	/* Fields */
+	/*---- Fields ----*/
 	
 	// The words representing this number in little endian, conceptually like this:
 	// actualValue = value[0] << 0 | value[1] << 32 | ... | value[7] << 224.
@@ -33,7 +33,7 @@ public:
 	
 	
 	
-	/* Constructors */
+	/*---- Constructors ----*/
 public:
 	
 	// Constructs a Uint256 initialized to zero. Constant-time.
@@ -54,7 +54,7 @@ public:
 	
 	
 	
-	/* Arithmetic methods */
+	/*---- Arithmetic methods ----*/
 	
 	// Adds the given number into this number, modulo 2^256. The other number must be a distinct object.
 	// Enable must be 1 to perform the operation or 0 to do nothing. Returns the carry-out bit, which is 0 or 1.
@@ -90,7 +90,7 @@ public:
 	void reciprocal(const Uint256 &modulus);
 	
 	
-	/* Miscellaneous methods */
+	/*---- Miscellaneous methods ----*/
 	
 	// Copies the given number into this number if enable is 1, or does nothing if enable is 0.
 	// Constant-time with respect to both values and the enable.
@@ -107,7 +107,7 @@ public:
 	void getBigEndianBytes(uint8_t b[NUM_WORDS * 4]) const;
 	
 	
-	/* Equality/inequality operators */
+	/*---- Equality/inequality operators ----*/
 	
 	// Tests whether this number is equal to the given number. Constant-time with respect to both values.
 	bool operator==(const Uint256 &other) const;
@@ -129,7 +129,7 @@ public:
 	
 	
 	
-	/* Class constants */
+	/*---- Class constants ----*/
 	
 public:
 	static const Uint256 ZERO;

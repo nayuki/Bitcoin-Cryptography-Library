@@ -23,14 +23,14 @@
  */
 class FieldInt final : private Uint256 {
 	
-	/* Fields */
+	/*---- Fields ----*/
 	
 public:
 	using Uint256::value;
 	
 	
 	
-	/* Constructors */
+	/*---- Constructors ----*/
 public:
 	
 	// Constructs a FieldInt from the given 64-character hexadecimal string. Not constant-time.
@@ -44,7 +44,7 @@ public:
 	
 	
 	
-	/* Arithmetic methods */
+	/*---- Arithmetic methods ----*/
 public:
 	
 	// Adds the given number into this number, modulo the prime. Constant-time with respect to both values.
@@ -72,14 +72,14 @@ public:
 	void reciprocal();
 	
 	
-	/* Miscellaneous methods */
+	/*---- Miscellaneous methods ----*/
 	
 	void replace(const FieldInt &other, uint32_t enable);
 	
 	using Uint256::getBigEndianBytes;
 	
 	
-	/* Equality and inequality operators */
+	/*---- Equality and inequality operators ----*/
 	
 	bool operator==(const FieldInt &other) const;
 	
@@ -102,7 +102,7 @@ private:
 	
 	
 	
-	/* Class constants */
+	/*---- Class constants ----*/
 	
 private:
 	static const Uint256 MODULUS;  // Prime number
