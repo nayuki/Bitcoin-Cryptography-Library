@@ -72,6 +72,9 @@ Base58Check.o: Base58Check.cpp Base58Check.hpp
 CurvePoint.o: CurvePoint.cpp CurvePoint.hpp
 	$(CC) $(CXXFLAGS) -c -o $@ $<
 
+Ecdsa.o: Ecdsa.cpp Ecdsa.hpp
+	$(CC) $(CXXFLAGS) -c -o $@ $<
+
 FieldInt.o: FieldInt.cpp FieldInt.hpp
 	$(CC) $(CXXFLAGS) -c -o $@ $<
 
