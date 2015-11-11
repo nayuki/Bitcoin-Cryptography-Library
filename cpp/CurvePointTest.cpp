@@ -15,6 +15,8 @@
 #include "Uint256.hpp"
 
 
+/*---- Structures ----*/
+
 struct TwoStrings {
 	const char *a;
 	const char *b;
@@ -43,8 +45,11 @@ struct SixStrings {
 };
 
 
+// Global variables
 static int numTestCases = 0;
 
+
+/*---- Test cases ----*/
 
 static void testReplace() {
 	CurvePoint p(CurvePoint::G);

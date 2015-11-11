@@ -15,6 +15,8 @@
 #include "Uint256.hpp"
 
 
+/*---- Structures ----*/
+
 struct TestCase {
 	const bool matches;
 	const char *privateKey;
@@ -24,6 +26,8 @@ struct TestCase {
 	const char *expectedS;
 };
 
+
+/*---- Test suite ----*/
 
 int main(int argc, char **argv) {
 	// Define test cases

@@ -16,7 +16,8 @@
 #include "Sha256Hash.hpp"
 
 
-// Data structures
+/*---- Structures ----*/
+
 struct TestCase {
 	const bool matches;
 	const char *expectedHash;  // In byte-reversed order
@@ -29,6 +30,8 @@ struct HmacCase {
 	const Bytes message;
 };
 
+
+/*---- Test suite ----*/
 
 static void ap(Sha256 &hasher, const char *msg) {
 	hasher.append(reinterpret_cast<const uint8_t*>(msg), strlen(msg));

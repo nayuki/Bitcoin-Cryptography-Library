@@ -15,6 +15,8 @@
 #include "Uint256.hpp"
 
 
+/*---- Structures ----*/
+
 struct BinaryCase {
 	const char *x;
 	const char *y;
@@ -28,8 +30,11 @@ struct TernaryCase {
 };
 
 
+// Global variables
 static int numTestCases = 0;
 
+
+/*---- Test cases ----*/
 
 static void testComparison() {
 	BinaryCase cases[] = {  // All hexadecimal strings must be in lowercase for strcmp() to work properly

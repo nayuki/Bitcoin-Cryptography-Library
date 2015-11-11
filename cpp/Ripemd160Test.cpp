@@ -15,12 +15,16 @@
 #include "Ripemd160.hpp"
 
 
+/*---- Structures ----*/
+
 struct TestCase {
 	const bool matches;
 	const char *expectedHash;
 	const Bytes message;
 };
 
+
+/*---- Test suite ----*/
 
 int main(int argc, char **argv) {
 	TestCase cases[] = {

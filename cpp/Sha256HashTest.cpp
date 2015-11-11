@@ -14,12 +14,16 @@
 #include "Sha256Hash.hpp"
 
 
+/*---- Structures ----*/
+
 struct TestCase {
 	const bool matches;
 	const char *hexHash;
 	const Bytes byteHash;
 };
 
+
+/*---- Test suite ----*/
 
 int main(int argc, char **argv) {
 	// Test equality

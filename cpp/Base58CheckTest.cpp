@@ -16,6 +16,8 @@
 #include "Uint256.hpp"
 
 
+/*---- Structures ----*/
+
 struct PublicCase {
 	bool matches;
 	const char *pubkeyHash;  // 40 hex digits
@@ -28,6 +30,8 @@ struct PrivateCase {
 	const char *encoded;  // Base58Check string
 };
 
+
+/*---- Test suite ----*/
 
 int main(int argc, char **argv) {
 	// Define test cases
