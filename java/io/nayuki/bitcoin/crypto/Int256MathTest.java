@@ -440,9 +440,10 @@ public final class Int256MathTest {
 	
 	
 	
-	private static class TestArray {
+	// A single array of int32 words with random offsets to three aligned, disjoint 8-word substrings.
+	private static final class TestArray {
 		
-		public int[] val;
+		public final int[] val;  // Reference is immutable, but elements are allowed to change
 		public final int xOff;
 		public final int yOff;
 		public final int zOff;
