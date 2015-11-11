@@ -43,6 +43,9 @@ struct SixStrings {
 };
 
 
+static int numTestCases = 0;
+
+
 static void testReplace() {
 	CurvePoint p(CurvePoint::G);
 	CurvePoint q(CurvePoint::G);
@@ -52,10 +55,8 @@ static void testReplace() {
 	assert(p != q);
 	p.replace(q, 1);
 	assert(p == q);
+	numTestCases++;
 }
-
-
-static int numTestCases = 0;
 
 
 static void testTwice() {
