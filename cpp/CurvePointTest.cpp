@@ -524,7 +524,7 @@ static void testPrivateExponentToPublicPoint() {
 	for (unsigned int i = 0; i < ARRAY_LENGTH(cases); i++) {
 		ThreeStrings &tc = cases[i];
 		CurvePoint p(CurvePoint::privateExponentToPublicPoint(Uint256(tc.a)));
-		assert(p.x == FieldInt(tc.b) && p.y == FieldInt(tc.c) && p.z == FieldInt::ONE);
+		assert(p.x == FieldInt(tc.b) && p.y == FieldInt(tc.c) && p.z == FieldInt(Uint256::ONE));
 		numTestCases++;
 	}
 }

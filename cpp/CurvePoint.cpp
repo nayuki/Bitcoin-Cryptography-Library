@@ -118,7 +118,7 @@ void CurvePoint::twice() {
 	 *   z' = s^3
 	 * }
 	 */
-	bool zeroResult = isZero() | (y == FieldInt::ZERO);
+	bool zeroResult = isZero() | (y == FI_ZERO);
 	
 	FieldInt s(z);
 	s.multiply(y);
@@ -205,10 +205,10 @@ void CurvePoint::normalize() {
 	norm.z.reciprocal();
 	norm.x.multiply(norm.z);
 	norm.y.multiply(norm.z);
-	norm.z = FieldInt::ONE;
-	x.replace(FieldInt::ONE, static_cast<uint32_t>(x != FieldInt::ZERO));
-	y.replace(FieldInt::ONE, static_cast<uint32_t>(y != FieldInt::ZERO));
-	this->replace(norm, static_cast<uint32_t>(z != FieldInt::ZERO));
+	norm.z = FI_ONE;
+	x.replace(FI_ONE, static_cast<uint32_t>(x != FI_ZERO));
+	y.replace(FI_ONE, static_cast<uint32_t>(y != FI_ZERO));
+	this->replace(norm, static_cast<uint32_t>(z != FI_ZERO));
 }
 
 
@@ -233,7 +233,7 @@ bool CurvePoint::isOnCurve() const {
 
 
 bool CurvePoint::isZero() const {
-	return (x == FieldInt::ZERO) & (y != FieldInt::ZERO) & (z == FieldInt::ZERO);
+	return (x == FI_ZERO) & (y != FI_ZERO) & (z == FI_ZERO);
 }
 
 

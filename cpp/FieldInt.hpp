@@ -106,8 +106,5 @@ private:
 	
 private:
 	static const Uint256 MODULUS;  // Prime number
-public:
-	static const FieldInt ZERO;
-	static const FieldInt ONE;
 	
 };

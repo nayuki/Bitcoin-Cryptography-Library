@@ -189,5 +189,3 @@ bool FieldInt::operator>=(const Uint256 &other) const {
 
 // Static initializers
 const Uint256  FieldInt::MODULUS("fffffffffffffffffffffffffffffffffffffffffffffffffffffffefffffc2f");
-const FieldInt FieldInt::ZERO   ("0000000000000000000000000000000000000000000000000000000000000000");
-const FieldInt FieldInt::ONE    ("0000000000000000000000000000000000000000000000000000000000000001");
