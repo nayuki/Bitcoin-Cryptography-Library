@@ -32,6 +32,9 @@ CXXFLAGS += -O1
 # Clear default suffix rules
 .SUFFIXES:
 
+# Don't delete object files
+.SECONDARY:
+
 # Stuff concerning goals
 .DEFAULT_GOAL = all
 .PHONY: all check clean
