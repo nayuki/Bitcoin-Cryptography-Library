@@ -9,6 +9,7 @@
 #include <cassert>
 #include <cstring>
 #include "Sha256.hpp"
+#include "Utils.hpp"
 
 
 Sha256Hash Sha256::getHash(const uint8_t *msg, size_t len) {
@@ -30,7 +31,7 @@ Sha256Hash Sha256::getHmac(const uint8_t *key, size_t keyLen, const uint8_t *msg
 	// Preprocess key
 	uint8_t tempKey[SHA256_BLOCK_LEN] = {};
 	if (keyLen <= SHA256_BLOCK_LEN)
-		memcpy(tempKey, key, keyLen);
+		Utils::copyBytes(tempKey, key, keyLen);
 	else {
 		Sha256Hash keyHash(getHash(key, keyLen));
 		memcpy(tempKey, keyHash.data(), SHA256_HASH_LEN);
@@ -62,7 +63,7 @@ Sha256Hash Sha256::getHash(const uint8_t *msg, size_t len, const uint32_t initSt
 	
 	// Final blocks, padding, and length
 	uint8_t block[SHA256_BLOCK_LEN] = {};
-	memcpy(block, &msg[off], len - off);
+	Utils::copyBytes(block, &msg[off], len - off);
 	off = len & (SHA256_BLOCK_LEN - 1);
 	block[off] = 0x80;
 	off++;

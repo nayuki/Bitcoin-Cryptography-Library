@@ -9,6 +9,7 @@
 #include <cassert>
 #include <cstring>
 #include "Ripemd160.hpp"
+#include "Utils.hpp"
 
 #define BLOCK_LEN 64
 
@@ -22,7 +23,7 @@ void Ripemd160::getHash(const uint8_t *msg, size_t len, uint8_t hashResult[RIPEM
 	
 	// Final blocks, padding, and length
 	uint8_t block[BLOCK_LEN] = {};
-	memcpy(block, &msg[off], len - off);
+	Utils::copyBytes(block, &msg[off], len - off);
 	off = len & (BLOCK_LEN - 1);
 	block[off] = 0x80;
 	off++;

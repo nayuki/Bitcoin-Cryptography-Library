@@ -6,6 +6,7 @@
  * https://github.com/nayuki/Bitcoin-Cryptography-Library
  */
 
+#include <cstring>
 #include "Utils.hpp"
 
 
@@ -18,6 +19,12 @@ int Utils::parseHexDigit(int ch) {
 		return ch - 'A' + 10;
 	else
 		return -1;
+}
+
+
+void Utils::copyBytes(void *dest, const void *src, size_t count) {
+	if (count > 0)
+		memmove(dest, src, count);
 }
 
 

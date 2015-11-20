@@ -22,6 +22,15 @@ public:
 	static int parseHexDigit(int ch);
 	
 	
+	// A safe wrapper over memmove() to avoid undefined behavior. This function can be a drop-in replacement
+	// for both memcpy() and memmove(). It is useful when count is a variable number that is sometimes zero.
+	// Note that src and dest can overlap.
+	// The function returns immediately if count is 0. This is safer than calling memmove() with a count of 0, because
+	// it would be undefined behavior if src or dest is null, or if either one is pointing to the end of an array.
+	// The function is not helpful for code that calls memcpy/memmove with a known positive constant count value.
+	static void copyBytes(void *dest, const void *src, size_t count);
+	
+	
 private:
 	Utils();
 	

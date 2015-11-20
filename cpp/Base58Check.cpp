@@ -11,6 +11,7 @@
 #include "Base58Check.hpp"
 #include "Sha256.hpp"
 #include "Sha256Hash.hpp"
+#include "Utils.hpp"
 
 
 void Base58Check::pubkeyHashToBase58Check(const uint8_t pubkeyHash[RIPEMD160_HASH_LEN], char outStr[35]) {
@@ -52,7 +53,7 @@ void Base58Check::bytesToBase58Check(uint8_t *data, int len, char *outStr) {
 		outLen++;
 		uint8_t quotient[MAX_TOTAL_BYTES] = {};
 		divide58(data, quotient, len);  // quotient = floor(data / 58)
-		memcpy(data, quotient, len);  // data = quotient
+		Utils::copyBytes(data, quotient, len);  // data = quotient
 	}
 	for (int i = 0; i < leadingZeros; i++) {  // Append leading zeros
 		outStr[outLen] = ALPHABET[0];
