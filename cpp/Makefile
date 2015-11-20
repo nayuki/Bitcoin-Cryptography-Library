@@ -48,7 +48,7 @@ EcdsaTest:        EcdsaTest.cpp        Utils.o Uint256.o FieldInt.o CurvePoint.o
 FieldIntTest:     FieldIntTest.cpp     Utils.o Uint256.o FieldInt.o
 	$(CC) $(CXXFLAGS) -o $@ $^
 
-Ripemd160Test:    Ripemd160Test.cpp    Ripemd160.o
+Ripemd160Test:    Ripemd160Test.cpp    Utils.o Ripemd160.o
 	$(CC) $(CXXFLAGS) -o $@ $^
 
 Sha256HashTest:   Sha256HashTest.cpp   Utils.o Sha256Hash.o
@@ -57,7 +57,7 @@ Sha256HashTest:   Sha256HashTest.cpp   Utils.o Sha256Hash.o
 Sha256Test:       Sha256Test.cpp       Utils.o Sha256Hash.o Sha256.o
 	$(CC) $(CXXFLAGS) -o $@ $^
 
-Sha512Test:       Sha512Test.cpp       Sha512.o
+Sha512Test:       Sha512Test.cpp       Utils.o Sha512.o
 	$(CC) $(CXXFLAGS) -o $@ $^
 
 Uint256Test:      Uint256Test.cpp      Utils.o Uint256.o
