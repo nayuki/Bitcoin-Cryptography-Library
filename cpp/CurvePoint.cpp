@@ -11,15 +11,15 @@
 
 
 CurvePoint::CurvePoint(const FieldInt &x_, const FieldInt &y_) :
-	x(x_), y(y_), z(FieldInt::ONE) {}
+	x(x_), y(y_), z(FI_ONE) {}
 
 
 CurvePoint::CurvePoint(const char *xStr, const char *yStr) :
-	x(xStr), y(yStr), z(FieldInt::ONE) {}
+	x(xStr), y(yStr), z(FI_ONE) {}
 
 
 CurvePoint::CurvePoint() :
-	x(FieldInt::ZERO), y(FieldInt::ONE), z(FieldInt::ZERO) {}
+	x(FI_ZERO), y(FI_ONE), z(FI_ZERO) {}
 
 
 void CurvePoint::add(const CurvePoint &other) {
@@ -263,6 +263,8 @@ CurvePoint CurvePoint::privateExponentToPublicPoint(const Uint256 &privExp) {
 
 
 // Static initializers
+const FieldInt CurvePoint::FI_ZERO("0000000000000000000000000000000000000000000000000000000000000000");
+const FieldInt CurvePoint::FI_ONE ("0000000000000000000000000000000000000000000000000000000000000001");
 const FieldInt CurvePoint::A    ("0000000000000000000000000000000000000000000000000000000000000000");
 const FieldInt CurvePoint::B    ("0000000000000000000000000000000000000000000000000000000000000007");
 const Uint256  CurvePoint::ORDER("fffffffffffffffffffffffffffffffebaaedce6af48a03bbfd25e8cd0364141");

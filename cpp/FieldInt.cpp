@@ -15,7 +15,10 @@
 
 FieldInt::FieldInt(const char *str) :
 		Uint256(str) {
-	assert(*this < MODULUS);
+	// Relies on the fact that uninitialized static variables are zero.
+	// Only do the assertion if the modulus has been initialized already.
+	if (MODULUS.value[0] != 0)
+		assert(*this < MODULUS);
 }
 
 

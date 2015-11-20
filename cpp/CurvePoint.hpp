@@ -120,6 +120,9 @@ public:
 	
 	/*---- Class constants ----*/
 	
+private:
+	static const FieldInt FI_ZERO;  // FieldInt constants - re-declared here due to C++'s
+	static const FieldInt FI_ONE;   // lack of guarantee of static initialization order.
 public:
 	static const FieldInt A;       // Curve equation parameter
 	static const FieldInt B;       // Curve equation parameter
