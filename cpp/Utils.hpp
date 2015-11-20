@@ -19,6 +19,8 @@ public:
 	static const char *HEX_DIGITS;
 	
 	
+	// Returns the numerical value of a hexadecimal digit character
+	// (e.g. '9' -> 9, 'a' -> 10, 'B' -> 11), or -1 if the character is invalid.
 	static int parseHexDigit(int ch);
 	
 	

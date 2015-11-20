@@ -15,8 +15,10 @@
 
 FieldInt::FieldInt(const char *str) :
 		Uint256(str) {
-	// Relies on the fact that uninitialized static variables are zero.
-	// Only do the assertion if the modulus has been initialized already.
+	// C++ does not guarantee the order of initialization of static variables. If another class is
+	// initializing a FieldInt constant, this class's modulus might not have been initialized yet.
+	// Thus the assertion must be exempted in this situation. This logic relies on the fact that uninitialized
+	// static variables are set to zero. Hence, only do the assertion if the modulus has been initialized already.
 	if (MODULUS.value[0] != 0)
 		assert(*this < MODULUS);
 }
@@ -55,7 +57,7 @@ void FieldInt::square() {
 
 
 void FieldInt::multiply(const FieldInt &other) {
-	// Compute raw product of this->value * other.value
+	// Compute raw product of (uint256 this->value) * (uint256 other.value) = (uint512 product0), via long multiplication
 	uint32_t product0[NUM_WORDS * 2];
 	{
 		uint64_t carry = 0;
@@ -84,8 +86,8 @@ void FieldInt::multiply(const FieldInt &other) {
 		assert((carry >> 32) == 0);
 	}
 	
-	// Barrett reduction algorithm begins here.
-	// Multiply by floor(2^512 / MODULUS), which is 2^256 + 2^32 + 0x3D1
+	// Barrett reduction algorithm begins here (see http://www.nayuki.io/page/barrett-reduction-algorithm).
+	// Multiply by floor(2^512 / MODULUS), which is 2^256 + 2^32 + 0x3D1. Guaranteed to fit in a uint768.
 	uint32_t product1[NUM_WORDS * 3];
 	{
 		uint32_t carry = 0;
@@ -104,7 +106,8 @@ void FieldInt::multiply(const FieldInt &other) {
 		assert(carry == 0);
 	}
 	
-	// Virtually shift right by 512 bits, then multiply by MODULUS. Note that MODULUS = 2^256 - 2^32 - 0x3D1
+	// Virtually shift right by 512 bits, then multiply by MODULUS.
+	// Note that MODULUS = 2^256 - 2^32 - 0x3D1. Result fits in a uint512.
 	uint32_t *product1Shifted = &product1[NUM_WORDS * 2];  // Length NUM_WORDS
 	uint32_t product2[NUM_WORDS * 2];
 	{
@@ -124,7 +127,7 @@ void FieldInt::multiply(const FieldInt &other) {
 		assert(borrow == 0);
 	}
 	
-	// Compute product0 - product2
+	// Compute product0 - product2, which fits in a uint257 (sic)
 	uint32_t difference[NUM_WORDS + 1];
 	{
 		uint32_t borrow = 0;
@@ -136,7 +139,7 @@ void FieldInt::multiply(const FieldInt &other) {
 		}
 	}
 	
-	// Final conditional subtraction
+	// Final conditional subtraction to yield a FieldInt value
 	memcpy(this->value, difference, sizeof(value));
 	uint32_t dosub = static_cast<uint32_t>((difference[NUM_WORDS] != 0) | (*this >= MODULUS));
 	Uint256::subtract(MODULUS, dosub);
