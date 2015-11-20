@@ -16,8 +16,8 @@
  * All arithmetic operations are performed modulo 2^256 (the standard unsigned overflow behavior).
  * Instances of this class are mutable. All possible values are valid.
  * 
- * For example, the integer 0x0123456789abcdef000000001111111122222222333333334444444455555555 is represented by
- * the array {0x55555555, 0x44444444, 0x33333333, 0x22222222, 0x11111111, 0x00000000, 0x89abcdef, 0x01234567}.
+ * For example, the integer 0x0123456789ABCDEF000000001111111122222222333333334444444455555555 is represented by
+ * the array {0x55555555, 0x44444444, 0x33333333, 0x22222222, 0x11111111, 0x00000000, 0x89ABCDEF, 0x01234567}.
  */
 class Uint256 {
 	
