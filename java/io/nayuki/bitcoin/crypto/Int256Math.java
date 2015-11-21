@@ -222,7 +222,7 @@ public final class Int256Math {
 		checkUint(val, tempOff);
 		assert val.length - tempOff >= 5 * NUM_WORDS;
 		
-		// Compute raw product of this.value * other.value
+		// Compute raw product of (uint256 this->value) * (uint256 other.value) = (uint512 product0), via long multiplication
 		int product0Off = tempOff + 0 * NUM_WORDS;  // Uses 16 words
 		{
 			long carry = 0;
@@ -251,8 +251,8 @@ public final class Int256Math {
 			assert((carry >>> 32) == 0);
 		}
 		
-		// Barrett reduction algorithm begins here.
-		// Multiply by floor(2^512 / MODULUS), which is 2^256 + 2^32 + 0x3D1
+		// Barrett reduction algorithm begins here (see http://www.nayuki.io/page/barrett-reduction-algorithm).
+		// Multiply by floor(2^512 / MODULUS), which is 2^256 + 2^32 + 0x3D1. Guaranteed to fit in a uint768.
 		int product1Off = tempOff + 2 * NUM_WORDS;  // Uses 24 words
 		{
 			int carry = 0;
@@ -271,7 +271,8 @@ public final class Int256Math {
 			assert(carry == 0);
 		}
 		
-		// Virtually shift right by 512 bits, then multiply by MODULUS. Note that MODULUS = 2^256 - 2^32 - 0x3D1
+		// Virtually shift right by 512 bits, then multiply by MODULUS.
+		// Note that MODULUS = 2^256 - 2^32 - 0x3D1. Result fits in a uint512.
 		int p1Shift = product1Off + NUM_WORDS * 2;  // Has 8 words
 		int product2Off = product1Off;  // Uses 16 words, reuses space
 		{
@@ -291,7 +292,7 @@ public final class Int256Math {
 			assert(borrow == 0);
 		}
 		
-		// Compute product0 - product2
+		// Compute product0 - product2, which fits in a uint257 (sic)
 		int differenceOff = product0Off;  // Uses 9 words but we allocate 16, reuses spaces
 		{
 			int borrow = 0;
@@ -303,7 +304,7 @@ public final class Int256Math {
 			}
 		}
 		
-		// Final conditional subtraction
+		// Final conditional subtraction to yield a FieldInt value
 		System.arraycopy(val, differenceOff, val, zOff, NUM_WORDS);
 		System.arraycopy(FIELD_MODULUS, 0, val, tempOff + 2 * NUM_WORDS, NUM_WORDS);  // Reuses space at offset 16
 		int enable = (equalTo(val[differenceOff + NUM_WORDS], 0) & lessThan(val, zOff, tempOff + 2 * NUM_WORDS)) ^ 1;
