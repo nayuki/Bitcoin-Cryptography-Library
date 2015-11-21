@@ -51,6 +51,10 @@ cpAdd       = funcOvh + 10 + 10*fiCopy + 3*fiReplace + 2*fiEquals + fiAdd + 5*fi
 cpMultiply  = funcOvh + 18*cpCopy + cpTwice + 13*(cpCopy + cpAdd) + 64*(36 + cpCopy + 16*cpReplace + 4*cpTwice + cpAdd) - 4*cpTwice
 cpNormalize = funcOvh + 1 + fiCopy + 2*fiReplace + 3*fiEquals + 2*fiMultiply + fiReciprocal + cpCopy + cpReplace
 
+# Ecdsa methods
+edMulModOrder = funcOvh + 1 + 2*uiCopy + 256*(8 + uiAdd + 2*uiSubtract + uiShiftLeft1 + 2*uiLessThan)
+edSign        = funcOvh + 4 + 7*uiCopy + uiReplace + uiAdd + 3*uiSubtract + 3*uiEquals + 4*uiLessThan + uiReciprocal + cpCopy + cpMultiply + cpNormalize + 2*edMulModOrder
+
 
 # ---- Print numbers ----
 
@@ -58,6 +62,7 @@ vargroups = [
 	["uiCopy", "uiReplace", "uiSwap", "uiEquals", "uiLessThan", "uiAdd", "uiSubtract", "uiShiftLeft1", "uiShiftRight1", "uiReciprocal"],
 	["fiCopy", "fiReplace", "fiEquals", "fiLessThan", "fiAdd", "fiSubtract", "fiNegate", "fiMultiply2", "fiMultiply", "fiSquare", "fiReciprocal"],
 	["cpCopy", "cpReplace", "cpIsZero", "cpEquals", "cpTwice", "cpAdd", "cpMultiply", "cpNormalize"],
+	["edMulModOrder", "edSign"],
 ]
 
 def inttostr_with_groups(x):
