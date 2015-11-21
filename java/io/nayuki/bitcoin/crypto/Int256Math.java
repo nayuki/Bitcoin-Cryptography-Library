@@ -20,6 +20,7 @@ public final class Int256Math {
 	
 	/*---- Uint256 conversion functions ----*/
 	
+	// Parses the given 64-digit hexadecimal string as a uint256 and stores it in the given array at the given offset.
 	public static void hexToUint(String hex, int[] val, int off) {
 		if (hex == null)
 			throw new NullPointerException();
@@ -31,6 +32,7 @@ public final class Int256Math {
 	}
 	
 	
+	// Returns a 32-byte array representing the uint256 in the given array at the given offset encoded in big endian.
 	public static byte[] uintToBytes(int[] val, int off) {
 		checkUint(val, off);
 		byte[] result = new byte[NUM_WORDS * 4];
@@ -40,6 +42,7 @@ public final class Int256Math {
 	}
 	
 	
+	// Interprets the given 32-byte array as a uint256 encoded in big endian and stores it in the given array at the given offset.
 	public static void bytesToUint(byte[] b, int[] val, int off) {
 		if (b == null)
 			throw new NullPointerException();
@@ -214,7 +217,7 @@ public final class Int256Math {
 	}
 	
 	
-	// Computes x = (x - y) mod prime. Offsets must be multiples of 8 and can overlap.
+	// Computes z = (x - y) mod prime. Offsets must be multiples of 8 and can overlap.
 	// Requires 8 words of temporary space. Constant-time with respect to both values.
 	public static void fieldSubtract(int[] val, int xOff, int yOff, int zOff, int tempOff) {
 		checkFieldInt(val, xOff);
@@ -382,7 +385,7 @@ public final class Int256Math {
 	}
 	
 	
-	// Testing x == y and returns 0 or 1. Offsets must be multiples of 8 and can overlap.
+	// Tests x == y and returns 0 or 1. Offsets must be multiples of 8 and can overlap.
 	// Constant-time with respect to both values.
 	public static int equalTo(int[] val, int xOff, int yOff) {
 		checkUint(val, xOff);
@@ -424,13 +427,15 @@ public final class Int256Math {
 	}
 	
 	
-	// Returns 1 if x < y with both as unsigned integers, otherwise 0.
+	// Returns 1 if uint64 x < uint64 y, otherwise 0.
 	// Constant-time with respect to both values.
 	private static int lessThan(long x, long y) {
 		return (int)(((~x & y) | ((~x ^ y) & (x - y))) >>> 63);
 	}
 	
 	
+	// Returns 1 if uint256 x < uint256 y, otherwise 0.
+	// Constant-time with respect to both values.
 	private static int lessThan(int[] x, int xOff, int[] y, int yOff) {
 		int result = 0;
 		for (int i = 0; i < NUM_WORDS; i++) {
@@ -445,6 +450,7 @@ public final class Int256Math {
 	}
 	
 	
+	// Returns 1 if uint256 x == 0, otherwise 0. Constant-time with respect to the value.
 	static int isZero(int[] val, int xOff) {
 		Int256Math.checkUint(val, xOff);
 		int result = 0;
