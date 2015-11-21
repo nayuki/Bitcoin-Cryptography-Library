@@ -46,7 +46,6 @@ public final class Sha256Hash implements Comparable<Sha256Hash> {
 	 * @throws IllegalArgumentException if the array is not of length 32
 	 * @throws NullPointerException if the array is {@code null}
 	 */
-	// Length must equal 32
 	public Sha256Hash(byte[] b) {
 		if (b == null)
 			throw new NullPointerException();
@@ -63,7 +62,6 @@ public final class Sha256Hash implements Comparable<Sha256Hash> {
 	 * @throws IllegalArgumentException if the string is not of length 64 or entirely hexadecimal digits
 	 * @throws NullPointerException if the string is {@code null}
 	 */
-	// String is in byte-reversed order and has length 64
 	public Sha256Hash(String s) {
 		if (s == null)
 			throw new NullPointerException();
