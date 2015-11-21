@@ -30,33 +30,7 @@ public final class Sha256 {
 	 * @throws NullPointerException if the message is {@code null}
 	 */
 	public static Sha256Hash getHash(byte[] msg) {
-		// Compress whole message blocks
-		if (msg == null)
-			throw new NullPointerException();
-		int[] state = {0x6A09E667, 0xBB67AE85, 0x3C6EF372, 0xA54FF53A, 0x510E527F, 0x9B05688C, 0x1F83D9AB, 0x5BE0CD19};
-		int off = msg.length / BLOCK_LEN * BLOCK_LEN;
-		compress(state, msg, off);
-		
-		// Final blocks, padding, and length
-		byte[] block = new byte[BLOCK_LEN];
-		System.arraycopy(msg, off, block, 0, msg.length - off);
-		off = msg.length % block.length;
-		block[off] = (byte)0x80;
-		off++;
-		if (off + 8 > block.length) {
-			compress(state, block, block.length);
-			Arrays.fill(block, (byte)0);
-		}
-		long len = (long)msg.length << 3;
-		for (int i = 0; i < 8; i++)
-			block[block.length - 1 - i] = (byte)(len >>> (i * 8));
-		compress(state, block, block.length);
-		
-		// Int32 array to bytes in big endian
-		byte[] result = new byte[state.length * 4];
-		for (int i = 0; i < result.length; i++)
-			result[i] = (byte)(state[i / 4] >>> ((3 - i % 4) * 8));
-		return new Sha256Hash(result);
+		return getHash(msg, INITIAL_STATE.clone(), 0);
 	}
 	
 	
@@ -71,8 +45,70 @@ public final class Sha256 {
 	}
 	
 	
+	/**
+	 * Computes and returns the HMAC-SHA-256 of the specified binary key and binary message.
+	 * @param key the key for the message authentication code
+	 * @param msg the message for the message authentication code
+	 * @return an object representing the HMAC-SHA-256 of the key and message
+	 * @throws NullPointerException if the key or message is {@code null}
+	 */
+	public static Sha256Hash getHmac(byte[] key, byte[] msg) {
+		if (key == null || msg == null)
+			throw new NullPointerException();
+		
+		// Preprocess key, creating a new byte array
+		key = Arrays.copyOf(key.length <= BLOCK_LEN ? key : getHash(key).toBytes(), BLOCK_LEN);
+		
+		// Compute inner hash
+		for (int i = 0; i < key.length; i++)
+			key[i] ^= 0x36;
+		int[] state = INITIAL_STATE.clone();
+		compress(state, key, key.length);
+		Sha256Hash innerHash = getHash(msg, state, key.length);
+		
+		// Compute outer hash
+		for (int i = 0; i < key.length; i++)
+			key[i] ^= 0x36 ^ 0x5C;
+		state = INITIAL_STATE.clone();
+		compress(state, key, key.length);
+		return getHash(innerHash.toBytes(), state, key.length);
+	}
+	
+	
 	
 	/*---- Private functions ----*/
+	
+	// Note: The initState array will be modified.
+	private static Sha256Hash getHash(byte[] msg, int[] initState, int prefixLen) {
+		// Compress whole message blocks
+		if (msg == null)
+			throw new NullPointerException();
+		int[] state = initState;
+		int off = msg.length / BLOCK_LEN * BLOCK_LEN;
+		compress(state, msg, off);
+		
+		// Final blocks, padding, and length
+		byte[] block = new byte[BLOCK_LEN];
+		System.arraycopy(msg, off, block, 0, msg.length - off);
+		off = msg.length % block.length;
+		block[off] = (byte)0x80;
+		off++;
+		if (off + 8 > block.length) {
+			compress(state, block, block.length);
+			Arrays.fill(block, (byte)0);
+		}
+		long len = ((long)msg.length + prefixLen) << 3;
+		for (int i = 0; i < 8; i++)
+			block[block.length - 1 - i] = (byte)(len >>> (i * 8));
+		compress(state, block, block.length);
+		
+		// Int32 array to bytes in big endian
+		byte[] result = new byte[state.length * 4];
+		for (int i = 0; i < result.length; i++)
+			result[i] = (byte)(state[i / 4] >>> ((3 - i % 4) * 8));
+		return new Sha256Hash(result);
+	}
+	
 	
 	private static void compress(int[] state, byte[] blocks, int len) {
 		if (len < 0 || len % BLOCK_LEN != 0)
@@ -123,6 +159,12 @@ public final class Sha256 {
 	
 	
 	/*---- Class constants ----*/
+	
+	private static final int[] INITIAL_STATE = {
+		0x6A09E667, 0xBB67AE85, 0x3C6EF372, 0xA54FF53A,
+		0x510E527F, 0x9B05688C, 0x1F83D9AB, 0x5BE0CD19,
+	};
+	
 	
 	private static final int[] ROUND_CONSTANTS = {
 		0x428A2F98, 0x71374491, 0xB5C0FBCF, 0xE9B5DBA5,
