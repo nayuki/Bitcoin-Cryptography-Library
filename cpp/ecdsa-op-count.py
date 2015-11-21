@@ -16,17 +16,18 @@
 # Uint256 methods
 uiCopy        = 1 + 8*2
 uiReplace     = 1 + 8*4
+uiSwap        = 1 + 8*7
 uiEquals      = 1 + 3 + 8*2
 uiLessThan    = 1 + 2 + 8*6
 uiAdd         = 1 + 3 + 8*9
 uiSubtract    = 1 + 3 + 8*9
 uiShiftLeft1  = 1 + 2 + 8*4
 uiShiftRight1 = 1 + 6 + 8*8
+uiReciprocal  = 1 + 4*uiCopy + uiReplace + 512*(11 + 2*uiSwap + 2*uiShiftRight1 + 2*uiAdd + 2*uiSubtract)
 
 # FieldInt methods
 fiCopy       = 1 + uiCopy
 fiReplace    = 1 + uiReplace
-fiSwap       = 1 + 8*7
 fiEquals     = 1 + uiEquals
 fiLessThan   = 1 + uiLessThan
 fiAdd        = 1 + 3 + fiLessThan + uiAdd + uiSubtract
@@ -35,7 +36,7 @@ fiNegate     = 1 + 4 + 8*9 + fiEquals
 fiMultiply2  = 1 + 3 + uiShiftLeft1 + uiSubtract
 fiMultiply   = 1 + 754 + (1 + 24*28) + (1 + 16*26) + (1 + 9*8) + 10 + 3 + uiLessThan + uiSubtract
 fiSquare     = 1 + fiMultiply
-fiReciprocal = 1 + 4*fiCopy + fiReplace + 512*(11 + 2*fiSwap + 2*uiShiftRight1 + 2*uiAdd + 2*uiSubtract)
+fiReciprocal = 1 + uiReciprocal
 
 # CurvePoint methods
 cpCopy      = 1 + 3*fiCopy
@@ -51,8 +52,8 @@ cpNormalize = 1 + 1 + fiCopy + 2*fiReplace + 3*fiEquals + 2*fiMultiply + fiRecip
 # ---- Print numbers ----
 
 vargroups = [
-	["uiCopy", "uiReplace", "uiEquals", "uiLessThan", "uiAdd", "uiSubtract", "uiShiftLeft1", "uiShiftRight1"],
-	["fiCopy", "fiReplace", "fiSwap", "fiEquals", "fiLessThan", "fiAdd", "fiSubtract", "fiNegate", "fiMultiply2", "fiMultiply", "fiSquare", "fiReciprocal"],
+	["uiCopy", "uiReplace", "uiSwap", "uiEquals", "uiLessThan", "uiAdd", "uiSubtract", "uiShiftLeft1", "uiShiftRight1", "uiReciprocal"],
+	["fiCopy", "fiReplace", "fiEquals", "fiLessThan", "fiAdd", "fiSubtract", "fiNegate", "fiMultiply2", "fiMultiply", "fiSquare", "fiReciprocal"],
 	["cpCopy", "cpReplace", "cpIsZero", "cpEquals", "cpTwice", "cpAdd", "cpMultiply", "cpNormalize"],
 ]
 
