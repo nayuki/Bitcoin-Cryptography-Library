@@ -33,7 +33,7 @@ public final class Int256Math {
 			long sum = (val[xOff + i] & LONG_MASK) + (val[yOff + i] & mask) + carry;
 			val[zOff + i] = (int)sum;
 			carry = (int)(sum >>> 32);
-			assert((carry >>> 1) == 0);
+			assert (carry >>> 1) == 0;
 		}
 		return carry;
 	}
@@ -54,7 +54,7 @@ public final class Int256Math {
 			long diff = (val[xOff + i] & LONG_MASK) - (val[yOff + i] & mask) - borrow;
 			val[zOff + i] = (int)diff;
 			borrow = -(int)(diff >>> 32);
-			assert((borrow >>> 1) == 0);
+			assert (borrow >>> 1) == 0;
 		}
 		return borrow;
 	}
@@ -169,7 +169,7 @@ public final class Int256Math {
 		checkUint(val, tempOff);
 		
 		int c = uintAdd(val, xOff, yOff, 1, zOff);  // Perform addition
-		assert((c >>> 1) == 0);
+		assert (c >>> 1) == 0;
 		System.arraycopy(FIELD_MODULUS, 0, val, tempOff, NUM_WORDS);
 		int enable = c | (lessThan(val, zOff, tempOff) ^ 1);
 		uintSubtract(val, zOff, tempOff, enable, zOff);  // Conditionally subtract modulus
@@ -185,7 +185,7 @@ public final class Int256Math {
 		checkUint(val, tempOff);
 		
 		int b = uintSubtract(val, xOff, yOff, 1, zOff);  // Perform subtraction
-		assert((b >>> 1) == 0);
+		assert (b >>> 1) == 0;
 		System.arraycopy(FIELD_MODULUS, 0, val, tempOff, NUM_WORDS);
 		uintAdd(val, zOff, tempOff, b, zOff);  // Conditionally add modulus
 	}
@@ -199,7 +199,7 @@ public final class Int256Math {
 		checkUint(val, tempOff);
 		
 		int c = uintShiftLeft1(val, xOff, zOff);
-		assert((c >>> 1) == 0);
+		assert (c >>> 1) == 0;
 		System.arraycopy(FIELD_MODULUS, 0, val, tempOff, NUM_WORDS);
 		int enable = c | (lessThan(val, zOff, tempOff) ^ 1);
 		uintSubtract(val, zOff, tempOff, enable, zOff);  // Conditionally subtract modulus
@@ -243,12 +243,12 @@ public final class Int256Math {
 						c += lessThan(sum, prod);
 					}
 				}
-				assert(0 <= c && c <= NUM_WORDS);
+				assert 0 <= c && c <= NUM_WORDS;
 				val[product0Off + i] = (int)sum;
 				carry = (long)c << 32 | sum >>> 32;
 			}
 			val[product0Off + i] = (int)carry;
-			assert((carry >>> 32) == 0);
+			assert (carry >>> 32) == 0;
 		}
 		
 		// Barrett reduction algorithm begins here (see http://www.nayuki.io/page/barrett-reduction-algorithm).
@@ -266,9 +266,9 @@ public final class Int256Math {
 					sum += val[product0Off + i - NUM_WORDS] & LONG_MASK;
 				val[product1Off + i] = (int)sum;
 				carry = (int)(sum >>> 32);
-				assert(0 <= carry && carry <= 0x3D3);
+				assert 0 <= carry && carry <= 0x3D3;
 			}
-			assert(carry == 0);
+			assert carry == 0;
 		}
 		
 		// Virtually shift right by 512 bits, then multiply by MODULUS.
@@ -287,9 +287,9 @@ public final class Int256Math {
 					diff += val[p1Shift + i - NUM_WORDS] & LONG_MASK;
 				val[product2Off + i] = (int)diff;
 				borrow = -(int)(diff >>> 32);
-				assert(0 <= borrow && borrow <= 0x3D3);
+				assert 0 <= borrow && borrow <= 0x3D3;
 			}
-			assert(borrow == 0);
+			assert borrow == 0;
 		}
 		
 		// Compute product0 - product2, which fits in a uint257 (sic)
@@ -300,7 +300,7 @@ public final class Int256Math {
 				long diff = (val[product0Off + i] & LONG_MASK) - (val[product2Off + i] & LONG_MASK) - borrow;
 				val[differenceOff + i] = (int)diff;
 				borrow = -(int)(diff >>> 32);
-				assert((borrow >>> 1) == 0);
+				assert (borrow >>> 1) == 0;
 			}
 		}
 		
