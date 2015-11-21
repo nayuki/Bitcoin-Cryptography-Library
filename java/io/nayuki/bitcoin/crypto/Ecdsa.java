@@ -89,7 +89,7 @@ public final class Ecdsa {
 		byte[] privkeyBytes = Int256Math.uintToBytes(privateKey, 0);
 		byte[] msghashBytes = msgHash.toBytes();
 		byte[] hmac = Sha256.getHmac(privkeyBytes, msghashBytes).toBytes();
-		int[] nonce = new int[8];
+		int[] nonce = new int[Int256Math.NUM_WORDS];
 		Int256Math.bytesToUint(hmac, nonce, 0);
 		return sign(privateKey, msgHash, nonce, outR, outS);
 	}

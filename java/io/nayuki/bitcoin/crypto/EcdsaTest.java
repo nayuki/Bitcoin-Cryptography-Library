@@ -554,8 +554,8 @@ public final class EcdsaTest {
 			int[] expectedR = toUint256(testCase[3]);
 			int[] expectedS = toUint256(testCase[4]);
 			
-			int[] r = new int[8];
-			int[] s = new int[8];
+			int[] r = new int[Int256Math.NUM_WORDS];
+			int[] s = new int[Int256Math.NUM_WORDS];
 			assertTrue(Ecdsa.sign(privateKey, msgHash, nonce, r, s));
 			assertArrayEquals(expectedR, r);
 			assertArrayEquals(expectedS, s);
@@ -603,8 +603,8 @@ public final class EcdsaTest {
 			int[] expectedR = toUint256(testCase[2]);
 			int[] expectedS = toUint256(testCase[3]);
 			
-			int[] r = new int[8];
-			int[] s = new int[8];
+			int[] r = new int[Int256Math.NUM_WORDS];
+			int[] s = new int[Int256Math.NUM_WORDS];
 			assertTrue(Ecdsa.signWithHmacNonce(privateKey, msgHash, r, s));
 			assertArrayEquals(expectedR, r);
 			assertArrayEquals(expectedS, s);
@@ -613,7 +613,7 @@ public final class EcdsaTest {
 	
 	
 	private static int[] toUint256(String hex) {
-		int[] result = new int[8];
+		int[] result = new int[Int256Math.NUM_WORDS];
 		Int256Math.hexToUint(hex, result, 0);
 		return result;
 	}

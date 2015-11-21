@@ -281,9 +281,9 @@ public final class CurvePointMath {
 	/*---- Helper functions ----*/
 	
 	private static void checkPoint(int[] arr, int off) {
-		Int256Math.checkFieldInt(arr, off + 0 * NUM_WORDS);
-		Int256Math.checkFieldInt(arr, off + 1 * NUM_WORDS);
-		Int256Math.checkFieldInt(arr, off + 2 * NUM_WORDS);
+		Int256Math.checkFieldInt(arr, off + XCOORD);
+		Int256Math.checkFieldInt(arr, off + YCOORD);
+		Int256Math.checkFieldInt(arr, off + ZCOORD);
 	}
 	
 	

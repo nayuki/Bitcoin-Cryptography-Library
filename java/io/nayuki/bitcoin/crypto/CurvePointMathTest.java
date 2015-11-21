@@ -34,19 +34,19 @@ public final class CurvePointMathTest {
 		};
 		int[] p = CurvePointMath.getBasePoint();
 		for (String[] cs : cases) {
-			int pOff = rand.nextInt(5) * 8;
-			int tempOff = pOff + 24 + rand.nextInt(5) * 8;
+			int pOff = rand.nextInt(5) * Int256Math.NUM_WORDS;
+			int tempOff = pOff + CurvePointMath.POINT_WORDS + rand.nextInt(5) * Int256Math.NUM_WORDS;
 			int[] arr = new int[tempOff + 72];
 			for (int i = 0; i < arr.length; i++)
 				arr[i] = rand.nextInt();
-			System.arraycopy(p, 0, arr, pOff, 24);
+			System.arraycopy(p, 0, arr, pOff, CurvePointMath.POINT_WORDS);
 			
 			CurvePointMath.twice(arr, pOff, tempOff);
 			CurvePointMath.normalize(arr, pOff, tempOff);
-			assertArrayEquals(toInt256(cs[0]), Arrays.copyOfRange(arr, pOff + 0, pOff + 8));
-			assertArrayEquals(toInt256(cs[1]), Arrays.copyOfRange(arr, pOff + 8, pOff + 16));
-			assertArrayEquals(Int256Math.ONE, Arrays.copyOfRange(arr, pOff + 16, pOff + 24));
-			System.arraycopy(arr, pOff, p, 0, 24);
+			assertArrayEquals(toInt256(cs[0]), Arrays.copyOfRange(arr, pOff + CurvePointMath.XCOORD, pOff + CurvePointMath.XCOORD + Int256Math.NUM_WORDS));
+			assertArrayEquals(toInt256(cs[1]), Arrays.copyOfRange(arr, pOff + CurvePointMath.YCOORD, pOff + CurvePointMath.YCOORD + Int256Math.NUM_WORDS));
+			assertArrayEquals(Int256Math.ONE, Arrays.copyOfRange(arr, pOff + CurvePointMath.ZCOORD, pOff + CurvePointMath.ZCOORD + Int256Math.NUM_WORDS));
+			System.arraycopy(arr, pOff, p, 0, CurvePointMath.POINT_WORDS);
 		}
 	}
 	
@@ -65,25 +65,25 @@ public final class CurvePointMathTest {
 			{"C152768B4ED3F7E3F0D680838C172402185556AB704FF0B0AA862ADDAD05824E", "CD5F61613C622615F1679D4AE82DE6CD886E51989FCBCBC769913F24C3D5252A", "D896C04205CAC67544C5176E8F257464EE19364A641442F0921A9E3C883237A5", "1BC74789D084C7C100C74466D9FF0DD5B195C57FB0A172ECDF9CAE26168A7D1E", "AD6C4498E4E18A48A905910601472E975EC00CBC89DD8714F27BD730533653CE", "1009AD5ABD73BCD7CC5C814CA9D2AEE18E90FD4127C8EC30C7217F6E794A7932"},
 		};
 		for (String[] cs : cases) {
-			int pOff = rand.nextInt(5) * 8;
-			int qOff = pOff + 24 + rand.nextInt(5) * 8;
-			int tempOff = qOff + 24 + rand.nextInt(5) * 8;
+			int pOff = rand.nextInt(5) * Int256Math.NUM_WORDS;
+			int qOff = pOff + CurvePointMath.POINT_WORDS + rand.nextInt(5) * Int256Math.NUM_WORDS;
+			int tempOff = qOff + CurvePointMath.POINT_WORDS + rand.nextInt(5) * Int256Math.NUM_WORDS;
 			int[] arr = new int[tempOff + 144];
 			for (int i = 0; i < arr.length; i++)
 				arr[i] = rand.nextInt();
 			
-			Int256Math.hexToUint(cs[0], arr, pOff + 0);
-			Int256Math.hexToUint(cs[1], arr, pOff + 8);
-			System.arraycopy(Int256Math.ONE, 0, arr, pOff + 16, 8);
-			Int256Math.hexToUint(cs[2], arr, qOff + 0);
-			Int256Math.hexToUint(cs[3], arr, qOff + 8);
-			System.arraycopy(Int256Math.ONE, 0, arr, qOff + 16, 8);
+			Int256Math.hexToUint(cs[0], arr, pOff + CurvePointMath.XCOORD);
+			Int256Math.hexToUint(cs[1], arr, pOff + CurvePointMath.YCOORD);
+			System.arraycopy(Int256Math.ONE, 0, arr, pOff + CurvePointMath.ZCOORD, Int256Math.NUM_WORDS);
+			Int256Math.hexToUint(cs[2], arr, qOff + CurvePointMath.XCOORD);
+			Int256Math.hexToUint(cs[3], arr, qOff + CurvePointMath.YCOORD);
+			System.arraycopy(Int256Math.ONE, 0, arr, qOff + CurvePointMath.ZCOORD, Int256Math.NUM_WORDS);
 			
 			CurvePointMath.add(arr, pOff, qOff, tempOff);
 			CurvePointMath.normalize(arr, pOff, tempOff);
-			assertArrayEquals(toInt256(cs[4]), Arrays.copyOfRange(arr, pOff + 0, pOff + 8));
-			assertArrayEquals(toInt256(cs[5]), Arrays.copyOfRange(arr, pOff + 8, pOff + 16));
-			assertArrayEquals(Int256Math.ONE, Arrays.copyOfRange(arr, pOff + 16, pOff + 24));
+			assertArrayEquals(toInt256(cs[4]), Arrays.copyOfRange(arr, pOff + CurvePointMath.XCOORD, pOff + CurvePointMath.XCOORD + Int256Math.NUM_WORDS));
+			assertArrayEquals(toInt256(cs[5]), Arrays.copyOfRange(arr, pOff + CurvePointMath.YCOORD, pOff + CurvePointMath.YCOORD + Int256Math.NUM_WORDS));
+			assertArrayEquals(Int256Math.ONE, Arrays.copyOfRange(arr, pOff + CurvePointMath.ZCOORD, pOff + CurvePointMath.ZCOORD + Int256Math.NUM_WORDS));
 		}
 	}
 	
@@ -177,24 +177,24 @@ public final class CurvePointMathTest {
 		};
 		for (String[] cs : cases) {
 			
-			int pOff = rand.nextInt(5) * 8;
-			int nOff = pOff + 24 + rand.nextInt(5) * 8;
-			int tempOff = nOff + 8 + rand.nextInt(5) * 8;
+			int pOff = rand.nextInt(5) * Int256Math.NUM_WORDS;
+			int nOff = pOff + CurvePointMath.POINT_WORDS + rand.nextInt(5) * Int256Math.NUM_WORDS;
+			int tempOff = nOff + Int256Math.NUM_WORDS + rand.nextInt(5) * Int256Math.NUM_WORDS;
 			int[] arr = new int[tempOff + 552];
 			for (int i = 0; i < arr.length; i++)
 				arr[i] = rand.nextInt();
 			
-			System.arraycopy(CurvePointMath.getBasePoint(), 0, arr, pOff, 24);
+			System.arraycopy(CurvePointMath.BASE_POINT, 0, arr, pOff, CurvePointMath.POINT_WORDS);
 			Int256Math.hexToUint(cs[0], arr, nOff);
 			
 			CurvePointMath.multiply(arr, pOff, nOff, tempOff);
 			CurvePointMath.normalize(arr, pOff, tempOff);
 			if (cs[1] == null && cs[2] == null)
-				assertArrayEquals(CurvePointMath.ZERO_POINT, Arrays.copyOfRange(arr, pOff + 0, pOff + 24));
+				assertArrayEquals(CurvePointMath.ZERO_POINT, Arrays.copyOfRange(arr, pOff, pOff + CurvePointMath.POINT_WORDS));
 			else {
-				assertArrayEquals(toInt256(cs[1]), Arrays.copyOfRange(arr, pOff + 0, pOff + 8));
-				assertArrayEquals(toInt256(cs[2]), Arrays.copyOfRange(arr, pOff + 8, pOff + 16));
-				assertArrayEquals(Int256Math.ONE, Arrays.copyOfRange(arr, pOff + 16, pOff + 24));
+				assertArrayEquals(toInt256(cs[1]), Arrays.copyOfRange(arr, pOff + CurvePointMath.XCOORD, pOff + CurvePointMath.XCOORD + Int256Math.NUM_WORDS));
+				assertArrayEquals(toInt256(cs[2]), Arrays.copyOfRange(arr, pOff + CurvePointMath.YCOORD, pOff + CurvePointMath.YCOORD + Int256Math.NUM_WORDS));
+				assertArrayEquals(Int256Math.ONE, Arrays.copyOfRange(arr, pOff + CurvePointMath.ZCOORD, pOff + CurvePointMath.ZCOORD + Int256Math.NUM_WORDS));
 			}
 		}
 	}
@@ -203,7 +203,7 @@ public final class CurvePointMathTest {
 	/*---- Helper definitions ----*/
 	
 	private static int[] toInt256(String s) {
-		int[] result = new int[8];
+		int[] result = new int[Int256Math.NUM_WORDS];
 		Int256Math.hexToUint(s, result, 0);
 		return result;
 	}
