@@ -45,7 +45,7 @@ public final class CurvePointMathTest {
 			CurvePointMath.normalize(arr, pOff, tempOff);
 			assertArrayEquals(toInt256(cs[0]), Arrays.copyOfRange(arr, pOff + 0, pOff + 8));
 			assertArrayEquals(toInt256(cs[1]), Arrays.copyOfRange(arr, pOff + 8, pOff + 16));
-			assertArrayEquals(INT256_ONE, Arrays.copyOfRange(arr, pOff + 16, pOff + 24));
+			assertArrayEquals(Int256Math.ONE, Arrays.copyOfRange(arr, pOff + 16, pOff + 24));
 			System.arraycopy(arr, pOff, p, 0, 24);
 		}
 	}
@@ -74,16 +74,16 @@ public final class CurvePointMathTest {
 			
 			Int256Math.hexToUint(cs[0], arr, pOff + 0);
 			Int256Math.hexToUint(cs[1], arr, pOff + 8);
-			System.arraycopy(INT256_ONE, 0, arr, pOff + 16, 8);
+			System.arraycopy(Int256Math.ONE, 0, arr, pOff + 16, 8);
 			Int256Math.hexToUint(cs[2], arr, qOff + 0);
 			Int256Math.hexToUint(cs[3], arr, qOff + 8);
-			System.arraycopy(INT256_ONE, 0, arr, qOff + 16, 8);
+			System.arraycopy(Int256Math.ONE, 0, arr, qOff + 16, 8);
 			
 			CurvePointMath.add(arr, pOff, qOff, tempOff);
 			CurvePointMath.normalize(arr, pOff, tempOff);
 			assertArrayEquals(toInt256(cs[4]), Arrays.copyOfRange(arr, pOff + 0, pOff + 8));
 			assertArrayEquals(toInt256(cs[5]), Arrays.copyOfRange(arr, pOff + 8, pOff + 16));
-			assertArrayEquals(INT256_ONE, Arrays.copyOfRange(arr, pOff + 16, pOff + 24));
+			assertArrayEquals(Int256Math.ONE, Arrays.copyOfRange(arr, pOff + 16, pOff + 24));
 		}
 	}
 	
@@ -190,11 +190,11 @@ public final class CurvePointMathTest {
 			CurvePointMath.multiply(arr, pOff, nOff, tempOff);
 			CurvePointMath.normalize(arr, pOff, tempOff);
 			if (cs[1] == null && cs[2] == null)
-				assertArrayEquals(POINT_ZERO, Arrays.copyOfRange(arr, pOff + 0, pOff + 24));
+				assertArrayEquals(CurvePointMath.ZERO_POINT, Arrays.copyOfRange(arr, pOff + 0, pOff + 24));
 			else {
 				assertArrayEquals(toInt256(cs[1]), Arrays.copyOfRange(arr, pOff + 0, pOff + 8));
 				assertArrayEquals(toInt256(cs[2]), Arrays.copyOfRange(arr, pOff + 8, pOff + 16));
-				assertArrayEquals(INT256_ONE, Arrays.copyOfRange(arr, pOff + 16, pOff + 24));
+				assertArrayEquals(Int256Math.ONE, Arrays.copyOfRange(arr, pOff + 16, pOff + 24));
 			}
 		}
 	}
@@ -207,10 +207,6 @@ public final class CurvePointMathTest {
 		Int256Math.hexToUint(s, result, 0);
 		return result;
 	}
-	
-	
-	private static final int[] INT256_ONE = {1, 0, 0, 0, 0, 0, 0, 0};
-	private static final int[] POINT_ZERO = {0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 	
 	
 	private static Random rand = new Random();
