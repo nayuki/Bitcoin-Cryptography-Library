@@ -614,8 +614,7 @@ public final class EcdsaTest {
 	
 	private static int[] toUint256(String hex) {
 		int[] result = new int[8];
-		for (int i = 0; i < result.length; i++)
-			result[i] = (int)Long.parseLong(hex.substring((7 - i) * 8, (8 - i) * 8), 16);
+		Int256Math.hexToUint(hex, result, 0);
 		return result;
 	}
 	

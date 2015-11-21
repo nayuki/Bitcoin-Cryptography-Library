@@ -473,8 +473,8 @@ public final class Int256MathTest {
 					break;
 				}
 			}
-			if (xStr != null) readInt256(xStr, xOff);
-			if (yStr != null) readInt256(yStr, yOff);
+			if (xStr != null) Int256Math.hexToUint(xStr, val, xOff);
+			if (yStr != null) Int256Math.hexToUint(yStr, val, yOff);
 			originalVal = val.clone();
 		}
 		
@@ -482,12 +482,6 @@ public final class Int256MathTest {
 		public void checkClobber() {
 			for (int i = 0; i < val.length; i++)
 				assertTrue(originalVal[i] == val[i] || i >= tempOff && i < tempOff + tempLen || i >= zOff && i < zOff + 8);
-		}
-		
-		
-		private void readInt256(String s, int valOff) {
-			for (int i = 0; i < 8; i++)
-				val[valOff + i] = (int)Long.parseLong(s.substring((7 - i) * 8, (8 - i) * 8), 16);
 		}
 		
 	}

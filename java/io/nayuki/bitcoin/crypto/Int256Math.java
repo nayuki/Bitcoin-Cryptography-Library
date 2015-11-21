@@ -20,6 +20,17 @@ public final class Int256Math {
 	
 	/*---- Uint256 conversion functions ----*/
 	
+	public static void hexToUint(String hex, int[] val, int off) {
+		if (hex == null)
+			throw new NullPointerException();
+		if (!hex.matches("[0-9a-fA-F]{64}"))
+			throw new IllegalArgumentException();
+		checkUint(val, off);
+		for (int i = 0; i < NUM_WORDS; i++)
+			val[off + i] = (int)Long.parseLong(hex.substring((7 - i) * 8, (8 - i) * 8), 16);
+	}
+	
+	
 	public static byte[] uintToBytes(int[] val, int off) {
 		checkUint(val, off);
 		byte[] result = new byte[NUM_WORDS * 4];

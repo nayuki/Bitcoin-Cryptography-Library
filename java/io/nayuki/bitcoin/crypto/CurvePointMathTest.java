@@ -72,11 +72,11 @@ public final class CurvePointMathTest {
 			for (int i = 0; i < arr.length; i++)
 				arr[i] = rand.nextInt();
 			
-			toInt256(cs[0], arr, pOff + 0);
-			toInt256(cs[1], arr, pOff + 8);
+			Int256Math.hexToUint(cs[0], arr, pOff + 0);
+			Int256Math.hexToUint(cs[1], arr, pOff + 8);
 			System.arraycopy(INT256_ONE, 0, arr, pOff + 16, 8);
-			toInt256(cs[2], arr, qOff + 0);
-			toInt256(cs[3], arr, qOff + 8);
+			Int256Math.hexToUint(cs[2], arr, qOff + 0);
+			Int256Math.hexToUint(cs[3], arr, qOff + 8);
 			System.arraycopy(INT256_ONE, 0, arr, qOff + 16, 8);
 			
 			CurvePointMath.add(arr, pOff, qOff, tempOff);
@@ -185,7 +185,7 @@ public final class CurvePointMathTest {
 				arr[i] = rand.nextInt();
 			
 			System.arraycopy(CurvePointMath.getBasePoint(), 0, arr, pOff, 24);
-			toInt256(cs[0], arr, nOff);
+			Int256Math.hexToUint(cs[0], arr, nOff);
 			
 			CurvePointMath.multiply(arr, pOff, nOff, tempOff);
 			CurvePointMath.normalize(arr, pOff, tempOff);
@@ -204,14 +204,8 @@ public final class CurvePointMathTest {
 	
 	private static int[] toInt256(String s) {
 		int[] result = new int[8];
-		toInt256(s, result, 0);
+		Int256Math.hexToUint(s, result, 0);
 		return result;
-	}
-	
-	
-	private static void toInt256(String s, int[] arr, int off) {
-		for (int i = 0; i < 8; i++)
-			arr[off + i] = (int)Long.parseLong(s.substring((7 - i) * 8, (8 - i) * 8), 16);
 	}
 	
 	
