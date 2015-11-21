@@ -36,7 +36,7 @@ public:
 	
 private:
 	
-	// Computes x = (x * y) % order.
+	// Computes x = (x * y) % CurvePoint::ORDER. Requires x < CurvePoint::ORDER.
 	static void multiplyModOrder(Uint256 &x, const Uint256 &y);
 	
 	

@@ -290,14 +290,17 @@ public final class CurvePointMath {
 	/*---- Class constants ----*/
 	
 	// Sizes and offsets
-	private static final int POINT_WORDS = 3 * NUM_WORDS;
-	private static final int XCOORD = 0 * NUM_WORDS;
-	private static final int YCOORD = 1 * NUM_WORDS;
-	private static final int ZCOORD = 2 * NUM_WORDS;
+	static final int POINT_WORDS = 3 * NUM_WORDS;
+	static final int XCOORD = 0 * NUM_WORDS;
+	static final int YCOORD = 1 * NUM_WORDS;
+	static final int ZCOORD = 2 * NUM_WORDS;
+	
+	// Curve parameters
+	static final int[] ORDER = {0xD0364141, 0xBFD25E8C, 0xAF48A03B, 0xBAAEDCE6, 0xFFFFFFFE, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF};
 	
 	// Elliptic curve points
 	private static final int[] ZERO_POINT = {0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};  // (0, 1, 0)
-	private static final int[] BASE_POINT = {
+	static final int[] BASE_POINT = {
 		0x16F81798, 0x59F2815B, 0x2DCE28D9, 0x029BFCDB, 0xCE870B07, 0x55A06295, 0xF9DCBBAC, 0x79BE667E,
 		0xFB10D4B8, 0x9C47D08F, 0xA6855419, 0xFD17B448, 0x0E1108A8, 0x5DA4FBFC, 0x26A3C465, 0x483ADA77,
 		0x00000001, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000};

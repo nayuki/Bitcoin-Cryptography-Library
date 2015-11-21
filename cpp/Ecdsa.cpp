@@ -67,22 +67,32 @@ bool Ecdsa::sign(const Uint256 &privateKey, const Sha256Hash &msgHash, const Uin
 
 bool Ecdsa::signWithHmacNonce(const Uint256 &privateKey, const Sha256Hash &msgHash, Uint256 &outR, Uint256 &outS) {
 	uint8_t privkeyBytes[32] = {};
-	uint8_t msgHashBytes[SHA256_HASH_LEN] = {};
+	uint8_t msghashBytes[SHA256_HASH_LEN] = {};
 	privateKey.getBigEndianBytes(privkeyBytes);
-	memcpy(msgHashBytes, msgHash.data(), SHA256_HASH_LEN);
+	memcpy(msghashBytes, msgHash.data(), SHA256_HASH_LEN);
 	
-	Sha256Hash hmac(Sha256::getHmac(privkeyBytes, sizeof(privkeyBytes), msgHashBytes, sizeof(msgHashBytes)));
+	Sha256Hash hmac(Sha256::getHmac(privkeyBytes, sizeof(privkeyBytes), msghashBytes, sizeof(msghashBytes)));
 	Uint256 nonce(hmac.data());
 	return sign(privateKey, msgHash, nonce, outR, outS);
 }
 
 
 void Ecdsa::multiplyModOrder(Uint256 &x, const Uint256 &y) {
-	// Russian peasant multiplication with modular reduction at each step
+	/* 
+	 * Russian peasant multiplication with modular reduction at each step. Pseudocode:
+	 *   copy = x;
+	 *   x = 0;
+	 *   for (i = 255 .. 0) {
+	 *     x = (x * 2) % order;
+	 *     if (y.bit[i] == 1)
+	 *       x = (x + copy) % order;
+	 *   }
+	 */
 	const Uint256 &mod = CurvePoint::ORDER;
 	assert(&x != &y && x < mod);
 	const Uint256 copy(x);
 	x = Uint256::ZERO;
+	
 	for (int i = 255; i >= 0; i--) {
 		// Multiply by 2
 		uint32_t c = x.shiftLeft1();

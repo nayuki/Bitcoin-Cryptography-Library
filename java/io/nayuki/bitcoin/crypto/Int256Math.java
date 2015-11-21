@@ -8,6 +8,8 @@
 
 package io.nayuki.bitcoin.crypto;
 
+import java.util.Arrays;
+
 
 /**
  * Performs arithmetic on unsigned 256-bit integers, which are represented as 8 consecutive ints.
@@ -15,6 +17,31 @@ package io.nayuki.bitcoin.crypto;
  * whereas all field operations require each input number to be less than the prime modulus.
  */
 public final class Int256Math {
+	
+	/*---- Uint256 conversion functions ----*/
+	
+	public static byte[] uintToBytes(int[] val, int off) {
+		checkUint(val, off);
+		byte[] result = new byte[NUM_WORDS * 4];
+		for (int i = 0; i < result.length; i++)
+			result[result.length - 1 - i] = (byte)(val[off + (i >>> 2)] >>> ((i & 3) << 3));
+		return result;
+	}
+	
+	
+	public static void bytesToUint(byte[] b, int[] val, int off) {
+		if (b == null)
+			throw new NullPointerException();
+		if (b.length != NUM_WORDS * 4)
+			throw new IllegalArgumentException();
+		checkUint(val, off);
+		
+		Arrays.fill(val, off, off + NUM_WORDS, 0);
+		for (int i = 0; i < b.length; i++)
+			val[off + (i >>> 2)] |= (b[b.length - 1 - i] & 0xFF) << ((i & 3) << 3);
+	}
+	
+	
 	
 	/*---- Uint256 arithmetic functions ----*/
 	
