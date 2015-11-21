@@ -13,40 +13,43 @@
 
 # ---- Calculate operation counts ----
 
+# Function call overhead
+funcOvh = 1
+
 # Uint256 methods
-uiCopy        = 1 + 8*2
-uiReplace     = 1 + 8*4
-uiSwap        = 1 + 8*7
-uiEquals      = 1 + 3 + 8*2
-uiLessThan    = 1 + 2 + 8*6
-uiAdd         = 1 + 3 + 8*9
-uiSubtract    = 1 + 3 + 8*9
-uiShiftLeft1  = 1 + 2 + 8*4
-uiShiftRight1 = 1 + 6 + 8*8
-uiReciprocal  = 1 + 4*uiCopy + uiReplace + 512*(11 + 2*uiSwap + 2*uiShiftRight1 + 2*uiAdd + 2*uiSubtract)
+uiCopy        = funcOvh + 8*2
+uiReplace     = funcOvh + 8*4
+uiSwap        = funcOvh + 8*7
+uiEquals      = funcOvh + 3 + 8*2
+uiLessThan    = funcOvh + 2 + 8*6
+uiAdd         = funcOvh + 3 + 8*9
+uiSubtract    = funcOvh + 3 + 8*9
+uiShiftLeft1  = funcOvh + 2 + 8*4
+uiShiftRight1 = funcOvh + 6 + 8*8
+uiReciprocal  = funcOvh + 4*uiCopy + uiReplace + 512*(11 + 2*uiSwap + 2*uiShiftRight1 + 2*uiAdd + 2*uiSubtract)
 
 # FieldInt methods
-fiCopy       = 1 + uiCopy
-fiReplace    = 1 + uiReplace
-fiEquals     = 1 + uiEquals
-fiLessThan   = 1 + uiLessThan
-fiAdd        = 1 + 3 + fiLessThan + uiAdd + uiSubtract
-fiSubtract   = 1 + 1 + uiSubtract + uiAdd
-fiNegate     = 1 + 4 + 8*9 + fiEquals
-fiMultiply2  = 1 + 3 + uiShiftLeft1 + uiSubtract
-fiMultiply   = 1 + 754 + (1 + 24*28) + (1 + 16*26) + (1 + 9*8) + 10 + 3 + uiLessThan + uiSubtract
-fiSquare     = 1 + fiMultiply
-fiReciprocal = 1 + uiReciprocal
+fiCopy       = funcOvh + uiCopy
+fiReplace    = funcOvh + uiReplace
+fiEquals     = funcOvh + uiEquals
+fiLessThan   = funcOvh + uiLessThan
+fiAdd        = funcOvh + 3 + fiLessThan + uiAdd + uiSubtract
+fiSubtract   = funcOvh + 1 + uiSubtract + uiAdd
+fiNegate     = funcOvh + 4 + 8*9 + fiEquals
+fiMultiply2  = funcOvh + 3 + uiShiftLeft1 + uiSubtract
+fiMultiply   = funcOvh + 754 + (1 + 24*28) + (1 + 16*26) + (1 + 9*8) + 10 + 3 + uiLessThan + uiSubtract
+fiSquare     = funcOvh + fiMultiply
+fiReciprocal = funcOvh + uiReciprocal
 
 # CurvePoint methods
-cpCopy      = 1 + 3*fiCopy
-cpReplace   = 1 + 3*fiReplace
-cpIsZero    = 1 + 2 + 3*fiEquals
-cpEquals    = 1 + 1 + 3*fiEquals
-cpTwice     = 1 + 1 + 10*fiCopy + fiEquals + fiAdd + 3*fiSubtract + 4*fiSquare + 5*fiMultiply2 + 7*fiMultiply + cpIsZero + cpReplace
-cpAdd       = 1 + 10 + 10*fiCopy + 3*fiReplace + 2*fiEquals + fiAdd + 5*fiSubtract + 2*fiSquare + 13*fiMultiply + cpCopy + 3*cpReplace + 2*cpIsZero + cpTwice
-cpMultiply  = 1 + 18*cpCopy + cpTwice + 13*(cpCopy + cpAdd) + 64*(36 + cpCopy + 16*cpReplace + 4*cpTwice + cpAdd) - 4*cpTwice
-cpNormalize = 1 + 1 + fiCopy + 2*fiReplace + 3*fiEquals + 2*fiMultiply + fiReciprocal + cpCopy + cpReplace
+cpCopy      = funcOvh + 3*fiCopy
+cpReplace   = funcOvh + 3*fiReplace
+cpIsZero    = funcOvh + 2 + 3*fiEquals
+cpEquals    = funcOvh + 1 + 3*fiEquals
+cpTwice     = funcOvh + 1 + 10*fiCopy + fiEquals + fiAdd + 3*fiSubtract + 4*fiSquare + 5*fiMultiply2 + 7*fiMultiply + cpIsZero + cpReplace
+cpAdd       = funcOvh + 10 + 10*fiCopy + 3*fiReplace + 2*fiEquals + fiAdd + 5*fiSubtract + 2*fiSquare + 13*fiMultiply + cpCopy + 3*cpReplace + 2*cpIsZero + cpTwice
+cpMultiply  = funcOvh + 18*cpCopy + cpTwice + 13*(cpCopy + cpAdd) + 64*(36 + cpCopy + 16*cpReplace + 4*cpTwice + cpAdd) - 4*cpTwice
+cpNormalize = funcOvh + 1 + fiCopy + 2*fiReplace + 3*fiEquals + 2*fiMultiply + fiReciprocal + cpCopy + cpReplace
 
 
 # ---- Print numbers ----
