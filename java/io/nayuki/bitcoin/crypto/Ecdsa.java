@@ -103,31 +103,31 @@ public final class Ecdsa {
 	private static void multiplyModOrder(int[] x, int xOff, int[] y, int yOff, int tempOff) {
 		/* 
 		 * Russian peasant multiplication with modular reduction at each step. Pseudocode:
-		 *   copy = x;
-		 *   x = 0;
+		 *   z = 0;
 		 *   for (i = 255 .. 0) {
-		 *     x = (x * 2) % order;
+		 *     z = (z * 2) % order;
 		 *     if (y.bit[i] == 1)
-		 *       x = (x + copy) % order;
+		 *       z = (z + x) % order;
 		 *   }
+		 *   x = z;
 		 */
-		int modOff  = tempOff + 0 * NUM_WORDS;
-		int copyOff = tempOff + 1 * NUM_WORDS;
-		System.arraycopy(CurvePointMath.ORDER, 0, x, tempOff, NUM_WORDS);
-		System.arraycopy(x, xOff, x, copyOff, NUM_WORDS);
+		int modOff = tempOff + 0 * NUM_WORDS;
+		int zOff   = tempOff + 1 * NUM_WORDS;
+		System.arraycopy(CurvePointMath.ORDER, 0, x, modOff, NUM_WORDS);
+		System.arraycopy(Int256Math.ZERO, 0, x, zOff, NUM_WORDS);
 		assert Int256Math.lessThan(x, xOff, modOff) == 1;
-		Arrays.fill(x, xOff, xOff + NUM_WORDS, 0);
 		
 		for (int i = 255; i >= 0; i--) {
 			// Multiply by 2
-			int c = Int256Math.uintShiftLeft1(x, xOff, xOff);
-			Int256Math.uintSubtract(x, xOff, modOff, c | (Int256Math.lessThan(x, xOff, modOff) ^ 1), xOff);
-			// Conditionally add 'copy'
+			int c = Int256Math.uintShiftLeft1(x, zOff, zOff);
+			Int256Math.uintSubtract(x, zOff, modOff, c | (Int256Math.lessThan(x, zOff, modOff) ^ 1), zOff);
+			// Conditionally add x
 			int enable = (y[yOff + (i >>> 5)] >>> (i & 31)) & 1;
-			c = Int256Math.uintAdd(x, xOff, copyOff, enable, xOff);
-			Int256Math.uintSubtract(x, xOff, modOff, c | (Int256Math.lessThan(x, xOff, modOff) ^ 1), xOff);
-			assert Int256Math.lessThan(x, xOff, modOff) == 1;
+			c = Int256Math.uintAdd(x, zOff, xOff, enable, zOff);
+			Int256Math.uintSubtract(x, zOff, modOff, c | (Int256Math.lessThan(x, zOff, modOff) ^ 1), zOff);
+			assert Int256Math.lessThan(x, zOff, modOff) == 1;
 		}
+		System.arraycopy(x, zOff, x, xOff, NUM_WORDS);
 	}
 	
 	

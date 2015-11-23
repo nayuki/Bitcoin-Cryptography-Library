@@ -80,29 +80,29 @@ bool Ecdsa::signWithHmacNonce(const Uint256 &privateKey, const Sha256Hash &msgHa
 void Ecdsa::multiplyModOrder(Uint256 &x, const Uint256 &y) {
 	/* 
 	 * Russian peasant multiplication with modular reduction at each step. Pseudocode:
-	 *   copy = x;
-	 *   x = 0;
+	 *   z = 0;
 	 *   for (i = 255 .. 0) {
-	 *     x = (x * 2) % order;
+	 *     z = (z * 2) % order;
 	 *     if (y.bit[i] == 1)
-	 *       x = (x + copy) % order;
+	 *       z = (z + x) % order;
 	 *   }
+	 *   x = z;
 	 */
 	const Uint256 &mod = CurvePoint::ORDER;
 	assert(&x != &y && x < mod);
-	const Uint256 copy(x);
-	x = Uint256::ZERO;
+	Uint256 z(Uint256::ZERO);
 	
 	for (int i = 255; i >= 0; i--) {
 		// Multiply by 2
-		uint32_t c = x.shiftLeft1();
-		x.subtract(mod, c | static_cast<uint32_t>(x >= mod));
-		// Conditionally add 'copy'
+		uint32_t c = z.shiftLeft1();
+		z.subtract(mod, c | static_cast<uint32_t>(z >= mod));
+		// Conditionally add x
 		uint32_t enable = (y.value[i >> 5] >> (i & 31)) & 1;
-		c = x.add(copy, enable);
-		x.subtract(mod, c | static_cast<uint32_t>(x >= mod));
-		assert(x < mod);
+		c = z.add(x, enable);
+		z.subtract(mod, c | static_cast<uint32_t>(z >= mod));
+		assert(z < mod);
 	}
+	x = z;
 }
 	
 	
