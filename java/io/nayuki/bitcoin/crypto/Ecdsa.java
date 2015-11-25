@@ -95,10 +95,80 @@ public final class Ecdsa {
 	}
 	
 	
+	// Checks whether the given signature, message, and public key are valid together. The public key point must be normalized.
+	// publicKey is a CurvePoint, r is a Uint256, and s is a Uint256.
+	public static boolean verify(int[] publicKey, Sha256Hash msgHash, int[] r, int[] s) {
+		if (publicKey == null || msgHash == null || r == null || s == null)
+			throw new NullPointerException();
+		if (publicKey.length != CurvePointMath.POINT_WORDS || r.length != NUM_WORDS || s.length != NUM_WORDS)
+			throw new IllegalArgumentException();
+		
+		/* 
+		 * Pseudocode:
+		 *   if (pubKey == zero || !(pubKey is normalized) ||
+		 *       !(pubKey on curve) || n * pubKey != zero)
+		 *     return false;
+		 *   if (!(0 < r, s < order))
+		 *     return false;
+		 *   w = s^-1 % order;
+		 *   u1 = (z * w) % order;
+		 *   u2 = (r * w) % order;
+		 *   p = u1 * G + u2 * pubKey;
+		 *   return r == p.x % order;
+		 */
+		
+		int[] val = new int[9 * NUM_WORDS + 552];
+		int tempOff  = 9 * NUM_WORDS;
+		int orderOff = 0 * NUM_WORDS;  // Uint256
+		System.arraycopy(CurvePointMath.ORDER, 0, val, orderOff, NUM_WORDS);
+		
+		int rOff = 1 * NUM_WORDS;  // Uint256
+		int sOff = 2 * NUM_WORDS;  // Uint256
+		System.arraycopy(r, 0, val, rOff, NUM_WORDS);
+		System.arraycopy(s, 0, val, sOff, NUM_WORDS);
+		if (    Int256Math.isZero(r, 0) == 1 || Int256Math.lessThan(val, rOff, orderOff) == 0 ||
+		        Int256Math.isZero(s, 0) == 1 || Int256Math.lessThan(val, sOff, orderOff) == 0)
+			return false;
+		
+		int qOff   = 3 * NUM_WORDS;  // CurvePoint
+		int oneOff = 6 * NUM_WORDS;  // Uint256
+		System.arraycopy(publicKey, 0, val, qOff, CurvePointMath.POINT_WORDS);
+		System.arraycopy(Int256Math.ONE, 0, val, oneOff, NUM_WORDS);
+		if (CurvePointMath.isZero(publicKey, 0) == 1 || Int256Math.equalTo(val, qOff + CurvePointMath.ZCOORD, oneOff) == 0
+				|| CurvePointMath.isOnCurve(val, qOff, tempOff) == 0)
+			return false;
+		CurvePointMath.multiply(val, qOff, orderOff, tempOff);
+		if (CurvePointMath.isZero(val, qOff) == 0)
+			return false;
+		
+		int wOff = 2 * NUM_WORDS;  // Uint256, reuses space
+		Int256Math.reciprocal(val, sOff, orderOff, wOff, tempOff);
+		
+		int u1Off = 3 * NUM_WORDS;  // Uint256, reuses space
+		int u2Off = 2 * NUM_WORDS;  // Uint256, reuses space
+		int zOff  = 4 * NUM_WORDS;  // Uint256, reuses space
+		Int256Math.bytesToUint(msgHash.toBytes(), val, zOff);
+		System.arraycopy(val, wOff, val, u1Off, NUM_WORDS);
+		multiplyModOrder(val, u1Off, val, zOff, tempOff);
+		multiplyModOrder(val, u2Off, r, 0, tempOff);
+		
+		int pOff = 6 * NUM_WORDS;  // CurvePoint, reuses space
+		System.arraycopy(CurvePointMath.BASE_POINT, 0, val, pOff, CurvePointMath.POINT_WORDS);
+		CurvePointMath.multiply(val, pOff, u1Off, tempOff);
+		System.arraycopy(publicKey, 0, val, qOff, CurvePointMath.POINT_WORDS);
+		CurvePointMath.multiply(val, qOff, u2Off, tempOff);
+		CurvePointMath.add(val, pOff, qOff, tempOff);
+		CurvePointMath.normalize(val, pOff, tempOff);
+		int reduce = Int256Math.lessThan(val, pOff + CurvePointMath.XCOORD, orderOff) ^ 1;
+		Int256Math.uintSubtract(val, pOff + CurvePointMath.XCOORD, orderOff, reduce, pOff + CurvePointMath.XCOORD);
+		return Int256Math.equalTo(val, rOff, pOff + CurvePointMath.XCOORD) == 1;
+	}
+	
+	
 	
 	/*---- Private functions ----*/
 	
-	// Computes x = (x * y) % CurvePointMath.ORDER. Requires x < CurvePointMath.ORDER.
+	// Computes x = (x * y) % CurvePointMath.ORDER. Requires x < CurvePointMath.ORDER, but y is unrestricted.
 	// tempOff indexes into the x array, and uses 16 words of temporary space.
 	private static void multiplyModOrder(int[] x, int xOff, int[] y, int yOff, int tempOff) {
 		/* 
