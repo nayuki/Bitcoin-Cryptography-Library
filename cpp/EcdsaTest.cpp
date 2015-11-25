@@ -17,7 +17,7 @@
 
 /*---- Structures ----*/
 
-struct TestCase {
+struct SignCase {
 	const bool matches;
 	const char *privateKey;
 	const char *msgHash;  // Byte-reversed
@@ -33,9 +33,9 @@ static int numTestCases = 0;
 
 /*---- Test cases ----*/
 
-static void testEcdsaSign() {
+static void testEcdsaSignAndVerify() {
 	// Define test cases
-	TestCase cases[] = {
+	SignCase cases[] = {
 		// Hand-crafted cases
 		{true, "0000000000000000000000000000000000000000000000000000000000000123", "8900000000000000000000000000000000000000000000000000000000000000", "0000000000000000000000000000000000000000000000000000000000000457", "28B7F3A019749CCE6FC677AFA8FAE72EC10E811ED4B04E1963143CEF87654B75", "04719F34FE9A47F2C9A22045485F3654DC3AC4A910A7B0B4C7A318F41DB65C9B"},
 		{true, "8B46893E711C8948B28E7637BFBED61666E0118ED4D361BED1F18058214C69B8", "FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF", "D9063703D9F719739FF645C77BA2F9D1DD2B4254DC7B001F8FC77C3B05AEF5B1", "B4508AF745210F6702C687682FD5E8C8D99CD1C6A7AD450AB4640458E14474BA", "421ED1256C6056D50A481D76B77CF5AA74A692556682E584A4872E8D8BBBCEAC"},
@@ -698,7 +698,7 @@ static void testEcdsaSign() {
 	
 	// Test runner
 	for (unsigned int i = 0; i < ARRAY_LENGTH(cases); i++) {
-		TestCase &tc = cases[i];
+		SignCase &tc = cases[i];
 		Uint256 privateKey(tc.privateKey);
 		Sha256Hash msgHash(tc.msgHash);
 		Uint256 expectedR(tc.expectedR);
@@ -714,13 +714,19 @@ static void testEcdsaSign() {
 		}
 		bool actualMatch = r == expectedR && s == expectedS;
 		assert(ok && actualMatch == tc.matches);
+		
+		if (Uint256::ZERO < privateKey && privateKey < CurvePoint::ORDER) {
+			CurvePoint publicKey(CurvePoint::privateExponentToPublicPoint(privateKey));
+			assert(Ecdsa::verify(publicKey, msgHash, r, s));
+		}
+		
 		numTestCases++;
 	}
 }
 
 
 int main(int argc, char **argv) {
-	testEcdsaSign();
+	testEcdsaSignAndVerify();
 	printf("All %d test cases passed\n", numTestCases);
 	return 0;
 }

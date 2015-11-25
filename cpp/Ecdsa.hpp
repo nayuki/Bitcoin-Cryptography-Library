@@ -8,6 +8,7 @@
 
 #pragma once
 
+#include "CurvePoint.hpp"
 #include "Sha256Hash.hpp"
 #include "Uint256.hpp"
 
@@ -34,9 +35,13 @@ public:
 	static bool signWithHmacNonce(const Uint256 &privateKey, const Sha256Hash &msgHash, Uint256 &outR, Uint256 &outS);
 	
 	
+	// Checks whether the given signature, message, and public key are valid together. The public key point must be normalized.
+	static bool verify(const CurvePoint &publicKey, const Sha256Hash &msgHash, const Uint256 &r, const Uint256 &s);
+	
+	
 private:
 	
-	// Computes x = (x * y) % CurvePoint::ORDER. Requires x < CurvePoint::ORDER.
+	// Computes x = (x * y) % CurvePoint::ORDER. Requires x < CurvePoint::ORDER, but y is unrestricted.
 	static void multiplyModOrder(Uint256 &x, const Uint256 &y);
 	
 	

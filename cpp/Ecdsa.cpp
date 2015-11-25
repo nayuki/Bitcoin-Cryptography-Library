@@ -77,6 +77,54 @@ bool Ecdsa::signWithHmacNonce(const Uint256 &privateKey, const Sha256Hash &msgHa
 }
 
 
+bool Ecdsa::verify(const CurvePoint &publicKey, const Sha256Hash &msgHash, const Uint256 &r, const Uint256 &s) {
+	/* 
+	 * Pseudocode:
+	 *   if (pubKey == zero || !(pubKey is normalized) ||
+	 *       !(pubKey on curve) || n * pubKey != zero)
+	 *     return false;
+	 *   if (!(0 < r, s < order))
+	 *     return false;
+	 *   w = s^-1 % order;
+	 *   u1 = (z * w) % order;
+	 *   u2 = (r * w) % order;
+	 *   p = u1 * G + u2 * pubKey;
+	 *   return r == p.x % order;
+	 */
+	
+	const Uint256 &order = CurvePoint::ORDER;
+	const Uint256 &zero = Uint256::ZERO;
+	CurvePoint q(publicKey);
+	q.multiply(CurvePoint::ORDER);
+	if (!(zero < r && r < order && zero < s && s < order))
+		return false;
+	if (publicKey.isZero() || publicKey.z != CurvePoint::FI_ONE || !publicKey.isOnCurve() || !q.isZero())
+		return false;
+	
+	Uint256 w(s);
+	w.reciprocal(order);
+	Uint256 z(msgHash.data());
+	Uint256 u1(w);
+	Uint256 u2(w);
+	multiplyModOrder(u1, z);
+	multiplyModOrder(u2, r);
+	
+	CurvePoint p(CurvePoint::G);
+	q = publicKey;
+	p.multiply(u1);
+	q.multiply(u2);
+	p.add(q);
+	p.normalize();
+	
+	Uint256 px;
+	for (int i = 0; i < 8; i++)  // Copy raw value from FieldInt to Uint256
+		px.value[i] = p.x.value[i];
+	if (px >= order)
+		px.subtract(order);
+	return r == px;
+}
+
+
 void Ecdsa::multiplyModOrder(Uint256 &x, const Uint256 &y) {
 	/* 
 	 * Russian peasant multiplication with modular reduction at each step. Pseudocode:
