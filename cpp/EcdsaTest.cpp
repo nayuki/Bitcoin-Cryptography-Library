@@ -21,15 +21,19 @@ struct TestCase {
 	const bool matches;
 	const char *privateKey;
 	const char *msgHash;  // Byte-reversed
-	const char *nonce;
+	const char *nonce;    // Can be null
 	const char *expectedR;
 	const char *expectedS;
 };
 
 
-/*---- Test suite ----*/
+// Global variables
+static int numTestCases = 0;
 
-int main(int argc, char **argv) {
+
+/*---- Test cases ----*/
+
+static void testEcdsaSign() {
 	// Define test cases
 	TestCase cases[] = {
 		// Hand-crafted cases
@@ -693,7 +697,6 @@ int main(int argc, char **argv) {
 	};
 	
 	// Test runner
-	int numTestCases = 0;
 	for (unsigned int i = 0; i < ARRAY_LENGTH(cases); i++) {
 		TestCase &tc = cases[i];
 		Uint256 privateKey(tc.privateKey);
@@ -713,6 +716,11 @@ int main(int argc, char **argv) {
 		assert(ok && actualMatch == tc.matches);
 		numTestCases++;
 	}
+}
+
+
+int main(int argc, char **argv) {
+	testEcdsaSign();
 	printf("All %d test cases passed\n", numTestCases);
 	return 0;
 }
