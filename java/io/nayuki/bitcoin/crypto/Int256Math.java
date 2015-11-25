@@ -32,6 +32,15 @@ public final class Int256Math {
 	}
 	
 	
+	// Converts the uint256 in the given array at the given offset to a 64-digit hexadecimal string in lowercase.
+	public static String uintToHex(int[] val, int off) {
+		StringBuilder sb = new StringBuilder();
+		for (int i = 7; i >= 0; i--)
+			sb.append(String.format("%08x", val[off + i]));
+		return sb.toString();
+	}
+	
+	
 	// Returns a 32-byte array representing the uint256 in the given array at the given offset encoded in big endian.
 	public static byte[] uintToBytes(int[] val, int off) {
 		checkUint(val, off);
