@@ -262,6 +262,30 @@ public final class CurvePointMath {
 	}
 	
 	
+	// Tests whether the given point is on the elliptic curve.
+	// The point needs to be normalized before the method is called.
+	// Zero is considered to be off the curve. Constant-time with respect to the point.
+	// Requires 56 words of temporary space.
+	public static int isOnCurve(int[] val, int pOff, int tempOff) {
+		checkPoint(val, pOff);
+		assert val.length - tempOff >= 7 * NUM_WORDS;
+		
+		int rightOff   = tempOff + 0 * NUM_WORDS;
+		int constOff   = tempOff + 1 * NUM_WORDS;
+		int newTempOff = tempOff + 2 * NUM_WORDS;
+		Int256Math.fieldSquare(val, pOff + XCOORD, rightOff, newTempOff);
+		System.arraycopy(A, 0, val, constOff, NUM_WORDS);
+		Int256Math.fieldAdd(val, rightOff, constOff, rightOff, newTempOff);
+		Int256Math.fieldMultiply(val, rightOff, pOff + XCOORD, rightOff, newTempOff);
+		System.arraycopy(B, 0, val, constOff, NUM_WORDS);
+		Int256Math.fieldAdd(val, rightOff, constOff, rightOff, newTempOff);
+		
+		int leftOff = tempOff + 1 * NUM_WORDS;  // Reuses space
+		Int256Math.fieldSquare(val, pOff + YCOORD, leftOff, newTempOff);
+		return Int256Math.equalTo(val, leftOff, rightOff) & (isZero(val, pOff) ^ 1);
+	}
+	
+	
 	// Tests whether the given point is equal to the special zero point.
 	// The point need not be normalized. Constant-time with respect to the point.
 	public static int isZero(int[] val, int pOff) {
@@ -296,6 +320,8 @@ public final class CurvePointMath {
 	static final int ZCOORD = 2 * NUM_WORDS;
 	
 	// Curve parameters
+	static final int[] A     = {0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000};
+	static final int[] B     = {0x00000007, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000};
 	static final int[] ORDER = {0xD0364141, 0xBFD25E8C, 0xAF48A03B, 0xBAAEDCE6, 0xFFFFFFFE, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF};
 	
 	// Elliptic curve points
