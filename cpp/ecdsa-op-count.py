@@ -26,7 +26,7 @@ uiAdd         = funcOvh + 3 + 8*9
 uiSubtract    = funcOvh + 3 + 8*9
 uiShiftLeft1  = funcOvh + 2 + 8*4
 uiShiftRight1 = funcOvh + 6 + 8*8
-uiReciprocal  = funcOvh + 4*uiCopy + uiReplace + 512*(11 + 2*uiSwap + 2*uiShiftRight1 + 2*uiAdd + 2*uiSubtract)
+uiReciprocal  = funcOvh + 4*uiCopy + uiReplace + 512*(11 + 2*uiSwap + 2*uiAdd + 2*uiSubtract + 2*uiShiftRight1)
 
 # FieldInt methods
 fiCopy       = funcOvh + uiCopy
@@ -34,9 +34,9 @@ fiReplace    = funcOvh + uiReplace
 fiEquals     = funcOvh + uiEquals
 fiLessThan   = funcOvh + uiLessThan
 fiAdd        = funcOvh + 3 + fiLessThan + uiAdd + uiSubtract
-fiSubtract   = funcOvh + 1 + uiSubtract + uiAdd
+fiSubtract   = funcOvh + 1 + uiAdd + uiSubtract
 fiNegate     = funcOvh + 4 + 8*9 + fiEquals
-fiMultiply2  = funcOvh + 3 + uiShiftLeft1 + uiSubtract
+fiMultiply2  = funcOvh + 3 + uiSubtract + uiShiftLeft1
 fiMultiply   = funcOvh + 754 + (1 + 24*28) + (1 + 16*26) + (1 + 9*8) + 10 + 3 + uiLessThan + uiSubtract
 fiSquare     = funcOvh + fiMultiply
 fiReciprocal = funcOvh + uiReciprocal
@@ -46,15 +46,15 @@ cpCopy      = funcOvh + 3*fiCopy
 cpReplace   = funcOvh + 3*fiReplace
 cpIsZero    = funcOvh + 2 + 3*fiEquals
 cpEquals    = funcOvh + 1 + 3*fiEquals
-cpTwice     = funcOvh + 1 + 10*fiCopy + fiEquals + fiAdd + 3*fiSubtract + 4*fiSquare + 5*fiMultiply2 + 7*fiMultiply + cpIsZero + cpReplace
-cpAdd       = funcOvh + 10 + 10*fiCopy + 3*fiReplace + 2*fiEquals + fiAdd + 5*fiSubtract + 2*fiSquare + 13*fiMultiply + cpCopy + 3*cpReplace + 2*cpIsZero + cpTwice
+cpTwice     = funcOvh + 1 + 10*fiCopy + fiEquals + fiAdd + 3*fiSubtract + 5*fiMultiply2 + 7*fiMultiply + 4*fiSquare + cpReplace + cpIsZero
+cpAdd       = funcOvh + 10 + 10*fiCopy + 3*fiReplace + 2*fiEquals + fiAdd + 5*fiSubtract + 13*fiMultiply + 2*fiSquare + cpCopy + 3*cpReplace + 2*cpIsZero + cpTwice
 cpMultiply  = funcOvh + 18*cpCopy + cpTwice + 13*(cpCopy + cpAdd) + 64*(36 + cpCopy + 16*cpReplace + 4*cpTwice + cpAdd) - 4*cpTwice
 cpNormalize = funcOvh + 1 + fiCopy + 2*fiReplace + 3*fiEquals + 2*fiMultiply + fiReciprocal + cpCopy + cpReplace
 cpIsOnCurve = funcOvh + 2 + 2*fiCopy + fiEquals + 2*fiAdd + fiMultiply + 2*fiSquare + cpIsZero
 
 # Ecdsa methods
-edMulModOrder = funcOvh + 1 + 2*uiCopy + 256*(8 + uiAdd + 2*uiSubtract + uiShiftLeft1 + 2*uiLessThan)
-edSign        = funcOvh + 4 + 7*uiCopy + uiReplace + uiAdd + 3*uiSubtract + 3*uiEquals + 4*uiLessThan + uiReciprocal + cpCopy + cpMultiply + cpNormalize + 2*edMulModOrder
+edMulModOrder = funcOvh + 1 + 2*uiCopy + 256*(8 + 2*uiLessThan + uiAdd + 2*uiSubtract + uiShiftLeft1)
+edSign        = funcOvh + 4 + 7*uiCopy + uiReplace + 3*uiEquals + 4*uiLessThan + uiAdd + 3*uiSubtract + uiReciprocal + cpCopy + cpMultiply + cpNormalize + 2*edMulModOrder
 edVerify      = funcOvh + 11 + 5*uiCopy + uiEquals + 5*uiLessThan + uiSubtract + uiReciprocal + fiEquals + 3*cpCopy + 2*cpIsZero + cpAdd + 3*cpMultiply + cpNormalize + cpIsOnCurve + 2*edMulModOrder
 
 
