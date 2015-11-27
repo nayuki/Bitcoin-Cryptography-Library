@@ -70,7 +70,7 @@ vargroups = [
 
 def inttostr_with_groups(x):
 	result = str(x)
-	for i in range(len(result) - 3, 1, -3):
+	for i in range(len(result) - 3, 0, -3):
 		result = result[ : i] + " " + result[i : ]
 	return result
 
