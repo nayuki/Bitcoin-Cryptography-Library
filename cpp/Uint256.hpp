@@ -74,14 +74,9 @@ public:
 	
 	
 	// Shifts this number right by 1 bit (same as dividing by 2 and flooring).
-	// Constant-time with respect to this value.
-	void shiftRight1();
-	
-	
-	// Shifts this number right by 1 bit (same as dividing by 2 and flooring).
 	// Enable must be 1 to perform the operation or 0 to do nothing.
 	// Constant-time with respect to this value and the enable.
-	void shiftRight1(uint32_t enable);
+	void shiftRight1(uint32_t enable=1);
 	
 	
 	// Computes the multiplicative inverse of this number with respect to the given modulus.

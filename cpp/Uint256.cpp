@@ -76,11 +76,6 @@ uint32_t Uint256::shiftLeft1() {
 }
 
 
-void Uint256::shiftRight1() {
-	shiftRight1(1);
-}
-
-
 void Uint256::shiftRight1(uint32_t enable) {
 	assert((enable >> 1) == 0);
 	uint32_t mask = -enable;
