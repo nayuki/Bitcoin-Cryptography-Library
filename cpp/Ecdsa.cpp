@@ -36,9 +36,7 @@ bool Ecdsa::sign(const Uint256 &privateKey, const Sha256Hash &msgHash, const Uin
 	p.multiply(nonce);
 	p.normalize();
 	
-	Uint256 r;
-	for (int i = 0; i < 8; i++)  // Copy raw value from FieldInt to Uint256
-		r.value[i] = p.x.value[i];
+	Uint256 r(p.x);
 	r.subtract(order, static_cast<uint32_t>(r >= order));
 	if (r == zero)
 		return false;
@@ -116,9 +114,7 @@ bool Ecdsa::verify(const CurvePoint &publicKey, const Sha256Hash &msgHash, const
 	p.add(q);
 	p.normalize();
 	
-	Uint256 px;
-	for (int i = 0; i < 8; i++)  // Copy raw value from FieldInt to Uint256
-		px.value[i] = p.x.value[i];
+	Uint256 px(p.x);
 	if (px >= order)
 		px.subtract(order);
 	return r == px;

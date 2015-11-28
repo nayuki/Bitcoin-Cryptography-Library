@@ -10,6 +10,8 @@
 
 #include <cstdint>
 
+class FieldInt;  // Forward declaration
+
 
 /* 
  * An unsigned 256-bit integer, represented as eight unsigned 32-bit words in little endian.
@@ -51,6 +53,10 @@ public:
 	// Constructs a Uint256 from the given 32 bytes encoded in big-endian.
 	// Constant-time with respect to the input array values. All possible values are valid.
 	explicit Uint256(const uint8_t b[NUM_WORDS * 4]);
+	
+	
+	// Constructs a Uint256 from the given FieldInt. Constant-time with respect to the given value.
+	explicit Uint256(const FieldInt &val);
 	
 	
 	
@@ -131,3 +137,6 @@ public:
 	static const Uint256 ONE;
 	
 };
+
+
+#include "FieldInt.hpp"
