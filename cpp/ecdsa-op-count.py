@@ -35,7 +35,6 @@ fiEquals     = funcOvh + uiEquals
 fiLessThan   = funcOvh + uiLessThan
 fiAdd        = funcOvh + 3 + fiLessThan + uiAdd + uiSubtract
 fiSubtract   = funcOvh + 1 + uiAdd + uiSubtract
-fiNegate     = funcOvh + 4 + 8*9 + fiEquals
 fiMultiply2  = funcOvh + 3 + uiSubtract + uiShiftLeft1
 fiMultiply   = funcOvh + 754 + (1 + 24*28) + (1 + 16*26) + (1 + 9*8) + 10 + 3 + uiLessThan + uiSubtract
 fiSquare     = funcOvh + fiMultiply
@@ -63,7 +62,7 @@ edVerify      = funcOvh + 11 + 5*uiCopy + uiEquals + 5*uiLessThan + uiSubtract +
 
 vargroups = [
 	["uiCopy", "uiReplace", "uiSwap", "uiEquals", "uiLessThan", "uiAdd", "uiSubtract", "uiShiftLeft1", "uiShiftRight1", "uiReciprocal"],
-	["fiCopy", "fiReplace", "fiEquals", "fiLessThan", "fiAdd", "fiSubtract", "fiNegate", "fiMultiply2", "fiMultiply", "fiSquare", "fiReciprocal"],
+	["fiCopy", "fiReplace", "fiEquals", "fiLessThan", "fiAdd", "fiSubtract", "fiMultiply2", "fiMultiply", "fiSquare", "fiReciprocal"],
 	["cpCopy", "cpReplace", "cpIsZero", "cpEquals", "cpTwice", "cpAdd", "cpMultiply", "cpNormalize", "cpIsOnCurve"],
 	["edMulModOrder", "edSign", "edVerify"],
 ]
