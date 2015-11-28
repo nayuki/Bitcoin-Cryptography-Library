@@ -52,19 +52,37 @@ asm_Uint256_subtract:
 /* uint32_t asm_Uint256_shiftLeft1(uint32_t dest[8]) */
 .globl asm_Uint256_shiftLeft1
 asm_Uint256_shiftLeft1:
-	movq     0(%rdi), %rcx
-	movq     8(%rdi), %rdx
+	shlq    $1,  0(%rdi)
+	rclq    $1,  8(%rdi)
+	rclq    $1, 16(%rdi)
+	rclq    $1, 24(%rdi)
+	setc    %al
+	movzbl  %al, %eax
+	retq
+
+
+/* void asm_Uint256_shiftRight1(uint32_t dest[8], uint32_t enable); */
+.globl asm_Uint256_shiftRight1
+asm_Uint256_shiftRight1:
+	movq     0(%rdi), %rax
+	movq     8(%rdi), %rcx
 	movq    16(%rdi), %r8
 	movq    24(%rdi), %r9
-	testq   %r9, %r9
-	sets    %al
-	movzbl  %al, %eax
-	shldq   $1, %r8 , %r9
-	shldq   $1, %rdx, %r8
-	shldq   $1, %rcx, %rdx
-	shlq    $1, %rcx
-	movq    %rcx,  0(%rdi)
-	movq    %rdx,  8(%rdi)
+	shrq    $1, %r9
+	rcrq    $1, %r8
+	rcrq    $1, %rcx
+	rcrq    $1, %rax
+	testl   %esi, %esi
+	movq    0(%rdi), %rdx
+	cmovzq  %rdx, %rax
+	movq    8(%rdi), %rdx
+	cmovzq  %rdx, %rcx
+	movq    16(%rdi), %rdx
+	cmovzq  %rdx, %r8
+	movq    24(%rdi), %rdx
+	cmovzq  %rdx, %r9
+	movq    %rax,  0(%rdi)
+	movq    %rcx,  8(%rdi)
 	movq    %r8 , 16(%rdi)
 	movq    %r9 , 24(%rdi)
 	retq
@@ -90,6 +108,51 @@ asm_Uint256_replace:
 	cmovzq  %r9 , %r8
 	movq    %rax, 16(%rdi)
 	movq    %r8 , 24(%rdi)
+	retq
+
+
+/* void asm_Uint256_swap(uint32_t left[8], uint32_t right[8], uint32_t enable) */
+.globl asm_Uint256_swap
+asm_Uint256_swap:
+	pushq  %rbx
+	negq   %rdx
+	movq   0(%rdi), %rax
+	movq   8(%rdi), %rcx
+	movq   0(%rsi), %r8
+	movq   8(%rsi), %r9
+	movq   %rax, %rbx
+	xorq   %r8, %rbx
+	andq   %rdx, %rbx
+	xorq   %rbx, %rax
+	xorq   %rbx, %r8
+	movq   %rax, 0(%rdi)
+	movq   %r8, 0(%rsi)
+	movq   %rcx, %rbx
+	xorq   %r9, %rbx
+	andq   %rdx, %rbx
+	xorq   %rbx, %rcx
+	xorq   %rbx, %r9
+	movq   %rcx, 8(%rdi)
+	movq   %r9, 8(%rsi)
+	movq   16(%rdi), %rax
+	movq   24(%rdi), %rcx
+	movq   16(%rsi), %r8
+	movq   24(%rsi), %r9
+	movq   %rax, %rbx
+	xorq   %r8, %rbx
+	andq   %rdx, %rbx
+	xorq   %rbx, %rax
+	xorq   %rbx, %r8
+	movq   %rax, 16(%rdi)
+	movq   %r8, 16(%rsi)
+	movq   %rcx, %rbx
+	xorq   %r9, %rbx
+	andq   %rdx, %rbx
+	xorq   %rbx, %rcx
+	xorq   %rbx, %r9
+	movq   %rcx, 24(%rdi)
+	movq   %r9, 24(%rsi)
+	popq   %rbx
 	retq
 
 

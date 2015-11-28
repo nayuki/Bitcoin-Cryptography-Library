@@ -19,7 +19,11 @@ extern "C" {
 	
 	uint32_t asm_Uint256_shiftLeft1(uint32_t dest[8]);
 	
+	void asm_Uint256_shiftRight1(uint32_t dest[8], uint32_t enable);
+	
 	void asm_Uint256_replace(uint32_t dest[8], const uint32_t src[8], uint32_t enable);
+	
+	void asm_Uint256_swap(uint32_t left[8], uint32_t right[8], uint32_t enable);
 	
 	bool asm_Uint256_equalTo(const uint32_t left[8], const uint32_t right[8]);
 	

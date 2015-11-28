@@ -57,14 +57,7 @@ uint32_t Uint256::shiftLeft1() {
 
 void Uint256::shiftRight1(uint32_t enable) {
 	assert((enable >> 1) == 0);
-	uint32_t mask = -enable;
-	uint32_t cur = value[0];
-	for (int i = 0; i < NUM_WORDS - 1; i++) {
-		uint32_t next = value[i + 1];
-		value[i] = ((cur >> 1 | next << 31) & mask) | (cur & ~mask);
-		cur = next;
-	}
-	value[NUM_WORDS - 1] = ((cur >> 1) & mask) | (cur & ~mask);
+	asm_Uint256_shiftRight1(&this->value[0], enable);
 }
 
 
@@ -122,13 +115,7 @@ void Uint256::replace(const Uint256 &other, uint32_t enable) {
 
 void Uint256::swap(Uint256 &other, uint32_t enable) {
 	assert((enable >> 1) == 0);
-	uint32_t mask = -enable;
-	for (int i = 0; i < NUM_WORDS; i++) {
-		uint32_t x = this->value[i];
-		uint32_t y = other.value[i];
-		this->value[i] = (y & mask) | (x & ~mask);
-		other.value[i] = (x & mask) | (y & ~mask);
-	}
+	asm_Uint256_swap(&this->value[0], &other.value[0], enable);
 }
 
 
