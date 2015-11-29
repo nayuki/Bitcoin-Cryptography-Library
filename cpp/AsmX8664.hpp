@@ -33,4 +33,8 @@ extern "C" {
 	
 	void asm_FieldInt_multiplyBarrettStep0(uint32_t dest[24], const uint32_t src[16]);
 	
+	void asm_FieldInt_multiplyBarrettStep1(uint32_t dest[16], const uint32_t src[8]);
+	
+	void asm_FieldInt_multiplyBarrettStep2(uint32_t z[9], const uint32_t x[16], const uint32_t y[16]);
+	
 }

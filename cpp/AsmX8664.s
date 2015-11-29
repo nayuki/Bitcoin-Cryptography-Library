@@ -234,8 +234,7 @@ asm_FieldInt_multiply256x256eq512:
 	jb      .inner0
 	
 .inner1:
-	addq    (%rdi,%r11), %r8
-	movq    %r8, (%rdi,%r11)
+	addq    %r8, (%rdi,%r11)
 	setc    %r8b
 	movzbl  %r8b, %r8d
 	addl    $8, %r11d
@@ -316,12 +315,88 @@ asm_FieldInt_multiplyBarrettStep0:
 	jb      .loop0
 	
 .loop1:
-	addq    (%rdi,%rcx), %r8
-	movq    %r8, (%rdi,%rcx)
+	addq    %r8, (%rdi,%rcx)
 	setc    %r8b
 	movzbl  %r8b, %r8d
 	addl    $8, %ecx
 	cmpl    $96, %ecx
 	jb      .loop1
 	
+	retq
+
+
+/* void asm_FieldInt_multiplyBarrettStep1(uint32_t dest[16], const uint32_t src[8]) */
+.globl asm_FieldInt_multiplyBarrettStep1
+asm_FieldInt_multiplyBarrettStep1:
+	movq     0(%rsi), %rax
+	movq     8(%rsi), %rcx
+	movq    16(%rsi), %r8
+	movq    24(%rsi), %r9
+	movq    %rax, 32(%rdi)
+	movq    %rcx, 40(%rdi)
+	movq    %r8 , 48(%rdi)
+	movq    %r9 , 56(%rdi)
+	
+	movl    0(%rsi), %eax
+	shlq    $32, %rax
+	negq    %rax
+	movq    %rax, 0(%rdi)
+	movl    $0, %eax
+	sbbq    4(%rsi), %rax
+	movq    %rax, 8(%rdi)
+	movl    $0, %eax
+	sbbq    12(%rsi), %rax
+	movq    %rax, 16(%rdi)
+	movl    $0, %eax
+	sbbq    20(%rsi), %rax
+	movq    %rax, 24(%rdi)
+	movl    28(%rsi), %eax
+	sbbq    %rax, 32(%rdi)
+	sbbq    $0, 40(%rdi)
+	sbbq    $0, 48(%rdi)
+	sbbq    $0, 56(%rdi)
+	
+	movl    $0, %ecx
+	movq    $0, %r8
+	movl    $0, %r9d
+.loop2:
+	movl    $0x3D1, %eax
+	mulq    (%rsi,%rcx)
+	addq    %r8, %rax
+	adcq    $0, %rdx
+	negl    %r9d
+	sbbq    %rax, (%rdi,%rcx)
+	movl    $0, %r9d
+	sbbl    $0, %r9d
+	movq    %rdx, %r8
+	addl    $8, %ecx
+	cmpl    $32, %ecx
+	jb      .loop2
+	
+	negl    %r9d
+	sbbq    %r8, 32(%rdi)
+	sbbq    $0, 40(%rdi)
+	sbbq    $0, 48(%rdi)
+	sbbq    $0, 56(%rdi)
+	retq
+
+
+/* void asm_FieldInt_multiplyBarrettStep2(uint32_t z[9], const uint32_t x[16], const uint32_t y[16]) */
+.globl asm_FieldInt_multiplyBarrettStep2
+asm_FieldInt_multiplyBarrettStep2:
+	movq  0(%rsi), %rax
+	subq  0(%rdx), %rax
+	movq  %rax, 0(%rdi)
+	movq  8(%rsi), %rax
+	sbbq  8(%rdx), %rax
+	movq  %rax, 8(%rdi)
+	movq  16(%rsi), %rax
+	sbbq  16(%rdx), %rax
+	movq  %rax, 16(%rdi)
+	movq  24(%rsi), %rax
+	sbbq  24(%rdx), %rax
+	movq  %rax, 24(%rdi)
+	movl  32(%rsi), %eax
+	sbbl  32(%rdx), %eax
+	movl  %eax, 32(%rdi)
 	retq

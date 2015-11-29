@@ -69,36 +69,12 @@ void FieldInt::multiply(const FieldInt &other) {
 	
 	// Virtually shift right by 512 bits, then multiply by MODULUS.
 	// Note that MODULUS = 2^256 - 2^32 - 0x3D1. Result fits in a uint512.
-	uint32_t *product1Shifted = &product1[NUM_WORDS * 2];  // Length NUM_WORDS
 	uint32_t product2[NUM_WORDS * 2];
-	{
-		uint32_t borrow = 0;
-		for (int i = 0; i < NUM_WORDS * 2; i++) {
-			uint64_t diff = -static_cast<uint64_t>(borrow);
-			if (i < NUM_WORDS)
-				diff -= static_cast<uint64_t>(product1Shifted[i]) * 0x3D1;
-			if (i >= 1 && i < NUM_WORDS + 1)
-				diff -= product1Shifted[i - 1];
-			if (i >= NUM_WORDS)
-				diff += product1Shifted[i - NUM_WORDS];
-			product2[i] = static_cast<uint32_t>(diff);
-			borrow = -static_cast<uint32_t>(diff >> 32);
-			assert(0 <= borrow && borrow <= 0x3D3);
-		}
-		assert(borrow == 0);
-	}
+	asm_FieldInt_multiplyBarrettStep1(product2, &product1[NUM_WORDS * 2]);
 	
 	// Compute product0 - product2, which fits in a uint257 (sic)
 	uint32_t difference[NUM_WORDS + 1];
-	{
-		uint32_t borrow = 0;
-		for (int i = 0; i < NUM_WORDS + 1; i++) {
-			uint64_t diff = static_cast<uint64_t>(product0[i]) - product2[i] - borrow;
-			difference[i] = static_cast<uint32_t>(diff);
-			borrow = -static_cast<uint32_t>(diff >> 32);
-			assert((borrow >> 1) == 0);
-		}
-	}
+	asm_FieldInt_multiplyBarrettStep2(difference, product0, product2);
 	
 	// Final conditional subtraction to yield a FieldInt value
 	memcpy(this->value, difference, sizeof(value));
