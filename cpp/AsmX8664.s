@@ -198,3 +198,130 @@ asm_Uint256_lessThan:
 	cmovbl  %ecx, %eax
 	cmoval  %edi, %eax
 	retq
+
+
+/* void asm_FieldInt_multiply256x256eq512(uint32_t z[16], const uint32_t x[8], const uint32_t y[8]) */
+.globl asm_FieldInt_multiply256x256eq512
+asm_FieldInt_multiply256x256eq512:
+	pushq   %r10
+	pushq   %r11
+	
+	movl    $0, %ecx
+.zeroize:
+	movq    $0, (%rdi,%rcx)
+	addl    $8, %ecx
+	cmpl    $64, %ecx
+	jb      .zeroize
+	
+	movq    %rdx, %rcx
+	movl    $0, %r9d
+.outer:
+	movl    $0, %r10d
+	movl    %r9d, %r11d
+	movq    $0, %r8
+	
+.inner0:
+	movq    (%rsi,%r9), %rax
+	mulq    (%rcx,%r10)
+	addq    %r8, %rax
+	adcq    $0, %rdx
+	addq    %rax, (%rdi,%r11)
+	adcq    $0, %rdx
+	movq    %rdx, %r8
+	addl    $8, %r10d
+	addl    $8, %r11d
+	cmpl    $32, %r10d
+	jb      .inner0
+	
+.inner1:
+	addq    (%rdi,%r11), %r8
+	movq    %r8, (%rdi,%r11)
+	setc    %r8b
+	movzbl  %r8b, %r8d
+	addl    $8, %r11d
+	cmpl    $64, %r11d
+	jb      .inner1
+	
+	addl    $8, %r9d
+	cmpl    $32, %r9d
+	jb      .outer
+	
+	popq    %r11
+	popq    %r10
+	retq
+
+
+/* void asm_FieldInt_multiplyBarrettStep0(uint32_t dest[24], const uint32_t src[16]) */
+.globl asm_FieldInt_multiplyBarrettStep0
+asm_FieldInt_multiplyBarrettStep0:
+	movq     0(%rsi), %rax
+	movq     8(%rsi), %rdx
+	movq    16(%rsi), %r8
+	movq    24(%rsi), %r9
+	movq    %rax, 32(%rdi)
+	movq    %rdx, 40(%rdi)
+	movq    %r8 , 48(%rdi)
+	movq    %r9 , 56(%rdi)
+	movq    32(%rsi), %rax
+	movq    40(%rsi), %rdx
+	movq    48(%rsi), %r8
+	movq    56(%rsi), %r9
+	movq    %rax, 64(%rdi)
+	movq    %rdx, 72(%rdi)
+	movq    %r8 , 80(%rdi)
+	movq    %r9 , 88(%rdi)
+	
+	movl    0(%rsi), %eax
+	movl    $0, 0(%rdi)
+	movl    %eax, 4(%rdi)
+	movq     4(%rsi), %rax
+	movq    12(%rsi), %rcx
+	movq    20(%rsi), %rdx
+	movq    %rax,  8(%rdi)
+	movq    %rcx, 16(%rdi)
+	movq    %rdx, 24(%rdi)
+	
+	movq    28(%rsi), %rax
+	addq    32(%rdi), %rax
+	movq    %rax, 32(%rdi)
+	movq    36(%rsi), %rax
+	adcq    40(%rdi), %rax
+	movq    %rax, 40(%rdi)
+	movq    44(%rsi), %rax
+	adcq    48(%rdi), %rax
+	movq    %rax, 48(%rdi)
+	movq    52(%rsi), %rax
+	adcq    56(%rdi), %rax
+	movq    %rax, 56(%rdi)
+	
+	movl    60(%rsi), %eax
+	adcq    64(%rdi), %rax
+	movq    %rax, 64(%rdi)
+	adcq    $0, 72(%rdi)
+	adcq    $0, 80(%rdi)
+	adcq    $0, 88(%rdi)
+	
+	movl    $0, %ecx
+	movq    $0, %r8
+.loop0:
+	movl    $0x3D1, %eax
+	mulq    (%rsi,%rcx)
+	addq    %r8, %rax
+	adcq    $0, %rdx
+	addq    %rax, (%rdi,%rcx)
+	adcq    $0, %rdx
+	movq    %rdx, %r8
+	addl    $8, %ecx
+	cmpl    $64, %ecx
+	jb      .loop0
+	
+.loop1:
+	addq    (%rdi,%rcx), %r8
+	movq    %r8, (%rdi,%rcx)
+	setc    %r8b
+	movzbl  %r8b, %r8d
+	addl    $8, %ecx
+	cmpl    $96, %ecx
+	jb      .loop1
+	
+	retq

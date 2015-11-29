@@ -29,4 +29,8 @@ extern "C" {
 	
 	bool asm_Uint256_lessThan(const uint32_t left[8], const uint32_t right[8]);
 	
+	void asm_FieldInt_multiply256x256eq512(uint32_t z[16], const uint32_t x[8], const uint32_t y[8]);
+	
+	void asm_FieldInt_multiplyBarrettStep0(uint32_t dest[24], const uint32_t src[16]);
+	
 }

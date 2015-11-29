@@ -8,6 +8,7 @@
 
 #include <cassert>
 #include <cstring>
+#include "AsmX8664.hpp"
 #include "FieldInt.hpp"
 
 #define NUM_WORDS 8
@@ -59,52 +60,12 @@ void FieldInt::square() {
 void FieldInt::multiply(const FieldInt &other) {
 	// Compute raw product of (uint256 this->value) * (uint256 other.value) = (uint512 product0), via long multiplication
 	uint32_t product0[NUM_WORDS * 2];
-	{
-		uint64_t carry = 0;
-		int i;
-		for (i = 0; i < NUM_WORDS * 2 - 1; i++) {
-			uint64_t sum = carry;
-			uint32_t c = 0;
-			if (i < NUM_WORDS) {
-				for (int j = 0; j <= i; j++) {
-					uint64_t prod = static_cast<uint64_t>(this->value[j]) * other.value[i - j];
-					sum += prod;
-					c += static_cast<uint32_t>(sum < prod);
-				}
-			} else {
-				for (int j = NUM_WORDS - 1; j >= 0 && i - j < NUM_WORDS; j--) {
-					uint64_t prod = static_cast<uint64_t>(this->value[i - j]) * other.value[j];
-					sum += prod;
-					c += static_cast<uint32_t>(sum < prod);
-				}
-			}
-			assert(0 <= c && c <= NUM_WORDS);
-			product0[i] = static_cast<uint32_t>(sum);
-			carry = static_cast<uint64_t>(c) << 32 | sum >> 32;
-		}
-		product0[i] = static_cast<uint32_t>(carry);
-		assert((carry >> 32) == 0);
-	}
+	asm_FieldInt_multiply256x256eq512(&product0[0], &this->value[0], &other.value[0]);
 	
 	// Barrett reduction algorithm begins here (see http://www.nayuki.io/page/barrett-reduction-algorithm).
 	// Multiply by floor(2^512 / MODULUS), which is 2^256 + 2^32 + 0x3D1. Guaranteed to fit in a uint768.
 	uint32_t product1[NUM_WORDS * 3];
-	{
-		uint32_t carry = 0;
-		for (int i = 0; i < NUM_WORDS * 3; i++) {
-			uint64_t sum = carry;
-			if (i < NUM_WORDS * 2)
-				sum += static_cast<uint64_t>(product0[i]) * 0x3D1;
-			if (i >= 1 && i < NUM_WORDS * 2 + 1)
-				sum += product0[i - 1];
-			if (i >= NUM_WORDS)
-				sum += product0[i - NUM_WORDS];
-			product1[i] = static_cast<uint32_t>(sum);
-			carry = static_cast<uint32_t>(sum >> 32);
-			assert(0 <= carry && carry <= 0x3D3);
-		}
-		assert(carry == 0);
-	}
+	asm_FieldInt_multiplyBarrettStep0(product1, product0);
 	
 	// Virtually shift right by 512 bits, then multiply by MODULUS.
 	// Note that MODULUS = 2^256 - 2^32 - 0x3D1. Result fits in a uint512.
