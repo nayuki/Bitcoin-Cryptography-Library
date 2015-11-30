@@ -74,13 +74,13 @@ asm_Uint256_shiftRight1:
 	rcrq    $1, %rax
 	testl   %esi, %esi
 	movq    0(%rdi), %rdx
+	movq    8(%rdi), %rsi
 	cmovzq  %rdx, %rax
-	movq    8(%rdi), %rdx
-	cmovzq  %rdx, %rcx
+	cmovzq  %rsi, %rcx
 	movq    16(%rdi), %rdx
+	movq    24(%rdi), %rsi
 	cmovzq  %rdx, %r8
-	movq    24(%rdi), %rdx
-	cmovzq  %rdx, %r9
+	cmovzq  %rsi, %r9
 	movq    %rax,  0(%rdi)
 	movq    %rcx,  8(%rdi)
 	movq    %r8 , 16(%rdi)
@@ -281,21 +281,16 @@ asm_FieldInt_multiplyBarrettStep0:
 	movq    %rdx, 24(%rdi)
 	
 	movq    28(%rsi), %rax
-	addq    32(%rdi), %rax
-	movq    %rax, 32(%rdi)
+	addq    %rax, 32(%rdi)
 	movq    36(%rsi), %rax
-	adcq    40(%rdi), %rax
-	movq    %rax, 40(%rdi)
+	adcq    %rax, 40(%rdi)
 	movq    44(%rsi), %rax
-	adcq    48(%rdi), %rax
-	movq    %rax, 48(%rdi)
+	adcq    %rax, 48(%rdi)
 	movq    52(%rsi), %rax
-	adcq    56(%rdi), %rax
-	movq    %rax, 56(%rdi)
+	adcq    %rax, 56(%rdi)
 	
 	movl    60(%rsi), %eax
-	adcq    64(%rdi), %rax
-	movq    %rax, 64(%rdi)
+	adcq    %rax, 64(%rdi)
 	adcq    $0, 72(%rdi)
 	adcq    $0, 80(%rdi)
 	adcq    $0, 88(%rdi)
@@ -314,14 +309,10 @@ asm_FieldInt_multiplyBarrettStep0:
 	cmpl    $64, %ecx
 	jb      .loop0
 	
-.loop1:
-	addq    %r8, (%rdi,%rcx)
-	setc    %r8b
-	movzbl  %r8b, %r8d
-	addl    $8, %ecx
-	cmpl    $96, %ecx
-	jb      .loop1
-	
+	addq    %r8, 64(%rdi)
+	adcq    $0, 72(%rdi)
+	adcq    $0, 80(%rdi)
+	adcq    $0, 88(%rdi)
 	retq
 
 
@@ -359,7 +350,7 @@ asm_FieldInt_multiplyBarrettStep1:
 	movl    $0, %ecx
 	movq    $0, %r8
 	movl    $0, %r9d
-.loop2:
+.loop1:
 	movl    $0x3D1, %eax
 	mulq    (%rsi,%rcx)
 	addq    %r8, %rax
@@ -371,7 +362,7 @@ asm_FieldInt_multiplyBarrettStep1:
 	movq    %rdx, %r8
 	addl    $8, %ecx
 	cmpl    $32, %ecx
-	jb      .loop2
+	jb      .loop1
 	
 	negl    %r9d
 	sbbq    %r8, 32(%rdi)

@@ -9,7 +9,9 @@
  */
 
 #include "TestHelper.hpp"
+#include <cinttypes>
 #include <cstdio>
+#include "AsmX8664.hpp"
 #include "FieldInt.hpp"
 
 
@@ -292,6 +294,70 @@ static void testConstructorUint256() {
 }
 
 
+static void testAsmMultiply256x256eq512() {
+	TernaryCase cases[] = {
+		{"FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF", "FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF", "FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFE0000000000000000000000000000000000000000000000000000000000000001"},
+	};
+	for (unsigned int i = 0; i < ARRAY_LENGTH(cases); i++) {
+		TernaryCase &tc = cases[i];
+		Uint256 x(tc.x);
+		Uint256 y(tc.y);
+		uint32_t z[16];
+		asm_FieldInt_multiply256x256eq512(&z[0], &x.value[0], &y.value[0]);
+		for (int j = 0; j < 16; j++) {
+			uint32_t word;
+			sscanf(&tc.z[j * 8], "%08" SCNx32, &word);
+			assert(word == z[15 - j]);
+		}
+		numTestCases++;
+	}
+}
+
+
+static void testAsmMultiplyBarrettStep0() {
+	BinaryCase cases[] = {
+		{"FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF", "00000000000000000000000000000000000000000000000000000001000003D0FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFFFFFC2F"},
+		{"FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF00000000000000000000000000000000000000000000000000000000FFFFFFFFFFFFFFFF", "00000000000000000000000000000000000000000000000000000000000003D0FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFC2EFFFFFFFF0000000000000000000000000000000000000001000003D0FFFFFFFEFFFFFC2F"},
+	};
+	for (unsigned int i = 0; i < ARRAY_LENGTH(cases); i++) {
+		BinaryCase &tc = cases[i];
+		uint32_t src[16];
+		for (int j = 0; j < 16; j++)
+			sscanf(&tc.x[j * 8], "%08" SCNx32, &src[15 - j]);
+		uint32_t dest[24];
+		asm_FieldInt_multiplyBarrettStep0(&dest[0], &src[0]);
+		for (int j = 0; j < 24; j++) {
+			uint32_t word;
+			sscanf(&tc.y[j * 8], "%08" SCNx32, &word);
+			assert(word == dest[23 - j]);
+		}
+		numTestCases++;
+	}
+}
+
+
+static void testAsmMultiplyBarrettStep1() {
+	BinaryCase cases[] = {
+		{"8000000000000000000000000000000000000000000000000000000000000000", "7FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF7FFFFE178000000000000000000000000000000000000000000000000000000000000000"},
+		{"8000000000000000000000000000000000000000000000000000000080000001", "7FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFE187FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF7FFFFE167FFFFC2F"},
+	};
+	for (unsigned int i = 0; i < ARRAY_LENGTH(cases); i++) {
+		BinaryCase &tc = cases[i];
+		uint32_t src[8];
+		for (int j = 0; j < 8; j++)
+			sscanf(&tc.x[j * 8], "%08" SCNx32, &src[7 - j]);
+		uint32_t dest[16];
+		asm_FieldInt_multiplyBarrettStep1(&dest[0], &src[0]);
+		for (int j = 0; j < 16; j++) {
+			uint32_t word;
+			sscanf(&tc.y[j * 8], "%08" SCNx32, &word);
+			assert(word == dest[15 - j]);
+		}
+		numTestCases++;
+	}
+}
+
+
 int main(int argc, char **argv) {
 	testComparison();
 	testAdd();
@@ -301,6 +367,9 @@ int main(int argc, char **argv) {
 	testSquare();
 	testReciprocal();
 	testConstructorUint256();
+	testAsmMultiply256x256eq512();
+	testAsmMultiplyBarrettStep0();
+	testAsmMultiplyBarrettStep1();
 	printf("All %d test cases passed\n", numTestCases);
 	return 0;
 }
