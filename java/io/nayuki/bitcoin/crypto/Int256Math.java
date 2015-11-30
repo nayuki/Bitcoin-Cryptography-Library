@@ -272,33 +272,18 @@ public final class Int256Math {
 		checkUint(val, tempOff);
 		assert val.length - tempOff >= 5 * NUM_WORDS;
 		
-		// Compute raw product of (uint256 this->value) * (uint256 other.value) = (uint512 product0), via long multiplication
+		// Compute raw product of (uint256 x) * (uint256 y) = (uint512 product0), via long multiplication
 		int product0Off = tempOff + 0 * NUM_WORDS;  // Uses 16 words
-		{
-			long carry = 0;
-			int i;
-			for (i = 0; i < NUM_WORDS * 2 - 1; i++) {
-				long sum = carry;
-				int c = 0;
-				if (i < NUM_WORDS) {
-					for (int j = 0; j <= i; j++) {
-						long prod = (val[xOff + j] & LONG_MASK) * (val[yOff + i - j] & LONG_MASK);
-						sum += prod;
-						c += lessThan(sum, prod);
-					}
-				} else {
-					for (int j = NUM_WORDS - 1; j >= 0 && i - j < NUM_WORDS; j--) {
-						long prod = (val[xOff + i - j] & LONG_MASK) * (val[yOff + j] & LONG_MASK);
-						sum += prod;
-						c += lessThan(sum, prod);
-					}
-				}
-				assert 0 <= c && c <= NUM_WORDS;
-				val[product0Off + i] = (int)sum;
-				carry = (long)c << 32 | sum >>> 32;
+		Arrays.fill(val, product0Off, product0Off + 2 * NUM_WORDS, 0);
+		for (int i = 0; i < NUM_WORDS; i++) {
+			int carry = 0;
+			for (int j = 0; j < NUM_WORDS; j++) {
+				long sum = (val[xOff + i] & LONG_MASK) * (val[yOff + j] & LONG_MASK);
+				sum += (val[product0Off + i + j] & LONG_MASK) + (carry & LONG_MASK);  // Does not overflow
+				val[product0Off + i + j] = (int)sum;
+				carry = (int)(sum >>> 32);
 			}
-			val[product0Off + i] = (int)carry;
-			assert (carry >>> 32) == 0;
+			val[product0Off + i + NUM_WORDS] = carry;
 		}
 		
 		// Barrett reduction algorithm begins here (see http://www.nayuki.io/page/barrett-reduction-algorithm).
@@ -433,13 +418,6 @@ public final class Int256Math {
 	static int equalTo(int x, int y) {
 		int z = x ^ y;
 		return ~(z | -z) >>> 31;
-	}
-	
-	
-	// Returns 1 if uint64 x < uint64 y, otherwise 0.
-	// Constant-time with respect to both values.
-	private static int lessThan(long x, long y) {
-		return (int)(((~x & y) | ((~x ^ y) & (x - y))) >>> 63);
 	}
 	
 	
