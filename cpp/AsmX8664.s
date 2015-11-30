@@ -203,50 +203,116 @@ asm_Uint256_lessThan:
 /* void asm_FieldInt_multiply256x256eq512(uint32_t z[16], const uint32_t x[8], const uint32_t y[8]) */
 .globl asm_FieldInt_multiply256x256eq512
 asm_FieldInt_multiply256x256eq512:
-	pushq   %r10
-	pushq   %r11
+	movq  %rdx, %rcx
 	
-	movl    $0, %ecx
-.zeroize:
-	movq    $0, (%rdi,%rcx)
-	addl    $8, %ecx
-	cmpl    $64, %ecx
-	jb      .zeroize
+	movq  0(%rsi), %r9
+	movq  %r9, %rax
+	mulq  0(%rcx)
+	movq  %rax, 0(%rdi)
+	movq  %rdx, %r8
+	movq  %r9, %rax
+	mulq  8(%rcx)
+	addq  %r8, %rax
+	adcq  $0, %rdx
+	movq  %rax, 8(%rdi)
+	movq  %rdx, %r8
+	movq  %r9, %rax
+	mulq  16(%rcx)
+	addq  %r8, %rax
+	adcq  $0, %rdx
+	movq  %rax, 16(%rdi)
+	movq  %rdx, %r8
+	movq  %r9, %rax
+	mulq  24(%rcx)
+	addq  %r8, %rax
+	adcq  $0, %rdx
+	movq  %rax, 24(%rdi)
+	movq  %rdx, 32(%rdi)
 	
-	movq    %rdx, %rcx
-	movl    $0, %r9d
-.outer:
-	movl    $0, %r10d
-	movl    %r9d, %r11d
-	movq    $0, %r8
+	movq  8(%rsi), %r9
+	movq  %r9, %rax
+	mulq  0(%rcx)
+	addq  %rax, 8(%rdi)
+	adcq  $0, %rdx
+	movq  %rdx, %r8
+	movq  %r9, %rax
+	mulq  8(%rcx)
+	addq  %r8, %rax
+	adcq  $0, %rdx
+	addq  %rax, 16(%rdi)
+	adcq  $0, %rdx
+	movq  %rdx, %r8
+	movq  %r9, %rax
+	mulq  16(%rcx)
+	addq  %r8, %rax
+	adcq  $0, %rdx
+	addq  %rax, 24(%rdi)
+	adcq  $0, %rdx
+	movq  %rdx, %r8
+	movq  %r9, %rax
+	mulq  24(%rcx)
+	addq  %r8, %rax
+	adcq  $0, %rdx
+	addq  %rax, 32(%rdi)
+	adcq  $0, %rdx
+	movq  %rdx, 40(%rdi)
 	
-.inner0:
-	movq    (%rsi,%r9), %rax
-	mulq    (%rcx,%r10)
-	addq    %r8, %rax
-	adcq    $0, %rdx
-	addq    %rax, (%rdi,%r11)
-	adcq    $0, %rdx
-	movq    %rdx, %r8
-	addl    $8, %r10d
-	addl    $8, %r11d
-	cmpl    $32, %r10d
-	jb      .inner0
+	movq  16(%rsi), %r9
+	movq  %r9, %rax
+	mulq  0(%rcx)
+	addq  %rax, 16(%rdi)
+	adcq  $0, %rdx
+	movq  %rdx, %r8
+	movq  %r9, %rax
+	mulq  8(%rcx)
+	addq  %r8, %rax
+	adcq  $0, %rdx
+	addq  %rax, 24(%rdi)
+	adcq  $0, %rdx
+	movq  %rdx, %r8
+	movq  %r9, %rax
+	mulq  16(%rcx)
+	addq  %r8, %rax
+	adcq  $0, %rdx
+	addq  %rax, 32(%rdi)
+	adcq  $0, %rdx
+	movq  %rdx, %r8
+	movq  %r9, %rax
+	mulq  24(%rcx)
+	addq  %r8, %rax
+	adcq  $0, %rdx
+	addq  %rax, 40(%rdi)
+	adcq  $0, %rdx
+	movq  %rdx, 48(%rdi)
 	
-.inner1:
-	addq    %r8, (%rdi,%r11)
-	setc    %r8b
-	movzbl  %r8b, %r8d
-	addl    $8, %r11d
-	cmpl    $64, %r11d
-	jb      .inner1
+	movq  24(%rsi), %r9
+	movq  %r9, %rax
+	mulq  0(%rcx)
+	addq  %rax, 24(%rdi)
+	adcq  $0, %rdx
+	movq  %rdx, %r8
+	movq  %r9, %rax
+	mulq  8(%rcx)
+	addq  %r8, %rax
+	adcq  $0, %rdx
+	addq  %rax, 32(%rdi)
+	adcq  $0, %rdx
+	movq  %rdx, %r8
+	movq  %r9, %rax
+	mulq  16(%rcx)
+	addq  %r8, %rax
+	adcq  $0, %rdx
+	addq  %rax, 40(%rdi)
+	adcq  $0, %rdx
+	movq  %rdx, %r8
+	movq  %r9, %rax
+	mulq  24(%rcx)
+	addq  %r8, %rax
+	adcq  $0, %rdx
+	addq  %rax, 48(%rdi)
+	adcq  $0, %rdx
+	movq  %rdx, 56(%rdi)
 	
-	addl    $8, %r9d
-	cmpl    $32, %r9d
-	jb      .outer
-	
-	popq    %r11
-	popq    %r10
 	retq
 
 
