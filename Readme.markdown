@@ -2,18 +2,23 @@ Nayuki's Bitcoin cryptography library
 =====================================
 
 This project implements the cryptographic primitives used in the Bitcoin system,
-in C++ and Java code. The library is open-source, independently written by Nayuki.
-It is designed with portability and clarity in mind, and is rigorously verified
-for correctness and quality.
+especially elliptic curve operations and hash functions.
 
-More details about the library features and design principles are available on
-the main web page.
+The code is written in two independent versions in C++ and Java. It includes a
+test suite of over a thousand test vectors that cover every feature provided by
+the library.
+
+The library is open-source, and is written by Nayuki from the ground up. It is
+designed with portability and clarity in mind, and is rigorously verified for
+correctness and quality.
+
+More details about features and design principles are on the main web page:
+[http://www.nayuki.io/page/bitcoin-cryptography-library](http://www.nayuki.io/page/bitcoin-cryptography-library) 
 
 License
 -------
 
 Copyright © 2015 Project Nayuki  
-[http://www.nayuki.io/page/bitcoin-cryptography-library](http://www.nayuki.io/page/bitcoin-cryptography-library)
 
 (MIT License)
 

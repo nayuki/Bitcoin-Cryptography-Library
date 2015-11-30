@@ -38,6 +38,11 @@ Uint256::Uint256(const uint8_t b[NUM_WORDS * 4]) :
 }
 
 
+Uint256::Uint256(const FieldInt &val) {
+	memcpy(this->value, val.value, sizeof(value));
+}
+
+
 uint32_t Uint256::add(const Uint256 &other, uint32_t enable) {
 	assert(&other != this && (enable >> 1) == 0);
 	return asm_Uint256_add(&this->value[0], &other.value[0], enable);
