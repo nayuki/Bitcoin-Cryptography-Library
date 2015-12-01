@@ -39,7 +39,7 @@ public final class CurvePointMathTest {
 			// Prepare array and offsets
 			int pOff = rand.nextInt(5) * Int256Math.NUM_WORDS;
 			int tempOff = pOff + CurvePointMath.POINT_WORDS + rand.nextInt(5) * Int256Math.NUM_WORDS;
-			int[] arr = randomArray(tempOff + 72);
+			int[] arr = randomArray(tempOff + CurvePointMath.TWICE_TEMP_WORDS);
 			
 			// Copy value
 			System.arraycopy(p, 0, arr, pOff, CurvePointMath.POINT_WORDS);
@@ -78,7 +78,7 @@ public final class CurvePointMathTest {
 			int pOff = rand.nextInt(5) * Int256Math.NUM_WORDS;
 			int qOff = pOff + CurvePointMath.POINT_WORDS + rand.nextInt(5) * Int256Math.NUM_WORDS;
 			int tempOff = qOff + CurvePointMath.POINT_WORDS + rand.nextInt(5) * Int256Math.NUM_WORDS;
-			int[] arr = randomArray(tempOff + 144);
+			int[] arr = randomArray(tempOff + CurvePointMath.ADD_TEMP_WORDS);
 			
 			// Copy values
 			Int256Math.hexToUint(cs[0], arr, pOff + CurvePointMath.XCOORD);
@@ -195,7 +195,7 @@ public final class CurvePointMathTest {
 			int pOff = rand.nextInt(5) * Int256Math.NUM_WORDS;
 			int nOff = pOff + CurvePointMath.POINT_WORDS + rand.nextInt(5) * Int256Math.NUM_WORDS;
 			int tempOff = nOff + Int256Math.NUM_WORDS + rand.nextInt(5) * Int256Math.NUM_WORDS;
-			int[] arr = randomArray(tempOff + 552);
+			int[] arr = randomArray(tempOff + CurvePointMath.MULTIPLY_TEMP_WORDS);
 			
 			// Copy values
 			System.arraycopy(CurvePointMath.BASE_POINT, 0, arr, pOff, CurvePointMath.POINT_WORDS);
@@ -814,7 +814,7 @@ public final class CurvePointMathTest {
 			// Prepare array and offsets
 			int pOff = rand.nextInt(5) * Int256Math.NUM_WORDS;
 			int tempOff = pOff + CurvePointMath.POINT_WORDS + rand.nextInt(5) * Int256Math.NUM_WORDS;
-			int[] arr = randomArray(tempOff + 56);
+			int[] arr = randomArray(tempOff + CurvePointMath.ISONCURVE_TEMP_WORDS);
 			
 			// Copy values
 			Int256Math.hexToUint(cs[1], arr, pOff + CurvePointMath.XCOORD);

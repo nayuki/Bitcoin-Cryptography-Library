@@ -161,7 +161,7 @@ public final class Int256MathTest {
 				while (!a.gcd(mod).equals(BigInteger.ONE));
 				a = a.mod(mod);
 				
-				TestArray arr = new TestArray(String.format("%064x", a), String.format("%064x", mod), 48);
+				TestArray arr = new TestArray(String.format("%064x", a), String.format("%064x", mod), Int256Math.RECIPROCAL_TEMP_WORDS);
 				Int256Math.reciprocal(arr.val, arr.xOff, arr.yOff, arr.zOff, arr.tempOff);
 				BigInteger b = a.modInverse(mod);
 				assertEqualsBigInt256(b, arr.val, arr.zOff);
@@ -187,7 +187,7 @@ public final class Int256MathTest {
 		for (int i = 0; i < 30000; i++) {
 			String s = i < cases.length ? cases[i][0] : randomFieldIntStr();
 			String t = i < cases.length ? cases[i][1] : randomFieldIntStr();
-			TestArray arr = new TestArray(s, t, 8);
+			TestArray arr = new TestArray(s, t, Int256Math.FIELD_ADD_TEMP_WORDS);
 			BigInteger a = toBigInt(s);
 			BigInteger b = toBigInt(t);
 			BigInteger c = a.add(b).mod(FIELD_MODULUS);
@@ -212,7 +212,7 @@ public final class Int256MathTest {
 		for (int i = 0; i < 30000; i++) {
 			String s = i < cases.length ? cases[i][0] : randomFieldIntStr();
 			String t = i < cases.length ? cases[i][1] : randomFieldIntStr();
-			TestArray arr = new TestArray(s, t, 8);
+			TestArray arr = new TestArray(s, t, Int256Math.FIELD_SUBTRACT_TEMP_WORDS);
 			BigInteger a = toBigInt(s);
 			BigInteger b = toBigInt(t);
 			BigInteger c = a.subtract(b).mod(FIELD_MODULUS);
@@ -239,7 +239,7 @@ public final class Int256MathTest {
 		};
 		for (int i = 0; i < 30000; i++) {
 			String s = i < cases.length ? cases[i] : randomFieldIntStr();
-			TestArray arr = new TestArray(s, null, 8);
+			TestArray arr = new TestArray(s, null, Int256Math.FIELD_MULTIPLY2_TEMP_WORDS);
 			BigInteger a = toBigInt(s);
 			BigInteger b = a.shiftLeft(1).mod(FIELD_MODULUS);
 			Int256Math.fieldMultiply2(arr.val, arr.xOff, arr.zOff, arr.tempOff);
@@ -281,7 +281,7 @@ public final class Int256MathTest {
 		};
 		for (int i = 0; i < 30000; i++) {
 			String s = i < cases.length ? cases[i] : randomFieldIntStr();
-			TestArray arr = new TestArray(s, null, 40);
+			TestArray arr = new TestArray(s, null, Int256Math.FIELD_SQUARE_TEMP_WORDS);
 			BigInteger a = toBigInt(s);
 			BigInteger b = a.pow(2).mod(FIELD_MODULUS);
 			Int256Math.fieldSquare(arr.val, arr.xOff, arr.zOff, arr.tempOff);
@@ -328,7 +328,7 @@ public final class Int256MathTest {
 		for (int i = 0; i < 30000; i++) {
 			String s = i < cases.length ? cases[i][0] : randomFieldIntStr();
 			String t = i < cases.length ? cases[i][1] : randomFieldIntStr();
-			TestArray arr = new TestArray(s, t, 40);
+			TestArray arr = new TestArray(s, t, Int256Math.FIELD_MULTIPLY_TEMP_WORDS);
 			BigInteger a = toBigInt(s);
 			BigInteger b = toBigInt(t);
 			BigInteger c = a.multiply(b).mod(FIELD_MODULUS);
@@ -344,7 +344,7 @@ public final class Int256MathTest {
 		
 		// Special case for zero
 		{
-			TestArray arr = new TestArray("0000000000000000000000000000000000000000000000000000000000000000", modStr, 48);
+			TestArray arr = new TestArray("0000000000000000000000000000000000000000000000000000000000000000", modStr, Int256Math.RECIPROCAL_TEMP_WORDS);
 			Int256Math.reciprocal(arr.val, arr.xOff, arr.yOff, arr.zOff, arr.tempOff);
 			assertEqualsBigInt256(BigInteger.ZERO, arr.val, arr.zOff);
 			arr.checkClobber();
@@ -381,7 +381,7 @@ public final class Int256MathTest {
 		};
 		for (int i = 0; i < 30000; i++) {
 			String s = i < cases.length ? cases[i] : randomFieldIntStr();
-			TestArray arr = new TestArray(s, modStr, 48);
+			TestArray arr = new TestArray(s, modStr, Int256Math.RECIPROCAL_TEMP_WORDS);
 			BigInteger a = toBigInt(s);
 			if (a.signum() == 0)
 				continue;

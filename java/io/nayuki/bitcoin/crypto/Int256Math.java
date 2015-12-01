@@ -18,6 +18,11 @@ import java.util.Arrays;
  */
 public final class Int256Math {
 	
+	/*---- Critical class constants ----*/
+	
+	static final int NUM_WORDS = 8;
+	
+	
 	/*---- Uint256 conversion functions ----*/
 	
 	// Parses the given 64-digit hexadecimal string as a uint256 and stores it in the given array at the given offset.
@@ -153,7 +158,7 @@ public final class Int256Math {
 		checkUint(val, yOff);
 		checkUint(val, zOff);
 		checkUint(val, tempOff);
-		assert val.length - tempOff >= 6 * NUM_WORDS;
+		assert val.length - tempOff >= RECIPROCAL_TEMP_WORDS;
 		if ((val[yOff] & 1) == 0)
 			throw new IllegalArgumentException("Modulus must be odd");
 		
@@ -207,6 +212,8 @@ public final class Int256Math {
 		System.arraycopy(val, dOff, val, zOff, NUM_WORDS);
 	}
 	
+	public static final int RECIPROCAL_TEMP_WORDS = 6 * NUM_WORDS;
+	
 	
 	/*---- Field arithmetic functions ----*/
 	
@@ -225,6 +232,8 @@ public final class Int256Math {
 		uintSubtract(val, zOff, tempOff, enable, zOff);  // Conditionally subtract modulus
 	}
 	
+	public static final int FIELD_ADD_TEMP_WORDS = NUM_WORDS;
+	
 	
 	// Computes z = (x - y) mod prime. Offsets must be multiples of 8 and can overlap.
 	// Requires 8 words of temporary space. Constant-time with respect to both values.
@@ -239,6 +248,8 @@ public final class Int256Math {
 		System.arraycopy(FIELD_MODULUS, 0, val, tempOff, NUM_WORDS);
 		uintAdd(val, zOff, tempOff, b, zOff);  // Conditionally add modulus
 	}
+	
+	public static final int FIELD_SUBTRACT_TEMP_WORDS = NUM_WORDS;
 	
 	
 	// Computes z = (x * 2) mod prime. Offsets must be multiples of 8 and can overlap.
@@ -255,6 +266,8 @@ public final class Int256Math {
 		uintSubtract(val, zOff, tempOff, enable, zOff);  // Conditionally subtract modulus
 	}
 	
+	public static final int FIELD_MULTIPLY2_TEMP_WORDS = NUM_WORDS;
+	
 	
 	// Computes z = x^2 mod prime. Offsets must be multiples of 8 and can overlap.
 	// Requires 40 words of temporary space. Constant-time with respect to the value.
@@ -270,7 +283,7 @@ public final class Int256Math {
 		checkFieldInt(val, yOff);
 		checkUint(val, zOff);
 		checkUint(val, tempOff);
-		assert val.length - tempOff >= 5 * NUM_WORDS;
+		assert val.length - tempOff >= FIELD_MULTIPLY_TEMP_WORDS;
 		
 		// Compute raw product of (uint256 x) * (uint256 y) = (uint512 product0), via long multiplication
 		int product0Off = tempOff + 0 * NUM_WORDS;  // Uses 16 words
@@ -345,6 +358,9 @@ public final class Int256Math {
 		int enable = (equalTo(val[differenceOff + NUM_WORDS], 0) & lessThan(val, zOff, tempOff + 2 * NUM_WORDS)) ^ 1;
 		uintSubtract(val, zOff, tempOff + 2 * NUM_WORDS, enable, zOff);
 	}
+	
+	public static final int FIELD_MULTIPLY_TEMP_WORDS = 5 * NUM_WORDS;
+	public static final int FIELD_SQUARE_TEMP_WORDS = FIELD_MULTIPLY_TEMP_WORDS;
 	
 	
 	/*---- Miscellaneous functions ----*/
@@ -463,7 +479,6 @@ public final class Int256Math {
 	
 	/*---- Class constants ----*/
 	
-	static final int NUM_WORDS = 8;
 	private static final long LONG_MASK = 0xFFFFFFFFL;
 	
 	static final int[] ZERO = {0, 0, 0, 0, 0, 0, 0, 0};

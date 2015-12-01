@@ -34,7 +34,7 @@ public final class Ecdsa {
 		 *   s = min(s, order - s);
 		 */
 		
-		int[] val = new int[2 * NUM_WORDS + CurvePointMath.POINT_WORDS + 552];  // Temporary scratch space for all values
+		int[] val = new int[2 * NUM_WORDS + CurvePointMath.POINT_WORDS + CurvePointMath.MULTIPLY_TEMP_WORDS];  // Temporary scratch space for all values
 		int tempOff = 5 * NUM_WORDS;
 		int nonceOff = 0 * NUM_WORDS;  // Uint256
 		int orderOff = 1 * NUM_WORDS;  // Uint256
@@ -117,7 +117,7 @@ public final class Ecdsa {
 		 *   return r == p.x % order;
 		 */
 		
-		int[] val = new int[9 * NUM_WORDS + 552];
+		int[] val = new int[9 * NUM_WORDS + CurvePointMath.MULTIPLY_TEMP_WORDS];
 		int tempOff  = 9 * NUM_WORDS;
 		int orderOff = 0 * NUM_WORDS;  // Uint256
 		System.arraycopy(CurvePointMath.ORDER, 0, val, orderOff, NUM_WORDS);
