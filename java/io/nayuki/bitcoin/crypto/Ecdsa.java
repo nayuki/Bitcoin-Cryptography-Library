@@ -5,15 +5,16 @@ import java.util.Arrays;
 
 
 /**
- * Computes an ECDSA signature deterministically. Not instantiable.
+ * Performs ECDSA signature generation and verification. Not instantiable.
  */
 public final class Ecdsa {
 	
 	/*---- Static functions ----*/
 	
-	// Computes the signature when given the private key, message hash, and random nonce.
-	// Returns true if signing was successful (overwhelming probability), or false if a new nonce must be chosen (vanishing probability).
-	// The nonce must be in the range [1, CurvePointMath.ORDER). The outputs are unchanged if signing failed.
+	// Computes the signature (deterministically) when given the private key, message hash, and random nonce.
+	// Returns true if signing was successful (overwhelming probability), or false if a new nonce must be chosen
+	// (vanishing probability). Both privateKey and nonce must be in the range [1, CurvePointMath.ORDER).
+	// outR and outS will be in the same range too; their values are assigned iff signing is successful.
 	// Note: The nonce must be unique, unpredictable, and secret. Otherwise the signature may leak the private key.
 	// All successful executions are constant-time with respect to the input values; in order words
 	// one successful execution is indistinguishable from another one based on side channel information.
@@ -78,8 +79,8 @@ public final class Ecdsa {
 	}
 	
 	
-	// Computes a deterministic nonce based on the HMAC of the message hash with the private key,
-	// and then performs ECDSA signing. Returns true iff successful (extremely likely).
+	// Computes a deterministic nonce based on the HMAC-SHA-256 of the message hash with the private key,
+	// and then performs ECDSA signing. Returns true iff signing is successful (with overwhelming probability).
 	public static boolean signWithHmacNonce(int[] privateKey, Sha256Hash msgHash, int[] outR, int[] outS) {
 		if (privateKey == null || msgHash == null || outR == null || outS == null)
 			throw new NullPointerException();
@@ -95,8 +96,8 @@ public final class Ecdsa {
 	}
 	
 	
-	// Checks whether the given signature, message, and public key are valid together. The public key point must be normalized.
-	// publicKey is a CurvePoint, r is a Uint256, and s is a Uint256.
+	// Checks whether the given signature, message, and public key are valid together.
+	// publicKey is a normalized CurvePoint, r is a Uint256, and s is a Uint256.
 	public static boolean verify(int[] publicKey, Sha256Hash msgHash, int[] r, int[] s) {
 		if (publicKey == null || msgHash == null || r == null || s == null)
 			throw new NullPointerException();

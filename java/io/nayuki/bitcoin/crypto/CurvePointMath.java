@@ -92,7 +92,7 @@ public final class CurvePointMath {
 	
 	
 	// Adds the point q into point p. Requires 144 words of temporary space.
-	// The resulting state is usually not normalized. Constant-time with respect to both points.
+	// The resulting point is usually not normalized. Constant-time with respect to both points.
 	public static void add(int[] val, int pOff, int qOff, int tempOff) {
 		/* 
 		 * (Derived from http://en.wikibooks.org/wiki/Cryptography/Prime_Curve/Standard_Projective_Coordinates)
@@ -187,8 +187,8 @@ public final class CurvePointMath {
 	public static final int ADD_TEMP_WORDS = 13 * NUM_WORDS + Int256Math.FIELD_MULTIPLY_TEMP_WORDS;
 	
 	
-	// Multiplies the given point by the given unsigned integer. Requires 552 words of temporary space.
-	// The resulting state is usually not normalized. Constant-time with respect to both values.
+	// Multiplies the given point by the given unsigned integer. The resulting point is usually not normalized.
+	// Requires 552 words of temporary space. Constant-time with respect to both values.
 	public static void multiply(int[] val, int pOff, int nOff, int tempOff) {
 		checkPoint(val, pOff);
 		Int256Math.checkUint(val, nOff);
@@ -225,8 +225,8 @@ public final class CurvePointMath {
 	public static final int MULTIPLY_TEMP_WORDS = 17 * POINT_WORDS + ADD_TEMP_WORDS;
 	
 	
-	// Normalizes the coordinates of the given point. If z != 0, then (x', y', z') = (x/z, y/z, 1);
-	// otherwise special logic occurs. Requires 72 words of temporary space. Constant-time with respect to the point.
+	// Normalizes the coordinates of the given point. Idempotent operation.
+	// Requires 72 words of temporary space. Constant-time with respect to the point.
 	public static void normalize(int[] val, int pOff, int tempOff) {
 		/* 
 		 * Algorithm pseudocode:
@@ -265,7 +265,7 @@ public final class CurvePointMath {
 	
 	/*---- Miscellaneous functions ----*/
 	
-	// Copies the point q into p iff enable is 1.
+	// Copies the point q into point p if enable is 1, or does nothing if enable is 0.
 	// Constant-time with respect to both values and the enable.
 	public static void replace(int[] val, int pOff, int qOff, int enable) {
 		checkPoint(val, pOff);
@@ -278,10 +278,9 @@ public final class CurvePointMath {
 	}
 	
 	
-	// Tests whether the given point is on the elliptic curve.
-	// The point needs to be normalized before the method is called.
-	// Zero is considered to be off the curve. Constant-time with respect to the point.
-	// Requires 56 words of temporary space.
+	// Tests whether the given point is on the elliptic curve, returning 0 or 1.
+	// The point needs to be normalized before the method is called. Zero is considered to be off the curve.
+	// Requires 56 words of temporary space. Constant-time with respect to the point.
 	public static int isOnCurve(int[] val, int pOff, int tempOff) {
 		checkPoint(val, pOff);
 		Int256Math.checkUint(val, tempOff);

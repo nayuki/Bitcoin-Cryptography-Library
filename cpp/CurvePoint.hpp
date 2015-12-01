@@ -81,7 +81,7 @@ public:
 	void normalize();
 	
 	
-	// Conditionally replaces this point's coordinates with the given point.
+	// Copies the given point into this point if enable is 1, or does nothing if enable is 0.
 	// Constant-time with respect to both values and the enable.
 	void replace(const CurvePoint &other, uint32_t enable);
 	
