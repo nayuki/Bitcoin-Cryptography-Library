@@ -281,6 +281,7 @@ public final class CurvePointMath {
 	// Requires 56 words of temporary space.
 	public static int isOnCurve(int[] val, int pOff, int tempOff) {
 		checkPoint(val, pOff);
+		Int256Math.checkUint(val, tempOff);
 		assert val.length - tempOff >= ISONCURVE_TEMP_WORDS;
 		
 		int rightOff   = tempOff + 0 * NUM_WORDS;
