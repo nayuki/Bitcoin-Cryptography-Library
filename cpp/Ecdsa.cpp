@@ -17,14 +17,14 @@
 
 bool Ecdsa::sign(const Uint256 &privateKey, const Sha256Hash &msgHash, const Uint256 &nonce, Uint256 &outR, Uint256 &outS) {
 	/* 
-	 * Pseudocode:
-	 *   if (nonce outside range [1, order-1]) return false;
-	 *   p = nonce * G;
-	 *   r = p.x % order;
-	 *   if (r == 0) return false;
-	 *   s = nonce^-1 * (msgHash + r * privateKey) % order;
-	 *   if (s == 0) return false;
-	 *   s = min(s, order - s);
+	 * Algorithm pseudocode:
+	 * if (nonce outside range [1, order-1]) return false;
+	 * p = nonce * G;
+	 * r = p.x % order;
+	 * if (r == 0) return false;
+	 * s = nonce^-1 * (msgHash + r * privateKey) % order;
+	 * if (s == 0) return false;
+	 * s = min(s, order - s);
 	 */
 	
 	const Uint256 &order = CurvePoint::ORDER;
@@ -77,17 +77,17 @@ bool Ecdsa::signWithHmacNonce(const Uint256 &privateKey, const Sha256Hash &msgHa
 
 bool Ecdsa::verify(const CurvePoint &publicKey, const Sha256Hash &msgHash, const Uint256 &r, const Uint256 &s) {
 	/* 
-	 * Pseudocode:
-	 *   if (pubKey == zero || !(pubKey is normalized) ||
-	 *       !(pubKey on curve) || n * pubKey != zero)
-	 *     return false;
-	 *   if (!(0 < r, s < order))
-	 *     return false;
-	 *   w = s^-1 % order;
-	 *   u1 = (z * w) % order;
-	 *   u2 = (r * w) % order;
-	 *   p = u1 * G + u2 * pubKey;
-	 *   return r == p.x % order;
+	 * Algorithm pseudocode:
+	 * if (pubKey == zero || !(pubKey is normalized) ||
+	 *     !(pubKey on curve) || n * pubKey != zero)
+	 *   return false;
+	 * if (!(0 < r, s < order))
+	 *   return false;
+	 * w = s^-1 % order;
+	 * u1 = (z * w) % order;
+	 * u2 = (r * w) % order;
+	 * p = u1 * G + u2 * pubKey;
+	 * return r == p.x % order;
 	 */
 	
 	const Uint256 &order = CurvePoint::ORDER;
@@ -123,14 +123,14 @@ bool Ecdsa::verify(const CurvePoint &publicKey, const Sha256Hash &msgHash, const
 
 void Ecdsa::multiplyModOrder(Uint256 &x, const Uint256 &y) {
 	/* 
-	 * Russian peasant multiplication with modular reduction at each step. Pseudocode:
-	 *   z = 0;
-	 *   for (i = 255 .. 0) {
-	 *     z = (z * 2) % order;
-	 *     if (y.bit[i] == 1)
-	 *       z = (z + x) % order;
-	 *   }
-	 *   x = z;
+	 * Russian peasant multiplication with modular reduction at each step. Algorithm pseudocode:
+	 * z = 0;
+	 * for (i = 255 .. 0) {
+	 *   z = (z * 2) % order;
+	 *   if (y.bit[i] == 1)
+	 *     z = (z + x) % order;
+	 * }
+	 * x = z;
 	 */
 	const Uint256 &mod = CurvePoint::ORDER;
 	assert(&x != &y && x < mod);

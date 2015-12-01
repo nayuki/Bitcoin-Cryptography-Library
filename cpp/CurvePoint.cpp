@@ -25,6 +25,7 @@ CurvePoint::CurvePoint() :
 void CurvePoint::add(const CurvePoint &other) {
 	/* 
 	 * (Derived from http://en.wikibooks.org/wiki/Cryptography/Prime_Curve/Standard_Projective_Coordinates)
+	 * Algorithm pseudocode:
 	 * if (this == ZERO)
 	 *   this = other
 	 * else if (other == ZERO)
@@ -105,6 +106,7 @@ void CurvePoint::add(const CurvePoint &other) {
 void CurvePoint::twice() {
 	/* 
 	 * (Derived from http://en.wikibooks.org/wiki/Cryptography/Prime_Curve/Standard_Projective_Coordinates)
+	 * Algorithm pseudocode:
 	 * if (this == ZERO || y == 0)
 	 *   this = ZERO
 	 * else {
@@ -191,6 +193,7 @@ void CurvePoint::multiply(const Uint256 &n) {
 
 void CurvePoint::normalize() {
 	/* 
+	 * Algorithm pseudocode:
 	 * if (z != 0) {
 	 *   x /= z;
 	 *   y /= z;

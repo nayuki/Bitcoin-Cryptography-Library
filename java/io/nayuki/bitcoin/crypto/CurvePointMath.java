@@ -31,6 +31,7 @@ public final class CurvePointMath {
 	public static void twice(int[] val, int pOff, int tempOff) {
 		/* 
 		 * (Derived from http://en.wikibooks.org/wiki/Cryptography/Prime_Curve/Standard_Projective_Coordinates)
+		 * Algorithm pseudocode:
 		 * if (p == ZERO || p.y == 0)
 		 *   p = ZERO
 		 * else {
@@ -95,6 +96,7 @@ public final class CurvePointMath {
 	public static void add(int[] val, int pOff, int qOff, int tempOff) {
 		/* 
 		 * (Derived from http://en.wikibooks.org/wiki/Cryptography/Prime_Curve/Standard_Projective_Coordinates)
+		 * Algorithm pseudocode:
 		 * if (p == ZERO)
 		 *   p = q
 		 * else if (q == ZERO)
@@ -227,6 +229,7 @@ public final class CurvePointMath {
 	// otherwise special logic occurs. Requires 72 words of temporary space. Constant-time with respect to the point.
 	public static void normalize(int[] val, int pOff, int tempOff) {
 		/* 
+		 * Algorithm pseudocode:
 		 * if (z != 0) {
 		 *   x /= z;
 		 *   y /= z;

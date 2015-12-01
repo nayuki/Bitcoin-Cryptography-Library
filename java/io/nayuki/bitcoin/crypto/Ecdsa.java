@@ -24,14 +24,14 @@ public final class Ecdsa {
 			throw new IllegalArgumentException();
 		
 		/* 
-		 * Pseudocode:
-		 *   if (nonce outside range [1, order-1]) return false;
-		 *   p = nonce * G;
-		 *   r = p.x % order;
-		 *   if (r == 0) return false;
-		 *   s = nonce^-1 * (msgHash + r * privateKey) % order;
-		 *   if (s == 0) return false;
-		 *   s = min(s, order - s);
+		 * Algorithm pseudocode:
+		 * if (nonce outside range [1, order-1]) return false;
+		 * p = nonce * G;
+		 * r = p.x % order;
+		 * if (r == 0) return false;
+		 * s = nonce^-1 * (msgHash + r * privateKey) % order;
+		 * if (s == 0) return false;
+		 * s = min(s, order - s);
 		 */
 		
 		int[] val = new int[2 * NUM_WORDS + CurvePointMath.POINT_WORDS + CurvePointMath.MULTIPLY_TEMP_WORDS];  // Temporary scratch space for all values
@@ -104,17 +104,17 @@ public final class Ecdsa {
 			throw new IllegalArgumentException();
 		
 		/* 
-		 * Pseudocode:
-		 *   if (pubKey == zero || !(pubKey is normalized) ||
-		 *       !(pubKey on curve) || n * pubKey != zero)
-		 *     return false;
-		 *   if (!(0 < r, s < order))
-		 *     return false;
-		 *   w = s^-1 % order;
-		 *   u1 = (z * w) % order;
-		 *   u2 = (r * w) % order;
-		 *   p = u1 * G + u2 * pubKey;
-		 *   return r == p.x % order;
+		 * Algorithm pseudocode:
+		 * if (pubKey == zero || !(pubKey is normalized) ||
+		 *     !(pubKey on curve) || n * pubKey != zero)
+		 *   return false;
+		 * if (!(0 < r, s < order))
+		 *   return false;
+		 * w = s^-1 % order;
+		 * u1 = (z * w) % order;
+		 * u2 = (r * w) % order;
+		 * p = u1 * G + u2 * pubKey;
+		 * return r == p.x % order;
 		 */
 		
 		int[] val = new int[9 * NUM_WORDS + CurvePointMath.MULTIPLY_TEMP_WORDS];
@@ -172,14 +172,14 @@ public final class Ecdsa {
 	// tempOff indexes into the x array, and uses 16 words of temporary space.
 	private static void multiplyModOrder(int[] x, int xOff, int[] y, int yOff, int tempOff) {
 		/* 
-		 * Russian peasant multiplication with modular reduction at each step. Pseudocode:
-		 *   z = 0;
-		 *   for (i = 255 .. 0) {
-		 *     z = (z * 2) % order;
-		 *     if (y.bit[i] == 1)
-		 *       z = (z + x) % order;
-		 *   }
-		 *   x = z;
+		 * Russian peasant multiplication with modular reduction at each step. Algorithm pseudocode:
+		 * z = 0;
+		 * for (i = 255 .. 0) {
+		 *   z = (z * 2) % order;
+		 *   if (y.bit[i] == 1)
+		 *     z = (z + x) % order;
+		 * }
+		 * x = z;
 		 */
 		int modOff = tempOff + 0 * NUM_WORDS;
 		int zOff   = tempOff + 1 * NUM_WORDS;
