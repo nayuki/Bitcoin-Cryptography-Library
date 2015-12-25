@@ -148,9 +148,9 @@ Sha256::Sha256() :
 }
 
 
-void Sha256::append(const uint8_t *bytes, int len) {
+void Sha256::append(const uint8_t *bytes, size_t len) {
 	assert(bytes != nullptr || len == 0);
-	for (int i = 0; i < len; i++) {
+	for (size_t i = 0; i < len; i++) {
 		buffer[bufferLen] = bytes[i];
 		bufferLen++;
 		if (bufferLen == SHA256_BLOCK_LEN) {

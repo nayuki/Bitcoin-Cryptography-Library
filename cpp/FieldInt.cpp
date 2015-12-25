@@ -85,7 +85,7 @@ void FieldInt::multiply(const FieldInt &other) {
 				sum += product0[i - NUM_WORDS];
 			product1[i] = static_cast<uint32_t>(sum);
 			carry = static_cast<uint32_t>(sum >> 32);
-			assert(0 <= carry && carry <= 0x3D3);
+			assert(carry <= 0x3D3);
 		}
 		assert(carry == 0);
 	}
@@ -106,7 +106,7 @@ void FieldInt::multiply(const FieldInt &other) {
 				diff += product1Shifted[i - NUM_WORDS];
 			product2[i] = static_cast<uint32_t>(diff);
 			borrow = -static_cast<uint32_t>(diff >> 32);
-			assert(0 <= borrow && borrow <= 0x3D3);
+			assert(borrow <= 0x3D3);
 		}
 		assert(borrow == 0);
 	}
