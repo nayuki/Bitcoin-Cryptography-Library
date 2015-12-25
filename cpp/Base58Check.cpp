@@ -33,27 +33,27 @@ void Base58Check::privateKeyToBase58Check(const Uint256 &privKey, char outStr[53
 }
 
 
-void Base58Check::bytesToBase58Check(uint8_t *data, size_t len, char *outStr) {
+void Base58Check::bytesToBase58Check(uint8_t *data, size_t dataLen, char *outStr) {
 	// Append 4-byte hash
 	#define MAX_TOTAL_BYTES 38  // Including the 4-byte hash
-	assert(len <= MAX_TOTAL_BYTES - 4);
-	Sha256Hash sha256Hash = Sha256::getDoubleHash(data, len);
-	for (int i = 0; i < 4; i++, len++)
-		data[len] = sha256Hash.getByte(i);
+	assert(dataLen <= MAX_TOTAL_BYTES - 4);
+	Sha256Hash sha256Hash = Sha256::getDoubleHash(data, dataLen);
+	for (int i = 0; i < 4; i++, dataLen++)
+		data[dataLen] = sha256Hash.getByte(i);
 	
 	// Count leading zero bytes
 	size_t leadingZeros = 0;
-	for (size_t i = 0; i < len && data[i] == 0; i++)
+	for (size_t i = 0; i < dataLen && data[i] == 0; i++)
 		leadingZeros++;
 	
 	// Encode to Base 58
 	size_t outLen = 0;
-	while (!isZero(data, len)) {  // Extract digits in little-endian
-		outStr[outLen] = ALPHABET[mod58(data, len)];
+	while (!isZero(data, dataLen)) {  // Extract digits in little-endian
+		outStr[outLen] = ALPHABET[mod58(data, dataLen)];
 		outLen++;
 		uint8_t quotient[MAX_TOTAL_BYTES] = {};
-		divide58(data, quotient, len);  // quotient = floor(data / 58)
-		Utils::copyBytes(data, quotient, len);  // data = quotient
+		divide58(data, quotient, dataLen);  // quotient = floor(data / 58)
+		Utils::copyBytes(data, quotient, dataLen);  // data = quotient
 	}
 	for (size_t i = 0; i < leadingZeros; i++) {  // Append leading zeros
 		outStr[outLen] = ALPHABET[0];
@@ -62,6 +62,8 @@ void Base58Check::bytesToBase58Check(uint8_t *data, size_t len, char *outStr) {
 	outStr[outLen] = '\0';
 	
 	// Reverse the string
+	if (outLen == 0)
+		return;  // Exit early to ensure that j does not overflow
 	for (size_t i = 0, j = outLen - 1; i < j; i++, j--) {
 		char temp = outStr[i];
 		outStr[i] = outStr[j];

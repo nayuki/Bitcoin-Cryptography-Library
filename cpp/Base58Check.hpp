@@ -38,7 +38,7 @@ private:
 	// Computes the 4-byte hash and converts the concatenated data to Base58Check.
 	// This overwrites data[0 <= i < len + 4]. The caller is responsible for the prefix byte,
 	// 4 free bytes starting at data[len], and allocating enough space in outStr. Not constant-time.
-	static void bytesToBase58Check(uint8_t *data, size_t len, char *outStr);
+	static void bytesToBase58Check(uint8_t *data, size_t dataLen, char *outStr);
 	
 	
 	/* Unsigned big-endian arbitrary-precision arithmetic functions */
