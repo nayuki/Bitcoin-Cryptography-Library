@@ -43,7 +43,7 @@ bool Ecdsa::sign(const Uint256 &privateKey, const Sha256Hash &msgHash, const Uin
 	assert(r < order);
 	
 	Uint256 s(r);
-	Uint256 z(msgHash.data());
+	Uint256 z(msgHash.value);
 	multiplyModOrder(s, privateKey);
 	uint32_t carry = s.add(z, 1);
 	s.subtract(order, carry | static_cast<uint32_t>(s >= order));
@@ -67,10 +67,10 @@ bool Ecdsa::signWithHmacNonce(const Uint256 &privateKey, const Sha256Hash &msgHa
 	uint8_t privkeyBytes[32] = {};
 	uint8_t msghashBytes[SHA256_HASH_LEN] = {};
 	privateKey.getBigEndianBytes(privkeyBytes);
-	memcpy(msghashBytes, msgHash.data(), SHA256_HASH_LEN);
+	memcpy(msghashBytes, msgHash.value, SHA256_HASH_LEN);
 	
-	Sha256Hash hmac(Sha256::getHmac(privkeyBytes, sizeof(privkeyBytes), msghashBytes, sizeof(msghashBytes)));
-	Uint256 nonce(hmac.data());
+	const Sha256Hash hmac(Sha256::getHmac(privkeyBytes, sizeof(privkeyBytes), msghashBytes, sizeof(msghashBytes)));
+	Uint256 nonce(hmac.value);
 	return sign(privateKey, msgHash, nonce, outR, outS);
 }
 
@@ -101,7 +101,7 @@ bool Ecdsa::verify(const CurvePoint &publicKey, const Sha256Hash &msgHash, const
 	
 	Uint256 w(s);
 	w.reciprocal(order);
-	Uint256 z(msgHash.data());
+	Uint256 z(msgHash.value);
 	Uint256 u1(w);
 	Uint256 u2(w);
 	multiplyModOrder(u1, z);

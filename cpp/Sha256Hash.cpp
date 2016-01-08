@@ -29,17 +29,6 @@ Sha256Hash::Sha256Hash(const char *str) :
 }
 
 
-uint8_t Sha256Hash::getByte(int index) const {
-	assert(0 <= index && index < SHA256_HASH_LEN);
-	return value[index];
-}
-
-
-const uint8_t *Sha256Hash::data() const {
-	return &value[0];
-}
-
-
 bool Sha256Hash::operator==(const Sha256Hash &other) const {
 	uint8_t diff = 0;
 	for (int i = 0; i < SHA256_HASH_LEN; i++)

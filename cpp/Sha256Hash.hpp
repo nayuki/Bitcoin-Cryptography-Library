@@ -14,7 +14,6 @@
 
 /* 
  * Represents a 32-byte SHA-256 hash value.
- * Instances of this class are immutable.
  * 
  * Note that by Bitcoin convention, SHA-256 hash strings are serialized in byte-reversed order.
  * For example, these three lines all represent the same hash value:
@@ -25,16 +24,15 @@
  */
 #define SHA256_HASH_LEN 32
 class Sha256Hash final {
+public:
 	
 	/*---- Fields ----*/
 	
-private:
 	uint8_t value[SHA256_HASH_LEN];
 	
 	
 	
 	/*---- Constructors ----*/
-public:
 	
 	// Constructs a Sha256Hash from the given array of 32 bytes (len is a dummy parameter that must equal 32).
 	// Constant-time with respect to the given array of values.
@@ -45,22 +43,8 @@ public:
 	Sha256Hash(const char *str);
 	
 	
-	// Business as usual.
-	Sha256Hash(const Sha256Hash &other) = default;
-	Sha256Hash(Sha256Hash &&other) = default;
-	
-	
 	
 	/*---- Instance methods ----*/
-public:
-	
-	// Retrieves a single byte of the hash. Not constant-time with respect to the index.
-	uint8_t getByte(int index) const;
-	
-	
-	// Provides a read-only view of the underlying 32-byte array.
-	const uint8_t *data() const;
-	
 	
 	// Tests whether the given hash is equal to this one. Constant-time with respect to both values.
 	bool operator==(const Sha256Hash &other) const;
@@ -68,10 +52,5 @@ public:
 	
 	// Tests whether the given hash is unequal to this one. Constant-time with respect to both values.
 	bool operator!=(const Sha256Hash &other) const;
-	
-	
-	// Enforces immutability.
-	Sha256Hash &operator=(const Sha256Hash &other) = delete;
-	Sha256Hash &operator=(Sha256Hash &&other) = delete;
 	
 };

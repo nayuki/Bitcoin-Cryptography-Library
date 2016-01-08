@@ -709,7 +709,7 @@ static void testEcdsaSignAndVerify() {
 	for (unsigned int i = 0; i < ARRAY_LENGTH(cases); i++) {
 		SignCase &tc = cases[i];
 		Uint256 privateKey(tc.privateKey);
-		Sha256Hash msgHash(tc.msgHash);
+		const Sha256Hash msgHash(tc.msgHash);
 		Uint256 expectedR(tc.expectedR);
 		Uint256 expectedS(tc.expectedS);
 		
@@ -1741,7 +1741,7 @@ static void testEcdsaVerify() {
 	for (unsigned int i = 0; i < ARRAY_LENGTH(cases); i++) {
 		VerifyCase &tc = cases[i];
 		CurvePoint publicKey(tc.pubPointX, tc.pubPointY);
-		Sha256Hash msgHash(tc.msgHash);
+		const Sha256Hash msgHash(tc.msgHash);
 		Uint256 r(tc.rValue);
 		Uint256 s(tc.sValue);
 		assert(Ecdsa::verify(publicKey, msgHash, r, s) == tc.answer);

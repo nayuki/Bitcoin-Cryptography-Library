@@ -37,9 +37,9 @@ void Base58Check::bytesToBase58Check(uint8_t *data, size_t dataLen, char *outStr
 	// Append 4-byte hash
 	#define MAX_TOTAL_BYTES 38  // Including the 4-byte hash
 	assert(dataLen <= MAX_TOTAL_BYTES - 4);
-	Sha256Hash sha256Hash = Sha256::getDoubleHash(data, dataLen);
+	const Sha256Hash sha256Hash = Sha256::getDoubleHash(data, dataLen);
 	for (int i = 0; i < 4; i++, dataLen++)
-		data[dataLen] = sha256Hash.getByte(i);
+		data[dataLen] = sha256Hash.value[i];
 	
 	// Count leading zero bytes
 	size_t leadingZeros = 0;
