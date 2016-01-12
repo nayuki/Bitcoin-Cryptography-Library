@@ -45,12 +45,12 @@ int main(int argc, char **argv) {
 	}
 	
 	// Test get byte
-	Sha256Hash hash("FD1A91CA0B85A52ECE4F73EB7C55A5021FA852F78D0390236219EA458C2CE991");
-	assert(hash.getByte( 0) == 0x91);
-	assert(hash.getByte( 1) == 0xE9);
-	assert(hash.getByte( 2) == 0x2C);
-	assert(hash.getByte(30) == 0x1A);
-	assert(hash.getByte(31) == 0xFD);
+	const Sha256Hash hash("FD1A91CA0B85A52ECE4F73EB7C55A5021FA852F78D0390236219EA458C2CE991");
+	assert(hash.value[ 0] == 0x91);
+	assert(hash.value[ 1] == 0xE9);
+	assert(hash.value[ 2] == 0x2C);
+	assert(hash.value[30] == 0x1A);
+	assert(hash.value[31] == 0xFD);
 	numTestCases++;
 	
 	// Epilog

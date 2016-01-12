@@ -57,7 +57,7 @@ public:
 	
 	
 	// Appends message bytes to this ongoing hasher.
-	void append(const uint8_t *bytes, int len);
+	void append(const uint8_t *bytes, size_t len);
 	
 	
 	// Returns the SHA-256 hash of all the bytes seen. Destroys the state so that no further append() or getHash() will be valid.

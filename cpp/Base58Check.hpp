@@ -38,22 +38,22 @@ private:
 	// Computes the 4-byte hash and converts the concatenated data to Base58Check.
 	// This overwrites data[0 <= i < len + 4]. The caller is responsible for the prefix byte,
 	// 4 free bytes starting at data[len], and allocating enough space in outStr. Not constant-time.
-	static void bytesToBase58Check(uint8_t *data, int len, char *outStr);
+	static void bytesToBase58Check(uint8_t *data, size_t dataLen, char *outStr);
 	
 	
 	/* Unsigned big-endian arbitrary-precision arithmetic functions */
 	// Note: This differs from Uint256 because Uint256 is fixed-width, little-endian, and 32-bit-word-oriented.
 	
 	// Tests whether the given bigint is zero. Not constant-time.
-	static bool isZero(const uint8_t *x, int len);
+	static bool isZero(const uint8_t *x, size_t len);
 	
 	
 	// Returns the given bigint modulo 58. Not constant-time.
-	static uint8_t mod58(const uint8_t *x, int len);
+	static uint8_t mod58(const uint8_t *x, size_t len);
 	
 	
 	// Computes the quotient y = floor(x / 58). Not constant-time.
-	static void divide58(const uint8_t *x, uint8_t *y, int len);
+	static void divide58(const uint8_t *x, uint8_t *y, size_t len);
 	
 	
 	Base58Check();  // Not instantiable

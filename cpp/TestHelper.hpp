@@ -38,7 +38,7 @@ Bytes hexBytes(const char *str) {
 	assert(length % 2 == 0);
 	length /= 2;
 	for (size_t i = 0; i < length; i++) {
-		int temp;
+		unsigned int temp;
 		sscanf(&str[i * 2], "%02x", &temp);
 		result.push_back(static_cast<uint8_t>(temp));
 	}

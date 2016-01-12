@@ -20,8 +20,8 @@ Sha256Hash Sha256::getHash(const uint8_t *msg, size_t len) {
 
 Sha256Hash Sha256::getDoubleHash(const uint8_t *msg, size_t len) {
 	assert(msg != nullptr || len == 0);
-	Sha256Hash innerHash(getHash(msg, len));
-	return getHash(innerHash.data(), SHA256_HASH_LEN);
+	const Sha256Hash innerHash(getHash(msg, len));
+	return getHash(innerHash.value, SHA256_HASH_LEN);
 }
 
 
@@ -33,8 +33,8 @@ Sha256Hash Sha256::getHmac(const uint8_t *key, size_t keyLen, const uint8_t *msg
 	if (keyLen <= SHA256_BLOCK_LEN)
 		Utils::copyBytes(tempKey, key, keyLen);
 	else {
-		Sha256Hash keyHash(getHash(key, keyLen));
-		memcpy(tempKey, keyHash.data(), SHA256_HASH_LEN);
+		const Sha256Hash keyHash(getHash(key, keyLen));
+		memcpy(tempKey, keyHash.value, SHA256_HASH_LEN);
 	}
 	
 	// Compute inner hash
@@ -43,14 +43,14 @@ Sha256Hash Sha256::getHmac(const uint8_t *key, size_t keyLen, const uint8_t *msg
 	uint32_t state[8];
 	memcpy(state, INITIAL_STATE, sizeof(state));
 	compress(state, tempKey, SHA256_BLOCK_LEN);
-	Sha256Hash innerHash(getHash(msg, msgLen, state, SHA256_BLOCK_LEN));
+	const Sha256Hash innerHash(getHash(msg, msgLen, state, SHA256_BLOCK_LEN));
 	
 	// Compute outer hash
 	for (int i = 0; i < SHA256_BLOCK_LEN; i++)
 		tempKey[i] ^= 0x36 ^ 0x5C;
 	memcpy(state, INITIAL_STATE, sizeof(state));
 	compress(state, tempKey, SHA256_BLOCK_LEN);
-	return getHash(innerHash.data(), SHA256_HASH_LEN, state, SHA256_BLOCK_LEN);
+	return getHash(innerHash.value, SHA256_HASH_LEN, state, SHA256_BLOCK_LEN);
 }
 
 
@@ -148,9 +148,9 @@ Sha256::Sha256() :
 }
 
 
-void Sha256::append(const uint8_t *bytes, int len) {
+void Sha256::append(const uint8_t *bytes, size_t len) {
 	assert(bytes != nullptr || len == 0);
-	for (int i = 0; i < len; i++) {
+	for (size_t i = 0; i < len; i++) {
 		buffer[bufferLen] = bytes[i];
 		bufferLen++;
 		if (bufferLen == SHA256_BLOCK_LEN) {

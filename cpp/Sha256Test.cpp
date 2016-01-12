@@ -186,7 +186,7 @@ int main(int argc, char **argv) {
 	};
 	for (unsigned int i = 0; i < ARRAY_LENGTH(singleCases); i++) {
 		TestCase &tc = singleCases[i];
-		Sha256Hash actualHash(Sha256::getHash(tc.message.data(), tc.message.size()));
+		const Sha256Hash actualHash(Sha256::getHash(tc.message.data(), tc.message.size()));
 		assert((actualHash == Sha256Hash(tc.expectedHash)) == tc.matches);
 		numTestCases++;
 	}
@@ -201,7 +201,7 @@ int main(int argc, char **argv) {
 	};
 	for (unsigned int i = 0; i < ARRAY_LENGTH(doubleCases); i++) {
 		TestCase &tc = doubleCases[i];
-		Sha256Hash actualHash(Sha256::getDoubleHash(tc.message.data(), tc.message.size()));
+		const Sha256Hash actualHash(Sha256::getDoubleHash(tc.message.data(), tc.message.size()));
 		assert((actualHash == Sha256Hash(tc.expectedHash)) == tc.matches);
 		numTestCases++;
 	}
@@ -221,7 +221,7 @@ int main(int argc, char **argv) {
 	};
 	for (unsigned int i = 0; i < ARRAY_LENGTH(hmacCases); i++) {
 		HmacCase &tc = hmacCases[i];
-		Sha256Hash actualHash(Sha256::getHmac(tc.key.data(), tc.key.size(), tc.message.data(), tc.message.size()));
+		const Sha256Hash actualHash(Sha256::getHmac(tc.key.data(), tc.key.size(), tc.message.data(), tc.message.size()));
 		assert((actualHash == Sha256Hash(tc.expectedHash)) == tc.matches);
 		numTestCases++;
 	}

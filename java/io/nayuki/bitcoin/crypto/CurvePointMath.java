@@ -19,6 +19,11 @@ import java.util.Arrays;
  */
 public final class CurvePointMath {
 	
+	/*---- Critical class constants ----*/
+	
+	static final int POINT_WORDS = 3 * NUM_WORDS;
+	
+	
 	/*---- Arithmetic functions ----*/
 	
 	// Doubles the given curve point. Requires 72 words of temporary space.
@@ -26,6 +31,7 @@ public final class CurvePointMath {
 	public static void twice(int[] val, int pOff, int tempOff) {
 		/* 
 		 * (Derived from http://en.wikibooks.org/wiki/Cryptography/Prime_Curve/Standard_Projective_Coordinates)
+		 * Algorithm pseudocode:
 		 * if (p == ZERO || p.y == 0)
 		 *   p = ZERO
 		 * else {
@@ -42,7 +48,7 @@ public final class CurvePointMath {
 		
 		checkPoint(val, pOff);
 		Int256Math.checkUint(val, tempOff);
-		assert val.length - tempOff >= 9 * NUM_WORDS;
+		assert val.length - tempOff >= TWICE_TEMP_WORDS;
 		
 		int zeroResult = CurvePointMath.isZero(val, pOff) | Int256Math.isZero(val, pOff + YCOORD);
 		int newTempOff = tempOff + 4 * NUM_WORDS;
@@ -82,12 +88,15 @@ public final class CurvePointMath {
 		CurvePointMath.replace(val, pOff, tempOff, zeroResult);
 	}
 	
+	public static final int TWICE_TEMP_WORDS = 4 * NUM_WORDS + Int256Math.FIELD_MULTIPLY_TEMP_WORDS;
+	
 	
 	// Adds the point q into point p. Requires 144 words of temporary space.
-	// The resulting state is usually not normalized. Constant-time with respect to both points.
+	// The resulting point is usually not normalized. Constant-time with respect to both points.
 	public static void add(int[] val, int pOff, int qOff, int tempOff) {
 		/* 
 		 * (Derived from http://en.wikibooks.org/wiki/Cryptography/Prime_Curve/Standard_Projective_Coordinates)
+		 * Algorithm pseudocode:
 		 * if (p == ZERO)
 		 *   p = q
 		 * else if (q == ZERO)
@@ -114,7 +123,7 @@ public final class CurvePointMath {
 		checkPoint(val, pOff);
 		checkPoint(val, qOff);
 		Int256Math.checkUint(val, tempOff);
-		assert val.length - tempOff >= 18 * NUM_WORDS;
+		assert val.length - tempOff >= ADD_TEMP_WORDS;
 		
 		int pIsZero = CurvePointMath.isZero(val, pOff);
 		int qIsZero = CurvePointMath.isZero(val, qOff);
@@ -175,14 +184,16 @@ public final class CurvePointMath {
 		CurvePointMath.replace(val, pOff, twicedOff, cond & sameX);
 	}
 	
+	public static final int ADD_TEMP_WORDS = 13 * NUM_WORDS + Int256Math.FIELD_MULTIPLY_TEMP_WORDS;
 	
-	// Multiplies the given point by the given unsigned integer. Requires 552 words of temporary space.
-	// The resulting state is usually not normalized. Constant-time with respect to both values.
+	
+	// Multiplies the given point by the given unsigned integer. The resulting point is usually not normalized.
+	// Requires 552 words of temporary space. Constant-time with respect to both values.
 	public static void multiply(int[] val, int pOff, int nOff, int tempOff) {
 		checkPoint(val, pOff);
 		Int256Math.checkUint(val, nOff);
 		Int256Math.checkUint(val, tempOff);
-		assert val.length - tempOff >= 69 * NUM_WORDS;
+		assert val.length - tempOff >= MULTIPLY_TEMP_WORDS;
 		
 		// Precompute [p*0, p*1, ..., p*15]
 		int newTempOff = tempOff + 51 * NUM_WORDS;
@@ -211,11 +222,14 @@ public final class CurvePointMath {
 		}
 	}
 	
+	public static final int MULTIPLY_TEMP_WORDS = 17 * POINT_WORDS + ADD_TEMP_WORDS;
 	
-	// Normalizes the coordinates of the given point. If z != 0, then (x', y', z') = (x/z, y/z, 1);
-	// otherwise special logic occurs. Requires 72 words of temporary space. Constant-time with respect to the point.
+	
+	// Normalizes the coordinates of the given point. Idempotent operation.
+	// Requires 72 words of temporary space. Constant-time with respect to the point.
 	public static void normalize(int[] val, int pOff, int tempOff) {
 		/* 
+		 * Algorithm pseudocode:
 		 * if (z != 0) {
 		 *   x /= z;
 		 *   y /= z;
@@ -229,7 +243,7 @@ public final class CurvePointMath {
 		
 		checkPoint(val, pOff);
 		Int256Math.checkUint(val, tempOff);
-		assert val.length - tempOff >= 9 * NUM_WORDS;
+		assert val.length - tempOff >= NORMALIZE_TEMP_WORDS;
 		
 		int nonzero = Int256Math.isZero(val, pOff + ZCOORD) ^ 1;
 		int newTempOff = tempOff + POINT_WORDS;
@@ -246,10 +260,12 @@ public final class CurvePointMath {
 		CurvePointMath.replace(val, pOff, normOff, nonzero);
 	}
 	
+	public static final int NORMALIZE_TEMP_WORDS = POINT_WORDS + Int256Math.RECIPROCAL_TEMP_WORDS;
+	
 	
 	/*---- Miscellaneous functions ----*/
 	
-	// Copies the point q into p iff enable is 1.
+	// Copies the point q into point p if enable is 1, or does nothing if enable is 0.
 	// Constant-time with respect to both values and the enable.
 	public static void replace(int[] val, int pOff, int qOff, int enable) {
 		checkPoint(val, pOff);
@@ -262,13 +278,13 @@ public final class CurvePointMath {
 	}
 	
 	
-	// Tests whether the given point is on the elliptic curve.
-	// The point needs to be normalized before the method is called.
-	// Zero is considered to be off the curve. Constant-time with respect to the point.
-	// Requires 56 words of temporary space.
+	// Tests whether the given point is on the elliptic curve, returning 0 or 1.
+	// The point needs to be normalized before the method is called. Zero is considered to be off the curve.
+	// Requires 56 words of temporary space. Constant-time with respect to the point.
 	public static int isOnCurve(int[] val, int pOff, int tempOff) {
 		checkPoint(val, pOff);
-		assert val.length - tempOff >= 7 * NUM_WORDS;
+		Int256Math.checkUint(val, tempOff);
+		assert val.length - tempOff >= ISONCURVE_TEMP_WORDS;
 		
 		int rightOff   = tempOff + 0 * NUM_WORDS;
 		int constOff   = tempOff + 1 * NUM_WORDS;
@@ -284,6 +300,8 @@ public final class CurvePointMath {
 		Int256Math.fieldSquare(val, pOff + YCOORD, leftOff, newTempOff);
 		return Int256Math.equalTo(val, leftOff, rightOff) & (isZero(val, pOff) ^ 1);
 	}
+	
+	public static final int ISONCURVE_TEMP_WORDS = 2 * NUM_WORDS + Int256Math.FIELD_MULTIPLY_TEMP_WORDS;
 	
 	
 	// Tests whether the given point is equal to the special zero point.
@@ -314,7 +332,6 @@ public final class CurvePointMath {
 	/*---- Class constants ----*/
 	
 	// Sizes and offsets
-	static final int POINT_WORDS = 3 * NUM_WORDS;
 	static final int XCOORD = 0 * NUM_WORDS;
 	static final int YCOORD = 1 * NUM_WORDS;
 	static final int ZCOORD = 2 * NUM_WORDS;
