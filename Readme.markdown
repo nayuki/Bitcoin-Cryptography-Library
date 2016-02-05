@@ -13,7 +13,7 @@ designed with portability and clarity in mind, and is rigorously verified for
 correctness and quality.
 
 More details about features and design principles are on the main web page:
-[http://www.nayuki.io/page/bitcoin-cryptography-library](http://www.nayuki.io/page/bitcoin-cryptography-library) 
+[https://www.nayuki.io/page/bitcoin-cryptography-library](https://www.nayuki.io/page/bitcoin-cryptography-library) 
 
 License
 -------

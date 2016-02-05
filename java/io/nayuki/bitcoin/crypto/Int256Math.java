@@ -2,7 +2,7 @@
  * Bitcoin cryptography library
  * Copyright (c) Project Nayuki
  * 
- * http://www.nayuki.io/page/bitcoin-cryptography-library
+ * https://www.nayuki.io/page/bitcoin-cryptography-library
  * https://github.com/nayuki/Bitcoin-Cryptography-Library
  */
 
@@ -299,7 +299,7 @@ public final class Int256Math {
 			val[product0Off + i + NUM_WORDS] = carry;
 		}
 		
-		// Barrett reduction algorithm begins here (see http://www.nayuki.io/page/barrett-reduction-algorithm).
+		// Barrett reduction algorithm begins here (see https://www.nayuki.io/page/barrett-reduction-algorithm).
 		// Multiply by floor(2^512 / MODULUS), which is 2^256 + 2^32 + 0x3D1. Guaranteed to fit in a uint768.
 		int product1Off = tempOff + 2 * NUM_WORDS;  // Uses 24 words
 		{

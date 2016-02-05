@@ -2,7 +2,7 @@
  * Bitcoin cryptography library
  * Copyright (c) Project Nayuki
  * 
- * http://www.nayuki.io/page/bitcoin-cryptography-library
+ * https://www.nayuki.io/page/bitcoin-cryptography-library
  * https://github.com/nayuki/Bitcoin-Cryptography-Library
  */
 
@@ -62,7 +62,7 @@ void FieldInt::multiply(const FieldInt &other) {
 	uint32_t product0[NUM_WORDS * 2];
 	asm_FieldInt_multiply256x256eq512(&product0[0], &this->value[0], &other.value[0]);
 	
-	// Barrett reduction algorithm begins here (see http://www.nayuki.io/page/barrett-reduction-algorithm).
+	// Barrett reduction algorithm begins here (see https://www.nayuki.io/page/barrett-reduction-algorithm).
 	// Multiply by floor(2^512 / MODULUS), which is 2^256 + 2^32 + 0x3D1. Guaranteed to fit in a uint768.
 	uint32_t product1[NUM_WORDS * 3];
 	asm_FieldInt_multiplyBarrettStep0(product1, product0);
