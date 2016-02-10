@@ -108,8 +108,10 @@ Ripemd160::Ripemd160() {}
 
 
 // Static initializers
-const uint32_t Ripemd160::KL[5] = {0x00000000, 0x5A827999, 0x6ED9EBA1, 0x8F1BBCDC, 0xA953FD4E};
-const uint32_t Ripemd160::KR[5] = {0x50A28BE6, 0x5C4DD124, 0x6D703EF3, 0x7A6D76E9, 0x00000000};
+const uint32_t Ripemd160::KL[5] = {
+	UINT32_C(0x00000000), UINT32_C(0x5A827999), UINT32_C(0x6ED9EBA1), UINT32_C(0x8F1BBCDC), UINT32_C(0xA953FD4E)};
+const uint32_t Ripemd160::KR[5] = {
+	UINT32_C(0x50A28BE6), UINT32_C(0x5C4DD124), UINT32_C(0x6D703EF3), UINT32_C(0x7A6D76E9), UINT32_C(0x00000000)};
 const unsigned int Ripemd160::RL[80] = {
 	 0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15,
 	 7,  4, 13,  1, 10,  6, 15,  3, 12,  0,  9,  5,  2, 14, 11,  8,
