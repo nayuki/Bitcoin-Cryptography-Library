@@ -136,7 +136,7 @@ void Sha256::compress(uint32_t state[8], const uint8_t *blocks, size_t len) {
 		state[6] += g;
 		state[7] += h;
 	}
-	#undef ROT32
+	#undef ROTR32
 }
 
 

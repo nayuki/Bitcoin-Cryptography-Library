@@ -127,5 +127,8 @@ bool FieldInt::operator>=(const Uint256 &other) const {
 }
 
 
+#undef NUM_WORDS
+
+
 // Static initializers
 const Uint256  FieldInt::MODULUS("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFFFFFC2F");
