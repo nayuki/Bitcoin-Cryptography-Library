@@ -1,3 +1,11 @@
+/* 
+ * Bitcoin cryptography library
+ * Copyright (c) Project Nayuki
+ * 
+ * https://www.nayuki.io/page/bitcoin-cryptography-library
+ * https://github.com/nayuki/Bitcoin-Cryptography-Library
+ */
+
 package io.nayuki.bitcoin.crypto;
 
 import static io.nayuki.bitcoin.crypto.Int256Math.NUM_WORDS;
