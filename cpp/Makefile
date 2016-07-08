@@ -1,9 +1,9 @@
 # 
-# This makefile:
-# - builds and runs the test programs in this directory, which check the
-#   functionality and correctness of the C++ cryptography implementations.
-# - requires a C++11 compiler, because of features like
-#   move constructors and libraries like cstdint being used.
+# This makefile builds and runs the test programs in this directory. They check
+# the functionality and correctness of the C++ cryptography implementations.
+# 
+# Requires a C++11 compiler, because of features like move constructors and
+# libraries like cstdint being used.
 # 
 # Bitcoin cryptography library
 # Copyright (c) Project Nayuki
@@ -12,16 +12,17 @@
 # https://github.com/nayuki/Bitcoin-Cryptography-Library
 # 
 
+
 # ---- Configuration options ----
 
 # External/implicit variables:
-# - $(CXX) as the C++ compiler, such as g++ or clang++
-# - $(CXXFLAGS) as any extra user-specified compiler flags (can be blank)
-# - $(AR) as the archiver, such as ar
+# - CXX: The C++ compiler, such as g++ or clang++.
+# - CXXFLAGS: Any extra user-specified compiler flags (can be blank).
+# - AR: The archiver, such as ar.
 
 # Mandatory compiler flags
 CXXFLAGS += -std=c++11
-# Diagnostics. When using Clang compiler, adding '-fsanitize=address' is helpful.
+# Diagnostics. Adding '-fsanitize=address' is helpful for most versions of Clang and newer versions of GCC.
 CXXFLAGS += -Wall -fsanitize=undefined
 # Optimization level
 CXXFLAGS += -O1
