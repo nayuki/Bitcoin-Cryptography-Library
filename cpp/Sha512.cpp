@@ -14,6 +14,9 @@
 #define BLOCK_LEN 128
 
 
+static uint64_t rotr64(uint64_t x, uint64_t i);
+
+
 void Sha512::getHash(const uint8_t *msg, size_t len, uint8_t hashResult[SHA512_HASH_LEN]) {
 	// Compress whole message blocks
 	assert((msg != nullptr || len == 0) && hashResult != nullptr);
@@ -47,7 +50,6 @@ void Sha512::getHash(const uint8_t *msg, size_t len, uint8_t hashResult[SHA512_H
 
 
 void Sha512::compress(uint64_t state[8], const uint8_t *blocks, size_t len) {
-	#define ROTR64(x, i)  (((x) << (64 - (i))) | ((x) >> (i)))
 	assert(len % BLOCK_LEN == 0);
 	uint64_t schedule[80];
 	for (size_t i = 0; i < len; ) {
@@ -67,8 +69,8 @@ void Sha512::compress(uint64_t state[8], const uint8_t *blocks, size_t len) {
 		
 		for (int j = 16; j < 80; j++) {
 			schedule[j] = schedule[j - 16] + schedule[j - 7]
-				+ (ROTR64(schedule[j - 15],  1) ^ ROTR64(schedule[j - 15],  8) ^ (schedule[j - 15] >> 7))
-				+ (ROTR64(schedule[j -  2], 19) ^ ROTR64(schedule[j -  2], 61) ^ (schedule[j -  2] >> 6));
+				+ (rotr64(schedule[j - 15],  1) ^ rotr64(schedule[j - 15],  8) ^ (schedule[j - 15] >> 7))
+				+ (rotr64(schedule[j -  2], 19) ^ rotr64(schedule[j -  2], 61) ^ (schedule[j -  2] >> 6));
 		}
 		
 		// The 80 rounds
@@ -81,8 +83,8 @@ void Sha512::compress(uint64_t state[8], const uint8_t *blocks, size_t len) {
 		uint64_t g = state[6];
 		uint64_t h = state[7];
 		for (int j = 0; j < 80; j++) {
-			uint64_t t1 = h + (ROTR64(e, 14) ^ ROTR64(e, 18) ^ ROTR64(e, 41)) + (g ^ (e & (f ^ g))) + ROUND_CONSTANTS[j] + schedule[j];
-			uint64_t t2 = (ROTR64(a, 28) ^ ROTR64(a, 34) ^ ROTR64(a, 39)) + ((a & (b | c)) | (b & c));
+			uint64_t t1 = h + (rotr64(e, 14) ^ rotr64(e, 18) ^ rotr64(e, 41)) + (g ^ (e & (f ^ g))) + ROUND_CONSTANTS[j] + schedule[j];
+			uint64_t t2 = (rotr64(a, 28) ^ rotr64(a, 34) ^ rotr64(a, 39)) + ((a & (b | c)) | (b & c));
 			h = g;
 			g = f;
 			f = e;
@@ -101,7 +103,6 @@ void Sha512::compress(uint64_t state[8], const uint8_t *blocks, size_t len) {
 		state[6] += g;
 		state[7] += h;
 	}
-	#undef ROTR64
 }
 
 
@@ -134,3 +135,9 @@ const uint64_t Sha512::ROUND_CONSTANTS[80] = {
 	UINT64_C(0x28DB77F523047D84), UINT64_C(0x32CAAB7B40C72493), UINT64_C(0x3C9EBE0A15C9BEBC), UINT64_C(0x431D67C49C100D4C),
 	UINT64_C(0x4CC5D4BECB3E42B6), UINT64_C(0x597F299CFC657E2A), UINT64_C(0x5FCB6FAB3AD6FAEC), UINT64_C(0x6C44198C4A475817),
 };
+
+
+// Requires 1 <= i <= 63
+static uint64_t rotr64(uint64_t x, uint64_t i) {
+	return (x << (64 - i)) | (x >> i);
+}

@@ -12,6 +12,9 @@
 #include "Utils.hpp"
 
 
+static uint32_t rotr32(uint32_t x, uint32_t i);
+
+
 Sha256Hash Sha256::getHash(const uint8_t *msg, size_t len) {
 	assert(msg != nullptr || len == 0);
 	return getHash(msg, len, INITIAL_STATE, 0);
@@ -87,7 +90,6 @@ Sha256Hash Sha256::getHash(const uint8_t *msg, size_t len, const uint32_t initSt
 void Sha256::compress(uint32_t state[8], const uint8_t *blocks, size_t len) {
 	assert(state != nullptr && (blocks != nullptr || len == 0));
 	assert(len % SHA256_BLOCK_LEN == 0);
-	#define ROTR32(x, i)  (((x) << (32 - (i))) | ((x) >> (i)))
 	uint32_t schedule[64];
 	for (size_t i = 0; i < len; ) {
 		
@@ -102,8 +104,8 @@ void Sha256::compress(uint32_t state[8], const uint8_t *blocks, size_t len) {
 		
 		for (int j = 16; j < 64; j++) {
 			schedule[j] = schedule[j - 16] + schedule[j - 7]
-				+ (ROTR32(schedule[j - 15],  7) ^ ROTR32(schedule[j - 15], 18) ^ (schedule[j - 15] >>  3))
-				+ (ROTR32(schedule[j -  2], 17) ^ ROTR32(schedule[j -  2], 19) ^ (schedule[j -  2] >> 10));
+				+ (rotr32(schedule[j - 15],  7) ^ rotr32(schedule[j - 15], 18) ^ (schedule[j - 15] >>  3))
+				+ (rotr32(schedule[j -  2], 17) ^ rotr32(schedule[j -  2], 19) ^ (schedule[j -  2] >> 10));
 		}
 		
 		// The 64 rounds
@@ -116,8 +118,8 @@ void Sha256::compress(uint32_t state[8], const uint8_t *blocks, size_t len) {
 		uint32_t g = state[6];
 		uint32_t h = state[7];
 		for (int j = 0; j < 64; j++) {
-			uint32_t t1 = h + (ROTR32(e, 6) ^ ROTR32(e, 11) ^ ROTR32(e, 25)) + (g ^ (e & (f ^ g))) + ROUND_CONSTANTS[j] + schedule[j];
-			uint32_t t2 = (ROTR32(a, 2) ^ ROTR32(a, 13) ^ ROTR32(a, 22)) + ((a & (b | c)) | (b & c));
+			uint32_t t1 = h + (rotr32(e, 6) ^ rotr32(e, 11) ^ rotr32(e, 25)) + (g ^ (e & (f ^ g))) + ROUND_CONSTANTS[j] + schedule[j];
+			uint32_t t2 = (rotr32(a, 2) ^ rotr32(a, 13) ^ rotr32(a, 22)) + ((a & (b | c)) | (b & c));
 			h = g;
 			g = f;
 			f = e;
@@ -136,7 +138,6 @@ void Sha256::compress(uint32_t state[8], const uint8_t *blocks, size_t len) {
 		state[6] += g;
 		state[7] += h;
 	}
-	#undef ROTR32
 }
 
 
@@ -203,3 +204,9 @@ const uint32_t Sha256::ROUND_CONSTANTS[64] = {
 	UINT32_C(0x748F82EE), UINT32_C(0x78A5636F), UINT32_C(0x84C87814), UINT32_C(0x8CC70208),
 	UINT32_C(0x90BEFFFA), UINT32_C(0xA4506CEB), UINT32_C(0xBEF9A3F7), UINT32_C(0xC67178F2),
 };
+
+
+// Requires 1 <= i <= 31
+static uint32_t rotr32(uint32_t x, uint32_t i) {
+	return (x << (32 - i)) | (x >> i);
+}
