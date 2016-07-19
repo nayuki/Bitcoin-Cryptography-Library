@@ -74,6 +74,7 @@ void Base58Check::bytesToBase58Check(uint8_t *data, size_t dataLen, char *outStr
 
 
 bool Base58Check::isZero(const uint8_t *x, size_t len) {
+	assert(len == 0 || x != nullptr);
 	for (size_t i = 0; i < len; i++) {
 		if (x[i] != 0)
 			return false;
@@ -83,6 +84,7 @@ bool Base58Check::isZero(const uint8_t *x, size_t len) {
 
 
 uint8_t Base58Check::mod58(const uint8_t *x, size_t len) {
+	assert(len == 0 || x != nullptr);
 	uint_fast16_t sum = 0;
 	for (size_t i = 0; i < len; i++)
 		sum = ((sum * 24) + x[i]) % 58;  // Note: 256 % 58 = 24
@@ -91,6 +93,7 @@ uint8_t Base58Check::mod58(const uint8_t *x, size_t len) {
 
 
 void Base58Check::divide58(const uint8_t *x, uint8_t *y, size_t len) {
+	assert(x != nullptr && y != nullptr);
 	memset(y, 0, len);
 	uint_fast16_t dividend = 0;
 	for (size_t i = 0; i < len * 8; i++) {  // For each output bit
