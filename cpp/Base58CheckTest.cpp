@@ -18,24 +18,21 @@
 
 /*---- Structures ----*/
 
-struct PublicCase {
-	bool matches;
-	const char *pubkeyHash;  // 40 hex digits
-	const char *encoded;  // Base58Check string
+struct TestCase {
+	bool success;
+	const char *hexadecimal;
+	const char *base58;
 };
 
-struct PrivateCase {
-	bool matches;
-	const char *privKey;  // 64 hex digits
-	const char *encoded;  // Base58Check string
-};
+
+// Global variables
+static int numTestCases = 0;
 
 
 /*---- Test suite ----*/
 
-int main(int argc, char **argv) {
-	// Define test cases
-	PublicCase pubCases[] = {
+static void testPublicAddressExport() {
+	TestCase cases[] = {
 		// Extremes
 		{true, "0000000000000000000000000000000000000000", "1111111111111111111114oLvT2"},
 		{true, "FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF", "1QLbz7JHiBTspS962RLKV8GndWFwi5j6Qr"},
@@ -183,7 +180,21 @@ int main(int argc, char **argv) {
 		{false, "A3571B72C6914434AB0F6C4EBDA1472FEBA88DEF", "1FtfVasxiAgW1JgsbndQgs48EKJiXHHVC"},
 		{false, "A3571B72C6914434AB0F6C4EBDA1472FEBA88DEF", "1FtfVasxiAgW1JgsbndQgs48EKJiXHHVCGa"},
 	};
-	PrivateCase privCases[] = {
+	
+	for (unsigned int i = 0; i < ARRAY_LENGTH(cases); i++) {
+		TestCase &tc = cases[i];
+		Bytes pubkeyHash(hexBytes(tc.hexadecimal));
+		assert(pubkeyHash.size() == 20);
+		char actual[35];
+		Base58Check::pubkeyHashToBase58Check(pubkeyHash.data(), actual);
+		assert((strcmp(actual, tc.base58) == 0) == tc.success);
+		numTestCases++;
+	}
+}
+
+
+static void testPrivateKeyExport() {
+	TestCase cases[] = {
 		// Extremes
 		{true, "0000000000000000000000000000000000000000000000000000000000000001", "KwDiBf89QgGbjEhKnhXJuH7LrciVrZi3qYjgd9M7rFU73sVHnoWn"},
 		{true, "FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEBAAEDCE6AF48A03BBFD25E8CD0364140", "L5oLkpV3aqBjhki6LmvChTCV6odsp4SXM6FfU2Gppt5kFLaHLuZ9"},
@@ -335,23 +346,20 @@ int main(int argc, char **argv) {
 		{false, "9DCBD84EB62DF0BB2094184F64258B86494511787E5AEE41EDA9A95D39ED4358", "L2WSpW5cxTUP3dbjHiuh4gDvxF4WFu7dGfuTh4VMZauqY7C41o5"},
 	};
 	
-	// Run tests
-	int numTestCases = 0;
-	for (unsigned int i = 0; i < ARRAY_LENGTH(pubCases); i++) {
-		PublicCase &tc = pubCases[i];
-		Bytes pubkeyHash(hexBytes(tc.pubkeyHash));
-		assert(pubkeyHash.size() == 20);
-		char actual[35];
-		Base58Check::pubkeyHashToBase58Check(pubkeyHash.data(), actual);
-		assert((strcmp(actual, tc.encoded) == 0) == tc.matches);
-		numTestCases++;
-	}
-	for (unsigned int i = 0; i < ARRAY_LENGTH(privCases); i++) {
+	for (unsigned int i = 0; i < ARRAY_LENGTH(cases); i++) {
+		TestCase &tc = cases[i];
+		assert(strlen(tc.hexadecimal) == 64);
 		char actual[53];
-		Base58Check::privateKeyToBase58Check(Uint256(privCases[i].privKey), actual);
-		assert((strcmp(actual, privCases[i].encoded) == 0) == privCases[i].matches);
+		Base58Check::privateKeyToBase58Check(Uint256(tc.hexadecimal), actual);
+		assert((strcmp(actual, tc.base58) == 0) == tc.success);
 		numTestCases++;
 	}
+}
+
+
+int main(int argc, char **argv) {
+	testPublicAddressExport();
+	testPrivateKeyExport();
 	printf("All %d test cases passed\n", numTestCases);
 	return 0;
 }
