@@ -36,14 +36,14 @@ void Base58Check::privateKeyToBase58Check(const Uint256 &privKey, char outStr[53
 void Base58Check::bytesToBase58Check(uint8_t *data, size_t dataLen, char *outStr) {
 	// Append 4-byte hash
 	#define MAX_TOTAL_BYTES 38  // Including the 4-byte hash
-	assert(dataLen <= MAX_TOTAL_BYTES - 4);
+	assert(data != nullptr && dataLen <= MAX_TOTAL_BYTES - 4 && outStr != nullptr);
 	const Sha256Hash sha256Hash = Sha256::getDoubleHash(data, dataLen);
 	for (int i = 0; i < 4; i++, dataLen++)
 		data[dataLen] = sha256Hash.value[i];
 	
 	// Count leading zero bytes
 	size_t leadingZeros = 0;
-	for (size_t i = 0; i < dataLen && data[i] == 0; i++)
+	while (leadingZeros < dataLen && data[leadingZeros] == 0)
 		leadingZeros++;
 	
 	// Encode to Base 58
@@ -104,7 +104,6 @@ bool Base58Check::privateKeyFromBase58Check(const char wifStr[53], Uint256 &outP
 	// Successfully set the value
 	outPrivKey = Uint256(&accumulator[1]);
 	return true;
-	
 	#undef TOTAL_BYTES
 }
 
@@ -147,10 +146,12 @@ void Base58Check::addUint8(uint8_t *x, uint8_t y, size_t len) {
 	uint_fast16_t carry = 0;
 	for (size_t i = len - 1; ; i--) {
 		uint_fast16_t sum = static_cast<uint_fast16_t>(x[i]) + carry;
+		assert(0 <= sum && sum < 512);
 		if (i == len - 1)
 			sum += y;
 		x[i] = static_cast<uint8_t>(sum);
 		carry = sum >> 8;
+		assert((carry >> 1) == 0);
 		if (i == 0)
 			break;
 	}
@@ -164,6 +165,7 @@ void Base58Check::multiply58(uint8_t *x, size_t len) {
 		uint_fast16_t temp = static_cast<uint_fast16_t>(x[i]) * 58 + carry;
 		x[i] = static_cast<uint8_t>(temp);
 		carry = temp >> 8;
+		assert(0 <= carry && carry < 58);
 		if (i == 0)
 			break;
 	}
