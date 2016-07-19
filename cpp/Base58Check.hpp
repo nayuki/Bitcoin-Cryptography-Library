@@ -62,6 +62,7 @@ private:
 	
 	/*---- Class constants ----*/
 	
+public:
 	static const char *ALPHABET;
 	
 };
