@@ -106,6 +106,34 @@ void Base58Check::divide58(const uint8_t *x, uint8_t *y, size_t len) {
 }
 
 
+void Base58Check::addUint8(uint8_t *x, uint8_t y, size_t len) {
+	assert(len >= 1 && x != nullptr);
+	uint_fast16_t carry = 0;
+	for (size_t i = len - 1; ; i--) {
+		uint_fast16_t sum = static_cast<uint_fast16_t>(x[i]) + carry;
+		if (i == len - 1)
+			sum += y;
+		x[i] = static_cast<uint8_t>(sum);
+		carry = sum >> 8;
+		if (i == 0)
+			break;
+	}
+}
+
+
+void Base58Check::multiply58(uint8_t *x, size_t len) {
+	assert(len >= 1 && x != nullptr);
+	uint_fast16_t carry = 0;
+	for (size_t i = len - 1; ; i--) {
+		uint_fast16_t temp = static_cast<uint_fast16_t>(x[i]) * 58 + carry;
+		x[i] = static_cast<uint8_t>(temp);
+		carry = temp >> 8;
+		if (i == 0)
+			break;
+	}
+}
+
+
 Base58Check::Base58Check() {}
 
 

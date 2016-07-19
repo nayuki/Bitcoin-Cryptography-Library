@@ -56,6 +56,14 @@ private:
 	static void divide58(const uint8_t *x, uint8_t *y, size_t len);
 	
 	
+	// Computes the sum (x = (x + y) mod 256^len) in place. Constant-time with respect to x's values and the value of y.
+	static void addUint8(uint8_t *x, uint8_t y, size_t len);
+	
+	
+	// Computes the product (x = (x * 58) mod 256^len) in place. Constant-time with respect to x's values.
+	static void multiply58(uint8_t *x, size_t len);
+	
+	
 	Base58Check();  // Not instantiable
 	
 	
