@@ -73,6 +73,42 @@ void Base58Check::bytesToBase58Check(uint8_t *data, size_t dataLen, char *outStr
 }
 
 
+bool Base58Check::privateKeyFromBase58Check(const char wifStr[53], Uint256 &outPrivKey) {
+	// Preliminary checks - these prevent arithmetic overflow and let us not need to handle leading zero bytes
+	assert(wifStr != nullptr);
+	if (strlen(wifStr) != 52 || (wifStr[0] != 'L' && wifStr[0] != 'K'))
+		return false;
+	
+	// Decode from Base 58 to base 256
+	#define TOTAL_BYTES 38
+	uint8_t accumulator[TOTAL_BYTES] = {};
+	for (int i = 0; i < 52; i++) {
+		const char *p = strchr(ALPHABET, wifStr[i]);
+		if (p == nullptr)
+			return false;
+		multiply58(accumulator, TOTAL_BYTES);
+		addUint8(accumulator, p - &ALPHABET[0], TOTAL_BYTES);
+	}
+	
+	// Check format bytes
+	if (accumulator[0] != 0x80 || accumulator[33] != 0x01)
+		return false;
+	
+	// Compute and check hash
+	const Sha256Hash sha256Hash = Sha256::getDoubleHash(accumulator, TOTAL_BYTES - 4);
+	for (int i = 0; i < 4; i++) {
+		if (accumulator[TOTAL_BYTES - 4 + i] != sha256Hash.value[i])
+			return false;
+	}
+	
+	// Successfully set the value
+	outPrivKey = Uint256(&accumulator[1]);
+	return true;
+	
+	#undef TOTAL_BYTES
+}
+
+
 bool Base58Check::isZero(const uint8_t *x, size_t len) {
 	assert(len == 0 || x != nullptr);
 	for (size_t i = 0; i < len; i++) {

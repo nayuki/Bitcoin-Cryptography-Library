@@ -33,6 +33,13 @@ public:
 	static void privateKeyToBase58Check(const Uint256 &privKey, char outStr[53]);
 	
 	
+	// Parses the given compressed WIF string. If the syntax and check digits are correct,
+	// then the private key Uint256 is set to the decoded value and true is returned.
+	// Otherwise the Uint256 is unchanged and false is returned. Not constant-time.
+	// Note that the decoded integer may be outside the normal private key range of [1, CurvePoint::ORDER).
+	static bool privateKeyFromBase58Check(const char wifStr[53], Uint256 &outPrivKey);
+	
+	
 private:
 	
 	// Computes the 4-byte hash and converts the concatenated data to Base58Check.
