@@ -48,6 +48,13 @@ private:
 	static void bytesToBase58Check(uint8_t *data, size_t dataLen, char *outStr);
 	
 	
+	// Converts the given Base58Check string to an array of bytes. Returns true if the conversion succeeded;
+	// otherwise returns false if the string contains non-Base58 characters, decodes to
+	// shorter or longer data than the output array length, or fails the hash check.
+	// The output array elements may be changed even if false is returned. Not constant-time.
+	static bool base58CheckToBytes(const char *inStr, uint8_t *outData, size_t outDataLen);
+	
+	
 	/* Unsigned big-endian arbitrary-precision arithmetic functions */
 	// Note: This differs from Uint256 because Uint256 is fixed-width, little-endian, and 32-bit-word-oriented.
 	
@@ -63,12 +70,14 @@ private:
 	static void divide58(const uint8_t *x, uint8_t *y, size_t len);
 	
 	
-	// Computes the sum (x = (x + y) mod 256^len) in place. Constant-time with respect to x's values and the value of y.
-	static void addUint8(uint8_t *x, uint8_t y, size_t len);
+	// Computes the sum (x = (x + y) mod 256^len) in place. Returns whether the
+	// carry-out is non-zero. Constant-time with respect to x's values and the value of y.
+	static bool addUint8(uint8_t *x, uint8_t y, size_t len);
 	
 	
-	// Computes the product (x = (x * 58) mod 256^len) in place. Constant-time with respect to x's values.
-	static void multiply58(uint8_t *x, size_t len);
+	// Computes the product (x = (x * 58) mod 256^len) in place. Returns whether
+	// the carry-out is non-zero. Constant-time with respect to x's values.
+	static bool multiply58(uint8_t *x, size_t len);
 	
 	
 	Base58Check();  // Not instantiable

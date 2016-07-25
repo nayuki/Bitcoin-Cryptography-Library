@@ -113,41 +113,62 @@ void Base58Check::divide58(const uint8_t *x, uint8_t *y, size_t len) {
 /*---- Public and private functions for Base58-to-bytes conversion ----*/
 
 bool Base58Check::privateKeyFromBase58Check(const char wifStr[53], Uint256 &outPrivKey) {
-	// Preliminary checks - these prevent arithmetic overflow and let us not need to handle leading zero bytes
+	// Preliminary checks
 	assert(wifStr != nullptr);
 	if (strlen(wifStr) != 52 || (wifStr[0] != 'L' && wifStr[0] != 'K'))
 		return false;
 	
-	// Decode from Base 58 to base 256
-	#define TOTAL_BYTES 38
-	uint8_t accumulator[TOTAL_BYTES] = {};
-	for (int i = 0; i < 52; i++) {
-		const char *p = strchr(ALPHABET, wifStr[i]);
-		if (p == nullptr)
-			return false;
-		multiply58(accumulator, TOTAL_BYTES);
-		addUint8(accumulator, p - &ALPHABET[0], TOTAL_BYTES);
-	}
-	
-	// Check format bytes
-	if (accumulator[0] != 0x80 || accumulator[33] != 0x01)
+	// Perform Base58 decoding
+	uint8_t decoded[1 + 32 + 1 + 4];
+	if (!base58CheckToBytes(wifStr, decoded, sizeof(decoded) / sizeof(decoded[0])))
 		return false;
 	
-	// Compute and check hash
-	const Sha256Hash sha256Hash = Sha256::getDoubleHash(accumulator, TOTAL_BYTES - 4);
-	for (int i = 0; i < 4; i++) {
-		if (accumulator[TOTAL_BYTES - 4 + i] != sha256Hash.value[i])
-			return false;
-	}
+	// Check format bytes
+	if (decoded[0] != 0x80 || decoded[33] != 0x01)
+		return false;
 	
 	// Successfully set the value
-	outPrivKey = Uint256(&accumulator[1]);
+	outPrivKey = Uint256(&decoded[1]);
 	return true;
-	#undef TOTAL_BYTES
 }
 
 
-void Base58Check::addUint8(uint8_t *x, uint8_t y, size_t len) {
+bool Base58Check::base58CheckToBytes(const char *inStr, uint8_t *outData, size_t outDataLen) {
+	assert(inStr != nullptr && outData != nullptr && outDataLen >= 4);
+	
+	// Convert from Base 58 to base 256
+	memset(outData, 0, outDataLen * sizeof(outData[0]));
+	for (size_t i = 0; inStr[i] != '\0'; i++) {
+		if (multiply58(outData, outDataLen))
+			return false;
+		const char *p = strchr(ALPHABET, inStr[i]);
+		if (p == nullptr)
+			return false;
+		if (addUint8(outData, p - &ALPHABET[0], outDataLen))
+			return false;
+	}
+	
+	// Verify number of leading zeros
+	for (size_t i = 0; ; i++) {
+		if (inStr[i] != '1' && (i >= outDataLen || outData[i] != 0))
+			break;  // Success
+		else if (inStr[i] == '1' && i < outDataLen && outData[i] == 0)
+			continue;  // Keep scanning
+		else
+			return false;  // Mismatch
+	}
+	
+	// Compute and check hash
+	const Sha256Hash sha256Hash = Sha256::getDoubleHash(outData, outDataLen - 4);
+	for (int i = 0; i < 4; i++) {
+		if (outData[outDataLen - 4 + i] != sha256Hash.value[i])
+			return false;
+	}
+	return true;
+}
+
+
+bool Base58Check::addUint8(uint8_t *x, uint8_t y, size_t len) {
 	assert(len >= 1 && x != nullptr);
 	uint_fast16_t carry = 0;
 	for (size_t i = len - 1; ; i--) {
@@ -161,10 +182,11 @@ void Base58Check::addUint8(uint8_t *x, uint8_t y, size_t len) {
 		if (i == 0)
 			break;
 	}
+	return carry > 0;
 }
 
 
-void Base58Check::multiply58(uint8_t *x, size_t len) {
+bool Base58Check::multiply58(uint8_t *x, size_t len) {
 	assert(len >= 1 && x != nullptr);
 	uint_fast16_t carry = 0;
 	for (size_t i = len - 1; ; i--) {
@@ -175,6 +197,7 @@ void Base58Check::multiply58(uint8_t *x, size_t len) {
 		if (i == 0)
 			break;
 	}
+	return carry > 0;
 }
 
 
