@@ -33,6 +33,12 @@ public:
 	static void privateKeyToBase58Check(const Uint256 &privKey, char outStr[53]);
 	
 	
+	// Parses the given public address string. If the syntax and check digits are correct,
+	// then the output array is set to the decoded value and true is returned.
+	// Otherwise the output array is unchanged and false is returned. Not constant-time.
+	static bool pubkeyHashFromBase58Check(const char *addrStr, uint8_t outPubkeyHash[RIPEMD160_HASH_LEN]);
+	
+	
 	// Parses the given compressed WIF string. If the syntax and check digits are correct,
 	// then the private key Uint256 is set to the decoded value and true is returned.
 	// Otherwise the Uint256 is unchanged and false is returned. Not constant-time.

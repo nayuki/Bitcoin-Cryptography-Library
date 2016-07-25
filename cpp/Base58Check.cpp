@@ -112,6 +112,27 @@ void Base58Check::divide58(const uint8_t *x, uint8_t *y, size_t len) {
 
 /*---- Public and private functions for Base58-to-bytes conversion ----*/
 
+bool Base58Check::pubkeyHashFromBase58Check(const char *addrStr, uint8_t outPubkeyHash[RIPEMD160_HASH_LEN]) {
+	// Preliminary checks
+	assert(addrStr != nullptr && outPubkeyHash != nullptr);
+	if (strlen(addrStr) < 1 || strlen(addrStr) > 34 || addrStr[0] != '1')
+		return false;
+	
+	// Perform Base58 decoding
+	uint8_t decoded[1 + RIPEMD160_HASH_LEN + 4];
+	if (!base58CheckToBytes(addrStr, decoded, sizeof(decoded) / sizeof(decoded[0])))
+		return false;
+	
+	// Check format byte
+	if (decoded[0] != 0x00)
+		return false;
+	
+	// Successfully set the output
+	memcpy(outPubkeyHash, &decoded[1], RIPEMD160_HASH_LEN * sizeof(uint8_t));
+	return true;
+}
+
+
 bool Base58Check::privateKeyFromBase58Check(const char wifStr[53], Uint256 &outPrivKey) {
 	// Preliminary checks
 	assert(wifStr != nullptr);
