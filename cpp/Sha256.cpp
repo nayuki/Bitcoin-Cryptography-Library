@@ -102,7 +102,7 @@ void Sha256::compress(uint32_t state[8], const uint8_t *blocks, size_t len) {
 		}
 		
 		for (int j = 16; j < 64; j++) {
-			schedule[j] = schedule[j - 16] + schedule[j - 7]
+			schedule[j] = 0U + schedule[j - 16] + schedule[j - 7]
 				+ (rotr32(schedule[j - 15],  7) ^ rotr32(schedule[j - 15], 18) ^ (schedule[j - 15] >>  3))
 				+ (rotr32(schedule[j -  2], 17) ^ rotr32(schedule[j -  2], 19) ^ (schedule[j -  2] >> 10));
 		}
@@ -117,25 +117,25 @@ void Sha256::compress(uint32_t state[8], const uint8_t *blocks, size_t len) {
 		uint32_t g = state[6];
 		uint32_t h = state[7];
 		for (int j = 0; j < 64; j++) {
-			uint32_t t1 = h + (rotr32(e, 6) ^ rotr32(e, 11) ^ rotr32(e, 25)) + (g ^ (e & (f ^ g))) + ROUND_CONSTANTS[j] + schedule[j];
-			uint32_t t2 = (rotr32(a, 2) ^ rotr32(a, 13) ^ rotr32(a, 22)) + ((a & (b | c)) | (b & c));
+			uint32_t t1 = 0U + h + (rotr32(e, 6) ^ rotr32(e, 11) ^ rotr32(e, 25)) + (g ^ (e & (f ^ g))) + ROUND_CONSTANTS[j] + schedule[j];
+			uint32_t t2 = 0U + (rotr32(a, 2) ^ rotr32(a, 13) ^ rotr32(a, 22)) + ((a & (b | c)) | (b & c));
 			h = g;
 			g = f;
 			f = e;
-			e = d + t1;
+			e = 0U + d + t1;
 			d = c;
 			c = b;
 			b = a;
-			a = t1 + t2;
+			a = 0U + t1 + t2;
 		}
-		state[0] += a;
-		state[1] += b;
-		state[2] += c;
-		state[3] += d;
-		state[4] += e;
-		state[5] += f;
-		state[6] += g;
-		state[7] += h;
+		state[0] = 0U + state[0] + a;
+		state[1] = 0U + state[1] + b;
+		state[2] = 0U + state[2] + c;
+		state[3] = 0U + state[3] + d;
+		state[4] = 0U + state[4] + e;
+		state[5] = 0U + state[5] + f;
+		state[6] = 0U + state[6] + g;
+		state[7] = 0U + state[7] + h;
 	}
 }
 
@@ -207,5 +207,5 @@ const uint32_t Sha256::ROUND_CONSTANTS[64] = {
 
 // Requires 1 <= i <= 31
 static uint32_t rotr32(uint32_t x, uint32_t i) {
-	return (x << (32 - i)) | (x >> i);
+	return ((0U + x) << (32 - i)) | (x >> i);
 }

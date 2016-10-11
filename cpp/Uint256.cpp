@@ -74,7 +74,7 @@ uint32_t Uint256::shiftLeft1() {
 	uint32_t prev = 0;
 	for (int i = 0; i < NUM_WORDS; i++) {
 		uint32_t cur = value[i];
-		value[i] = cur << 1 | prev >> 31;
+		value[i] = (0U + cur) << 1 | prev >> 31;
 		prev = cur;
 	}
 	return prev >> 31;
@@ -87,7 +87,7 @@ void Uint256::shiftRight1(uint32_t enable) {
 	uint32_t cur = value[0];
 	for (int i = 0; i < NUM_WORDS - 1; i++) {
 		uint32_t next = value[i + 1];
-		value[i] = ((cur >> 1 | next << 31) & mask) | (cur & ~mask);
+		value[i] = ((cur >> 1 | (0U + next) << 31) & mask) | (cur & ~mask);
 		cur = next;
 	}
 	value[NUM_WORDS - 1] = ((cur >> 1) & mask) | (cur & ~mask);

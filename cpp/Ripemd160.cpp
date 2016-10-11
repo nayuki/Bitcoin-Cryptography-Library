@@ -66,24 +66,24 @@ void Ripemd160::compress(uint32_t state[5], const uint8_t *blocks, size_t len) {
 		uint32_t el = state[4], er = state[4];
 		for (unsigned int j = 0; j < 80; j++) {
 			uint32_t temp;
-			temp = rotl32(al + f(j, bl, cl, dl) + schedule[RL[j]] + KL[j >> 4], SL[j]) + el;
+			temp = 0U + rotl32(0U + al + f(j, bl, cl, dl) + schedule[RL[j]] + KL[j >> 4], SL[j]) + el;
 			al = el;
 			el = dl;
 			dl = rotl32(cl, 10);
 			cl = bl;
 			bl = temp;
-			temp = rotl32(ar + f(79 - j, br, cr, dr) + schedule[RR[j]] + KR[j >> 4], SR[j]) + er;
+			temp = 0U + rotl32(0U + ar + f(79 - j, br, cr, dr) + schedule[RR[j]] + KR[j >> 4], SR[j]) + er;
 			ar = er;
 			er = dr;
 			dr = rotl32(cr, 10);
 			cr = br;
 			br = temp;
 		}
-		uint32_t temp = state[1] + cl + dr;
-		state[1] = state[2] + dl + er;
-		state[2] = state[3] + el + ar;
-		state[3] = state[4] + al + br;
-		state[4] = state[0] + bl + cr;
+		uint32_t temp = 0U + state[1] + cl + dr;
+		state[1] = 0U + state[2] + dl + er;
+		state[2] = 0U + state[3] + el + ar;
+		state[3] = 0U + state[4] + al + br;
+		state[4] = 0U + state[0] + bl + cr;
 		state[0] = temp;
 	}
 }
