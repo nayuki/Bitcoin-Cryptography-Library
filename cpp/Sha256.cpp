@@ -95,11 +95,10 @@ void Sha256::compress(uint32_t state[8], const uint8_t *blocks, size_t len) {
 		
 		// Message schedule
 		for (int j = 0; j < 16; j++, i += 4) {
-			schedule[j] =
-				  static_cast<uint32_t>(blocks[i + 0]) << 24
-				| static_cast<uint32_t>(blocks[i + 1]) << 16
-				| static_cast<uint32_t>(blocks[i + 2]) <<  8
-				| static_cast<uint32_t>(blocks[i + 3]) <<  0;
+			schedule[j] = static_cast<uint32_t>(blocks[i + 0]) << 24
+			            | static_cast<uint32_t>(blocks[i + 1]) << 16
+			            | static_cast<uint32_t>(blocks[i + 2]) <<  8
+			            | static_cast<uint32_t>(blocks[i + 3]) <<  0;
 		}
 		
 		for (int j = 16; j < 64; j++) {

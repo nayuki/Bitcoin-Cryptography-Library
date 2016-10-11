@@ -56,15 +56,14 @@ void Sha512::compress(uint64_t state[8], const uint8_t *blocks, size_t len) {
 		
 		// Message schedule
 		for (int j = 0; j < 16; j++, i += 8) {
-			schedule[j] =
-				  static_cast<uint64_t>(blocks[i + 0]) << 56
-				| static_cast<uint64_t>(blocks[i + 1]) << 48
-				| static_cast<uint64_t>(blocks[i + 2]) << 40
-				| static_cast<uint64_t>(blocks[i + 3]) << 32
-				| static_cast<uint64_t>(blocks[i + 4]) << 24
-				| static_cast<uint64_t>(blocks[i + 5]) << 16
-				| static_cast<uint64_t>(blocks[i + 6]) <<  8
-				| static_cast<uint64_t>(blocks[i + 7]) <<  0;
+			schedule[j] = static_cast<uint64_t>(blocks[i + 0]) << 56
+			            | static_cast<uint64_t>(blocks[i + 1]) << 48
+			            | static_cast<uint64_t>(blocks[i + 2]) << 40
+			            | static_cast<uint64_t>(blocks[i + 3]) << 32
+			            | static_cast<uint64_t>(blocks[i + 4]) << 24
+			            | static_cast<uint64_t>(blocks[i + 5]) << 16
+			            | static_cast<uint64_t>(blocks[i + 6]) <<  8
+			            | static_cast<uint64_t>(blocks[i + 7]) <<  0;
 		}
 		
 		for (int j = 16; j < 80; j++) {

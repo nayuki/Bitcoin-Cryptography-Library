@@ -50,11 +50,10 @@ void Ripemd160::compress(uint32_t state[5], const uint8_t *blocks, size_t len) {
 		
 		// Message schedule
 		for (int j = 0; j < 16; j++, i += 4) {
-			schedule[j] =
-				  static_cast<uint32_t>(blocks[i + 0]) <<  0
-				| static_cast<uint32_t>(blocks[i + 1]) <<  8
-				| static_cast<uint32_t>(blocks[i + 2]) << 16
-				| static_cast<uint32_t>(blocks[i + 3]) << 24;
+			schedule[j] = static_cast<uint32_t>(blocks[i + 0]) <<  0
+			            | static_cast<uint32_t>(blocks[i + 1]) <<  8
+			            | static_cast<uint32_t>(blocks[i + 2]) << 16
+			            | static_cast<uint32_t>(blocks[i + 3]) << 24;
 		}
 		
 		// The 80 rounds
