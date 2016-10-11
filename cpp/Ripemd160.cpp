@@ -34,9 +34,10 @@ void Ripemd160::getHash(const uint8_t *msg, size_t len, uint8_t hashResult[RIPEM
 		compress(state, block, BLOCK_LEN);
 		memset(block, 0, BLOCK_LEN);
 	}
-	uint64_t length = static_cast<uint64_t>(len) << 3;
-	for (int i = 0; i < 8; i++)
-		block[BLOCK_LEN - 8 + i] = static_cast<uint8_t>(length >> (i << 3));
+	block[BLOCK_LEN - 8] = static_cast<uint8_t>((len & 0x1FU) << 3);
+	len >>= 5;
+	for (int i = 1; i < 8; i++, len >>= 8)
+		block[BLOCK_LEN - 8 + i] = static_cast<uint8_t>(len);
 	compress(state, block, BLOCK_LEN);
 	
 	// Uint32 array to bytes in little endian

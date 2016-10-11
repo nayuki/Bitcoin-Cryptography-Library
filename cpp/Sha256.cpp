@@ -74,9 +74,11 @@ Sha256Hash Sha256::getHash(const uint8_t *msg, size_t len, const uint32_t initSt
 		compress(state, block, SHA256_BLOCK_LEN);
 		memset(block, 0, SHA256_BLOCK_LEN);
 	}
-	uint64_t length = static_cast<uint64_t>(len + prefixLen) << 3;
-	for (int i = 0; i < 8; i++)
-		block[SHA256_BLOCK_LEN - 1 - i] = static_cast<uint8_t>(length >> (i << 3));
+	len += prefixLen;
+	block[SHA256_BLOCK_LEN - 1] = static_cast<uint8_t>((len & 0x1FU) << 3);
+	len >>= 5;
+	for (int i = 1; i < 8; i++, len >>= 8)
+		block[SHA256_BLOCK_LEN - 1 - i] = static_cast<uint8_t>(len);
 	compress(state, block, SHA256_BLOCK_LEN);
 	
 	// Uint32 array to bytes in big endian

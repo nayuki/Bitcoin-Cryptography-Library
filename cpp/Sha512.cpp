@@ -36,11 +36,10 @@ void Sha512::getHash(const uint8_t *msg, size_t len, uint8_t hashResult[SHA512_H
 		compress(state, block, BLOCK_LEN);
 		memset(block, 0, BLOCK_LEN);
 	}
-	uint64_t length = static_cast<uint64_t>(len) << 3;
-	for (int i = 0; i < 8; i++)
-		block[BLOCK_LEN - 1 - i] = static_cast<uint8_t>(length >> (i << 3));
-	for (int i = 8; i < 16; i++)
-		block[BLOCK_LEN - 1 - i] = 0;
+	block[BLOCK_LEN - 1] = static_cast<uint8_t>((len & 0x1FU) << 3);
+	len >>= 5;
+	for (int i = 1; i < 16; i++, len >>= 8)
+		block[BLOCK_LEN - 1 - i] = static_cast<uint8_t>(len);
 	compress(state, block, BLOCK_LEN);
 	
 	// Uint64 array to bytes in big endian
