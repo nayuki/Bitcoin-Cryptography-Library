@@ -13,13 +13,13 @@ designed with portability and clarity in mind, and is rigorously verified for
 correctness and quality.
 
 More details about features and design principles are on the main web page:
-[https://www.nayuki.io/page/bitcoin-cryptography-library](https://www.nayuki.io/page/bitcoin-cryptography-library) 
+[https://www.nayuki.io/page/bitcoin-cryptography-library](https://www.nayuki.io/page/bitcoin-cryptography-library)
 
 
 License
 -------
 
-Copyright © 2016 Project Nayuki  
+Copyright © 2016 Project Nayuki
 
 (MIT License)
 

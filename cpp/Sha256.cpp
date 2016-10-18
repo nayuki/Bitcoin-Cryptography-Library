@@ -74,9 +74,11 @@ Sha256Hash Sha256::getHash(const uint8_t *msg, size_t len, const uint32_t initSt
 		compress(state, block, SHA256_BLOCK_LEN);
 		memset(block, 0, SHA256_BLOCK_LEN);
 	}
-	uint64_t length = static_cast<uint64_t>(len + prefixLen) << 3;
-	for (int i = 0; i < 8; i++)
-		block[SHA256_BLOCK_LEN - 1 - i] = static_cast<uint8_t>(length >> (i << 3));
+	len += prefixLen;
+	block[SHA256_BLOCK_LEN - 1] = static_cast<uint8_t>((len & 0x1FU) << 3);
+	len >>= 5;
+	for (int i = 1; i < 8; i++, len >>= 8)
+		block[SHA256_BLOCK_LEN - 1 - i] = static_cast<uint8_t>(len);
 	compress(state, block, SHA256_BLOCK_LEN);
 	
 	// Uint32 array to bytes in big endian
@@ -95,15 +97,14 @@ void Sha256::compress(uint32_t state[8], const uint8_t *blocks, size_t len) {
 		
 		// Message schedule
 		for (int j = 0; j < 16; j++, i += 4) {
-			schedule[j] =
-				  static_cast<uint32_t>(blocks[i + 0]) << 24
-				| static_cast<uint32_t>(blocks[i + 1]) << 16
-				| static_cast<uint32_t>(blocks[i + 2]) <<  8
-				| static_cast<uint32_t>(blocks[i + 3]) <<  0;
+			schedule[j] = static_cast<uint32_t>(blocks[i + 0]) << 24
+			            | static_cast<uint32_t>(blocks[i + 1]) << 16
+			            | static_cast<uint32_t>(blocks[i + 2]) <<  8
+			            | static_cast<uint32_t>(blocks[i + 3]) <<  0;
 		}
 		
 		for (int j = 16; j < 64; j++) {
-			schedule[j] = schedule[j - 16] + schedule[j - 7]
+			schedule[j] = 0U + schedule[j - 16] + schedule[j - 7]
 				+ (rotr32(schedule[j - 15],  7) ^ rotr32(schedule[j - 15], 18) ^ (schedule[j - 15] >>  3))
 				+ (rotr32(schedule[j -  2], 17) ^ rotr32(schedule[j -  2], 19) ^ (schedule[j -  2] >> 10));
 		}
@@ -118,25 +119,25 @@ void Sha256::compress(uint32_t state[8], const uint8_t *blocks, size_t len) {
 		uint32_t g = state[6];
 		uint32_t h = state[7];
 		for (int j = 0; j < 64; j++) {
-			uint32_t t1 = h + (rotr32(e, 6) ^ rotr32(e, 11) ^ rotr32(e, 25)) + (g ^ (e & (f ^ g))) + ROUND_CONSTANTS[j] + schedule[j];
-			uint32_t t2 = (rotr32(a, 2) ^ rotr32(a, 13) ^ rotr32(a, 22)) + ((a & (b | c)) | (b & c));
+			uint32_t t1 = 0U + h + (rotr32(e, 6) ^ rotr32(e, 11) ^ rotr32(e, 25)) + (g ^ (e & (f ^ g))) + ROUND_CONSTANTS[j] + schedule[j];
+			uint32_t t2 = 0U + (rotr32(a, 2) ^ rotr32(a, 13) ^ rotr32(a, 22)) + ((a & (b | c)) | (b & c));
 			h = g;
 			g = f;
 			f = e;
-			e = d + t1;
+			e = 0U + d + t1;
 			d = c;
 			c = b;
 			b = a;
-			a = t1 + t2;
+			a = 0U + t1 + t2;
 		}
-		state[0] += a;
-		state[1] += b;
-		state[2] += c;
-		state[3] += d;
-		state[4] += e;
-		state[5] += f;
-		state[6] += g;
-		state[7] += h;
+		state[0] = 0U + state[0] + a;
+		state[1] = 0U + state[1] + b;
+		state[2] = 0U + state[2] + c;
+		state[3] = 0U + state[3] + d;
+		state[4] = 0U + state[4] + e;
+		state[5] = 0U + state[5] + f;
+		state[6] = 0U + state[6] + g;
+		state[7] = 0U + state[7] + h;
 	}
 }
 
@@ -208,5 +209,5 @@ const uint32_t Sha256::ROUND_CONSTANTS[64] = {
 
 // Requires 1 <= i <= 31
 static uint32_t rotr32(uint32_t x, uint32_t i) {
-	return (x << (32 - i)) | (x >> i);
+	return ((0U + x) << (32 - i)) | (x >> i);
 }

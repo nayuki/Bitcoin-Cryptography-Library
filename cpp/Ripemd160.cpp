@@ -14,6 +14,9 @@
 #define BLOCK_LEN 64
 
 
+static uint32_t rotl32(uint32_t x, uint32_t i);
+
+
 void Ripemd160::getHash(const uint8_t *msg, size_t len, uint8_t hashResult[RIPEMD160_HASH_LEN]) {
 	// Compress whole message blocks
 	assert((msg != nullptr || len == 0) && hashResult != nullptr);
@@ -31,9 +34,10 @@ void Ripemd160::getHash(const uint8_t *msg, size_t len, uint8_t hashResult[RIPEM
 		compress(state, block, BLOCK_LEN);
 		memset(block, 0, BLOCK_LEN);
 	}
-	uint64_t length = static_cast<uint64_t>(len) << 3;
-	for (int i = 0; i < 8; i++)
-		block[BLOCK_LEN - 8 + i] = static_cast<uint8_t>(length >> (i << 3));
+	block[BLOCK_LEN - 8] = static_cast<uint8_t>((len & 0x1FU) << 3);
+	len >>= 5;
+	for (int i = 1; i < 8; i++, len >>= 8)
+		block[BLOCK_LEN - 8 + i] = static_cast<uint8_t>(len);
 	compress(state, block, BLOCK_LEN);
 	
 	// Uint32 array to bytes in little endian
@@ -43,18 +47,16 @@ void Ripemd160::getHash(const uint8_t *msg, size_t len, uint8_t hashResult[RIPEM
 
 
 void Ripemd160::compress(uint32_t state[5], const uint8_t *blocks, size_t len) {
-	#define ROTL32(x, i)  (((x) << (i)) | ((x) >> (32 - (i))))
 	assert(len % BLOCK_LEN == 0);
 	uint32_t schedule[16];
 	for (size_t i = 0; i < len; ) {
 		
 		// Message schedule
 		for (int j = 0; j < 16; j++, i += 4) {
-			schedule[j] =
-				  static_cast<uint32_t>(blocks[i + 0]) <<  0
-				| static_cast<uint32_t>(blocks[i + 1]) <<  8
-				| static_cast<uint32_t>(blocks[i + 2]) << 16
-				| static_cast<uint32_t>(blocks[i + 3]) << 24;
+			schedule[j] = static_cast<uint32_t>(blocks[i + 0]) <<  0
+			            | static_cast<uint32_t>(blocks[i + 1]) <<  8
+			            | static_cast<uint32_t>(blocks[i + 2]) << 16
+			            | static_cast<uint32_t>(blocks[i + 3]) << 24;
 		}
 		
 		// The 80 rounds
@@ -65,27 +67,26 @@ void Ripemd160::compress(uint32_t state[5], const uint8_t *blocks, size_t len) {
 		uint32_t el = state[4], er = state[4];
 		for (unsigned int j = 0; j < 80; j++) {
 			uint32_t temp;
-			temp = ROTL32(al + f(j, bl, cl, dl) + schedule[RL[j]] + KL[j >> 4], SL[j]) + el;
+			temp = 0U + rotl32(0U + al + f(j, bl, cl, dl) + schedule[RL[j]] + KL[j >> 4], SL[j]) + el;
 			al = el;
 			el = dl;
-			dl = ROTL32(cl, 10);
+			dl = rotl32(cl, 10);
 			cl = bl;
 			bl = temp;
-			temp = ROTL32(ar + f(79 - j, br, cr, dr) + schedule[RR[j]] + KR[j >> 4], SR[j]) + er;
+			temp = 0U + rotl32(0U + ar + f(79 - j, br, cr, dr) + schedule[RR[j]] + KR[j >> 4], SR[j]) + er;
 			ar = er;
 			er = dr;
-			dr = ROTL32(cr, 10);
+			dr = rotl32(cr, 10);
 			cr = br;
 			br = temp;
 		}
-		uint32_t temp = state[1] + cl + dr;
-		state[1] = state[2] + dl + er;
-		state[2] = state[3] + el + ar;
-		state[3] = state[4] + al + br;
-		state[4] = state[0] + bl + cr;
+		uint32_t temp = 0U + state[1] + cl + dr;
+		state[1] = 0U + state[2] + dl + er;
+		state[2] = 0U + state[3] + el + ar;
+		state[3] = 0U + state[4] + al + br;
+		state[4] = 0U + state[0] + bl + cr;
 		state[0] = temp;
 	}
-	#undef ROTL32
 }
 
 
@@ -136,3 +137,9 @@ const unsigned int Ripemd160::SR[80] = {
 	 9,  7, 15, 11,  8,  6,  6, 14, 12, 13,  5, 14, 13, 13,  7,  5,
 	15,  5,  8, 11, 14, 14,  6, 14,  6,  9, 12,  9, 12,  5, 15,  8,
 	 8,  5, 12,  9, 12,  5, 14,  6,  8, 13,  6,  5, 15, 13, 11, 11};
+
+
+// Requires 1 <= i <= 31
+static uint32_t rotl32(uint32_t x, uint32_t i) {
+	return ((0U + x) << i) | (x >> (32 - i));
+}

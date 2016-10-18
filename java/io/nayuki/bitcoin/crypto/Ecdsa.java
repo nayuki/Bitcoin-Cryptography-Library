@@ -120,7 +120,7 @@ public final class Ecdsa {
 		 * if (!(0 < r, s < order))
 		 *   return false;
 		 * w = s^-1 % order;
-		 * u1 = (z * w) % order;
+		 * u1 = (msgHash * w) % order;
 		 * u2 = (r * w) % order;
 		 * p = u1 * G + u2 * pubKey;
 		 * return r == p.x % order;
