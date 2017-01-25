@@ -10,6 +10,7 @@ package io.nayuki.bitcoin.crypto;
 
 import static java.lang.Integer.rotateRight;
 import java.util.Arrays;
+import java.util.Objects;
 
 
 /**
@@ -53,8 +54,8 @@ public final class Sha256 {
 	 * @throws NullPointerException if the key or message is {@code null}
 	 */
 	public static Sha256Hash getHmac(byte[] key, byte[] msg) {
-		if (key == null || msg == null)
-			throw new NullPointerException();
+		Objects.requireNonNull(key);
+		Objects.requireNonNull(msg);
 		
 		// Preprocess key, creating a new byte array
 		key = Arrays.copyOf(key.length <= BLOCK_LEN ? key : getHash(key).toBytes(), BLOCK_LEN);
@@ -81,8 +82,7 @@ public final class Sha256 {
 	// Note: The initState array will be modified.
 	private static Sha256Hash getHash(byte[] msg, int[] initState, int prefixLen) {
 		// Compress whole message blocks
-		if (msg == null)
-			throw new NullPointerException();
+		Objects.requireNonNull(msg);
 		int[] state = initState;
 		int off = msg.length / BLOCK_LEN * BLOCK_LEN;
 		compress(state, msg, off);

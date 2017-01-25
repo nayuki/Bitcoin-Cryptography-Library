@@ -10,6 +10,7 @@ package io.nayuki.bitcoin.crypto;
 
 import static java.lang.Long.rotateRight;
 import java.util.Arrays;
+import java.util.Objects;
 
 
 /**
@@ -32,8 +33,7 @@ public final class Sha512 {
 	 */
 	public static byte[] getHash(byte[] msg) {
 		// Compress whole message blocks
-		if (msg == null)
-			throw new NullPointerException();
+		Objects.requireNonNull(msg);
 		long[] state = {
 			0x6A09E667F3BCC908L, 0xBB67AE8584CAA73BL, 0x3C6EF372FE94F82BL, 0xA54FF53A5F1D36F1L,
 			0x510E527FADE682D1L, 0x9B05688C2B3E6C1FL, 0x1F83D9ABFB41BD6BL, 0x5BE0CD19137E2179L};
@@ -73,8 +73,8 @@ public final class Sha512 {
 	 * @return a 64-byte array representing the HMAC value
 	 */
 	public static byte[] getHmac(byte[] key, byte[] msg) {
-		if (key == null || msg == null)
-			throw new NullPointerException();
+		Objects.requireNonNull(key);
+		Objects.requireNonNull(msg);
 		if (key.length > BLOCK_LEN)
 			key = getHash(key);
 		if (key.length < BLOCK_LEN)  // Note: Do not change to else-if

@@ -9,6 +9,7 @@
 package io.nayuki.bitcoin.crypto;
 
 import java.util.Arrays;
+import java.util.Objects;
 
 
 /**
@@ -27,8 +28,7 @@ public final class Int256Math {
 	
 	// Parses the given 64-digit hexadecimal string as a uint256 and stores it in the given array at the given offset.
 	public static void hexToUint(String hex, int[] val, int off) {
-		if (hex == null)
-			throw new NullPointerException();
+		Objects.requireNonNull(hex);
 		if (!hex.matches("[0-9a-fA-F]{64}"))
 			throw new IllegalArgumentException();
 		checkUint(val, off);
@@ -58,8 +58,7 @@ public final class Int256Math {
 	
 	// Interprets the given 32-byte array as a uint256 encoded in big endian and stores it in the given array at the given offset.
 	public static void bytesToUint(byte[] b, int[] val, int off) {
-		if (b == null)
-			throw new NullPointerException();
+		Objects.requireNonNull(b);
 		if (b.length != NUM_WORDS * 4)
 			throw new IllegalArgumentException();
 		checkUint(val, off);

@@ -9,6 +9,7 @@
 package io.nayuki.bitcoin.crypto;
 
 import java.util.Arrays;
+import java.util.Objects;
 
 
 /**
@@ -47,8 +48,7 @@ public final class Sha256Hash implements Comparable<Sha256Hash> {
 	 * @throws NullPointerException if the array is {@code null}
 	 */
 	public Sha256Hash(byte[] b) {
-		if (b == null)
-			throw new NullPointerException();
+		Objects.requireNonNull(b);
 		if (b.length != HASH_LENGTH)
 			throw new IllegalArgumentException();
 		hash = b.clone();
@@ -63,8 +63,7 @@ public final class Sha256Hash implements Comparable<Sha256Hash> {
 	 * @throws NullPointerException if the string is {@code null}
 	 */
 	public Sha256Hash(String s) {
-		if (s == null)
-			throw new NullPointerException();
+		Objects.requireNonNull(s);
 		if (s.length() != HASH_LENGTH * 2 || !s.matches("[0-9a-fA-F]*"))
 			throw new IllegalArgumentException("Invalid hash string");
 		hash = new byte[HASH_LENGTH];
@@ -118,8 +117,7 @@ public final class Sha256Hash implements Comparable<Sha256Hash> {
 	 * @throws NullPointerException if the other object is {@code null}
 	 */
 	public int compareTo(Sha256Hash other) {
-		if (other == null)
-			throw new NullPointerException();
+		Objects.requireNonNull(other);
 		for (int i = hash.length - 1; i >= 0; i--) {
 			int temp = (hash[i] & 0xFF) - (other.hash[i] & 0xFF);
 			if (temp != 0)

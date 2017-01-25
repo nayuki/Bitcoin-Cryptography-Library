@@ -10,6 +10,7 @@ package io.nayuki.bitcoin.crypto;
 
 import static java.lang.Integer.rotateLeft;
 import java.util.Arrays;
+import java.util.Objects;
 
 
 /**
@@ -32,8 +33,7 @@ public final class Ripemd160 {
 	 */
 	public static byte[] getHash(byte[] msg) {
 		// Compress whole message blocks
-		if (msg == null)
-			throw new NullPointerException();
+		Objects.requireNonNull(msg);
 		int[] state = {0x67452301, 0xEFCDAB89, 0x98BADCFE, 0x10325476, 0xC3D2E1F0};
 		int off = msg.length / BLOCK_LEN * BLOCK_LEN;
 		compress(state, msg, off);
