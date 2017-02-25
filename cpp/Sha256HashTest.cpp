@@ -25,7 +25,7 @@ struct TestCase {
 
 /*---- Test suite ----*/
 
-int main(int argc, char **argv) {
+int main() {
 	// Test equality
 	TestCase cases[] = {
 		{true , "0000000000000000000000000000000000000000000000000000000000000000", hexBytes("0000000000000000000000000000000000000000000000000000000000000000")},

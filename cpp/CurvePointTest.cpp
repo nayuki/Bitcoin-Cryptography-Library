@@ -1130,7 +1130,7 @@ static void testPrivateExponentToPublicPoint() {
 }
 
 
-int main(int argc, char **argv) {
+int main() {
 	testReplace();
 	testTwice();
 	testAdd();

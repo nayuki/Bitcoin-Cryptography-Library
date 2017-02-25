@@ -1814,7 +1814,7 @@ static void testEcdsaVerify() {
 }
 
 
-int main(int argc, char **argv) {
+int main() {
 	testEcdsaSignAndVerify();
 	testEcdsaVerify();
 	printf("All %d test cases passed\n", numTestCases);

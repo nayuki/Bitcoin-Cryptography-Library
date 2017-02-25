@@ -39,7 +39,7 @@ static void ap(Sha256 &hasher, const char *msg) {
 
 
 // Remember that all 256-bit hash strings are byte-reversed as per the Bitcoin convention.
-int main(int argc, char **argv) {
+int main() {
 	int numTestCases = 0;
 	
 	// Single SHA-256 hash

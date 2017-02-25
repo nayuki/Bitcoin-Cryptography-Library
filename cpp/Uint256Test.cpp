@@ -340,7 +340,7 @@ static void testGetBigEndianByte() {
 }
 
 
-int main(int argc, char **argv) {
+int main() {
 	testComparison();
 	testAdd();
 	testSubtract();

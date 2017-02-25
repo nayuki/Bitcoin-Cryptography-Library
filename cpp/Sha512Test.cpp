@@ -26,7 +26,7 @@ struct TestCase {
 
 /*---- Test suite ----*/
 
-int main(int argc, char **argv) {
+int main() {
 	// ASCII test vectors
 	TestCase cases[] = {
 		// Standard test vectors
