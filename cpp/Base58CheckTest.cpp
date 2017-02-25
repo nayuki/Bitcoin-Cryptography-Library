@@ -11,6 +11,7 @@
 #include "TestHelper.hpp"
 #include <cstdio>
 #include <cstdint>
+#include <cstdlib>
 #include <cstring>
 #include "Base58Check.hpp"
 #include "Uint256.hpp"
@@ -703,5 +704,5 @@ int main() {
 	testPrivateKeyExport();
 	testPrivateKeyImport();
 	printf("All %d test cases passed\n", numTestCases);
-	return 0;
+	return EXIT_SUCCESS;
 }

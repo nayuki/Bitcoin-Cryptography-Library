@@ -11,6 +11,7 @@
 #include "TestHelper.hpp"
 #include <cstdio>
 #include <cstdint>
+#include <cstdlib>
 #include <cstring>
 #include "Sha512.hpp"
 
@@ -329,5 +330,5 @@ int main() {
 		numTestCases++;
 	}
 	printf("All %d test cases passed\n", numTestCases);
-	return 0;
+	return EXIT_SUCCESS;
 }

@@ -10,6 +10,7 @@
 
 #include "TestHelper.hpp"
 #include <cstdio>
+#include <cstdlib>
 #include "FieldInt.hpp"
 
 
@@ -302,5 +303,5 @@ int main() {
 	testReciprocal();
 	testConstructorUint256();
 	printf("All %d test cases passed\n", numTestCases);
-	return 0;
+	return EXIT_SUCCESS;
 }

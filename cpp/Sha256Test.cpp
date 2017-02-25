@@ -11,6 +11,7 @@
 #include "TestHelper.hpp"
 #include <cstdio>
 #include <cstdint>
+#include <cstdlib>
 #include <cstring>
 #include "Sha256.hpp"
 #include "Sha256Hash.hpp"
@@ -236,5 +237,5 @@ int main() {
 	
 	// Epilog
 	printf("All %d test cases passed\n", numTestCases);
-	return 0;
+	return EXIT_SUCCESS;
 }

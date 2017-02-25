@@ -10,6 +10,7 @@
 
 #include "TestHelper.hpp"
 #include <cstdio>
+#include <cstdlib>
 #include "Ecdsa.hpp"
 #include "Sha256Hash.hpp"
 #include "Uint256.hpp"
@@ -1818,5 +1819,5 @@ int main() {
 	testEcdsaSignAndVerify();
 	testEcdsaVerify();
 	printf("All %d test cases passed\n", numTestCases);
-	return 0;
+	return EXIT_SUCCESS;
 }

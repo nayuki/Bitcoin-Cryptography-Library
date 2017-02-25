@@ -10,6 +10,7 @@
 
 #include "TestHelper.hpp"
 #include <cstdio>
+#include <cstdlib>
 #include "CurvePoint.hpp"
 #include "FieldInt.hpp"
 #include "Uint256.hpp"
@@ -1139,5 +1140,5 @@ int main() {
 	testIsOnCurve();
 	testPrivateExponentToPublicPoint();
 	printf("All %d test cases passed\n", numTestCases);
-	return 0;
+	return EXIT_SUCCESS;
 }
