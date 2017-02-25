@@ -9,8 +9,9 @@
  */
 
 #include "TestHelper.hpp"
-#include <cstdio>
 #include <cstdint>
+#include <cstdio>
+#include <cstdlib>
 #include <cstring>
 #include "Sha256.hpp"
 #include "Sha256Hash.hpp"
@@ -39,7 +40,7 @@ static void ap(Sha256 &hasher, const char *msg) {
 
 
 // Remember that all 256-bit hash strings are byte-reversed as per the Bitcoin convention.
-int main(int argc, char **argv) {
+int main() {
 	int numTestCases = 0;
 	
 	// Single SHA-256 hash
@@ -236,5 +237,5 @@ int main(int argc, char **argv) {
 	
 	// Epilog
 	printf("All %d test cases passed\n", numTestCases);
-	return 0;
+	return EXIT_SUCCESS;
 }

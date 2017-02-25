@@ -10,6 +10,7 @@
 
 #include "TestHelper.hpp"
 #include <cstdio>
+#include <cstdlib>
 #include <cstring>
 #include "Sha256Hash.hpp"
 
@@ -25,7 +26,7 @@ struct TestCase {
 
 /*---- Test suite ----*/
 
-int main(int argc, char **argv) {
+int main() {
 	// Test equality
 	TestCase cases[] = {
 		{true , "0000000000000000000000000000000000000000000000000000000000000000", hexBytes("0000000000000000000000000000000000000000000000000000000000000000")},
@@ -55,5 +56,5 @@ int main(int argc, char **argv) {
 	
 	// Epilog
 	printf("All %d test cases passed\n", numTestCases);
-	return 0;
+	return EXIT_SUCCESS;
 }

@@ -11,6 +11,7 @@
 #include "TestHelper.hpp"
 #include <cstdint>
 #include <cstdio>
+#include <cstdlib>
 #include <cstring>
 #include "Uint256.hpp"
 
@@ -340,7 +341,7 @@ static void testGetBigEndianByte() {
 }
 
 
-int main(int argc, char **argv) {
+int main() {
 	testComparison();
 	testAdd();
 	testSubtract();
@@ -351,5 +352,5 @@ int main(int argc, char **argv) {
 	testConstructorBytes();
 	testGetBigEndianByte();
 	printf("All %d test cases passed\n", numTestCases);
-	return 0;
+	return EXIT_SUCCESS;
 }

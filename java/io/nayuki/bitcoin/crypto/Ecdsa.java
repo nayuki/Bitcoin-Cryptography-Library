@@ -10,6 +10,7 @@ package io.nayuki.bitcoin.crypto;
 
 import static io.nayuki.bitcoin.crypto.Int256Math.NUM_WORDS;
 import java.util.Arrays;
+import java.util.Objects;
 
 
 /**
@@ -27,8 +28,11 @@ public final class Ecdsa {
 	// All successful executions are constant-time with respect to the input values; in order words
 	// one successful execution is indistinguishable from another one based on side channel information.
 	public static boolean sign(int[] privateKey, Sha256Hash msgHash, int[] nonce, int[] outR, int[] outS) {
-		if (privateKey == null || msgHash == null || nonce == null || outR == null || outS == null)
-			throw new NullPointerException();
+		Objects.requireNonNull(privateKey);
+		Objects.requireNonNull(msgHash);
+		Objects.requireNonNull(nonce);
+		Objects.requireNonNull(outR);
+		Objects.requireNonNull(outS);
 		if (privateKey.length != NUM_WORDS || nonce.length != NUM_WORDS || outR.length != NUM_WORDS || outS.length != NUM_WORDS)
 			throw new IllegalArgumentException();
 		
@@ -90,8 +94,10 @@ public final class Ecdsa {
 	// Computes a deterministic nonce based on the HMAC-SHA-256 of the message hash with the private key,
 	// and then performs ECDSA signing. Returns true iff signing is successful (with overwhelming probability).
 	public static boolean signWithHmacNonce(int[] privateKey, Sha256Hash msgHash, int[] outR, int[] outS) {
-		if (privateKey == null || msgHash == null || outR == null || outS == null)
-			throw new NullPointerException();
+		Objects.requireNonNull(privateKey);
+		Objects.requireNonNull(msgHash);
+		Objects.requireNonNull(outR);
+		Objects.requireNonNull(outS);
 		if (privateKey.length != NUM_WORDS || outR.length != NUM_WORDS || outS.length != NUM_WORDS)
 			throw new IllegalArgumentException();
 		
@@ -107,8 +113,10 @@ public final class Ecdsa {
 	// Checks whether the given signature, message, and public key are valid together.
 	// publicKey is a normalized CurvePoint, r is a Uint256, and s is a Uint256.
 	public static boolean verify(int[] publicKey, Sha256Hash msgHash, int[] r, int[] s) {
-		if (publicKey == null || msgHash == null || r == null || s == null)
-			throw new NullPointerException();
+		Objects.requireNonNull(publicKey);
+		Objects.requireNonNull(msgHash);
+		Objects.requireNonNull(r);
+		Objects.requireNonNull(s);
 		if (publicKey.length != CurvePointMath.POINT_WORDS || r.length != NUM_WORDS || s.length != NUM_WORDS)
 			throw new IllegalArgumentException();
 		

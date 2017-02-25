@@ -9,8 +9,9 @@
  */
 
 #include "TestHelper.hpp"
-#include <cstdio>
 #include <cstdint>
+#include <cstdio>
+#include <cstdlib>
 #include <cstring>
 #include "Base58Check.hpp"
 #include "Uint256.hpp"
@@ -697,11 +698,11 @@ static void testPrivateKeyImport() {
 }
 
 
-int main(int argc, char **argv) {
+int main() {
 	testPublicAddressExport();
 	testPublicAddressImport();
 	testPrivateKeyExport();
 	testPrivateKeyImport();
 	printf("All %d test cases passed\n", numTestCases);
-	return 0;
+	return EXIT_SUCCESS;
 }

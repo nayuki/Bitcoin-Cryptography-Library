@@ -9,8 +9,9 @@
  */
 
 #include "TestHelper.hpp"
-#include <cstdio>
 #include <cstdint>
+#include <cstdio>
+#include <cstdlib>
 #include <cstring>
 #include "Sha512.hpp"
 
@@ -26,7 +27,7 @@ struct TestCase {
 
 /*---- Test suite ----*/
 
-int main(int argc, char **argv) {
+int main() {
 	// ASCII test vectors
 	TestCase cases[] = {
 		// Standard test vectors
@@ -329,5 +330,5 @@ int main(int argc, char **argv) {
 		numTestCases++;
 	}
 	printf("All %d test cases passed\n", numTestCases);
-	return 0;
+	return EXIT_SUCCESS;
 }

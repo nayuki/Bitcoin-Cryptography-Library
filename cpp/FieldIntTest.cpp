@@ -11,6 +11,7 @@
 #include "TestHelper.hpp"
 #include <cinttypes>
 #include <cstdio>
+#include <cstdlib>
 #include "AsmX8664.hpp"
 #include "FieldInt.hpp"
 
@@ -365,7 +366,7 @@ static void testAsmMultiplyBarrettStep1() {
 }
 
 
-int main(int argc, char **argv) {
+int main() {
 	testComparison();
 	testAdd();
 	testSubtract();
@@ -378,5 +379,5 @@ int main(int argc, char **argv) {
 	testAsmMultiplyBarrettStep0();
 	testAsmMultiplyBarrettStep1();
 	printf("All %d test cases passed\n", numTestCases);
-	return 0;
+	return EXIT_SUCCESS;
 }
