@@ -19,7 +19,7 @@ More details about features and design principles are on the main web page:
 License
 -------
 
-Copyright © 2016 Project Nayuki
+Copyright © 2017 Project Nayuki
 
 (MIT License)
 
