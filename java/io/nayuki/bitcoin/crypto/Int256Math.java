@@ -183,11 +183,11 @@ public final class Int256Math {
 			//     b /= 2;
 			//     d = d % 2 == 0 ? d / 2 : y - (y - d) / 2;
 			// }
-			int yEven = ~val[bOff] & 1;
-			int bOdd = val[dOff] & 1;
-			uintShiftRight1(val, bOff, yEven, bOff);
-			uintShiftRight1(val, dOff, yEven, dOff);
-			uintAdd(val, dOff, halfModOff, yEven & bOdd, dOff);
+			int bEven = ~val[bOff] & 1;
+			int dOdd = val[dOff] & 1;
+			uintShiftRight1(val, bOff, bEven, bOff);
+			uintShiftRight1(val, dOff, bEven, dOff);
+			uintAdd(val, dOff, halfModOff, bEven & dOdd, dOff);
 			
 			// If allowed, try to swap so that b >= a and then do b -= a. Pseudocode:
 			// if (b % 2 != 0 && b != 1) {
