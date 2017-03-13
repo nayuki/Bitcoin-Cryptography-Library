@@ -183,6 +183,7 @@ public final class Int256Math {
 			//     b /= 2;
 			//     d = d % 2 == 0 ? d / 2 : y - (y - d) / 2;
 			// }
+			assert (val[aOff] & 1) == 1;
 			int bEven = ~val[bOff] & 1;
 			int dOdd = val[dOff] & 1;
 			uintShiftRight1(val, bOff, bEven, bOff);
@@ -190,7 +191,7 @@ public final class Int256Math {
 			uintAdd(val, dOff, halfModOff, bEven & dOdd, dOff);
 			
 			// If allowed, try to swap so that b >= a and then do b -= a. Pseudocode:
-			// if (b % 2 != 0 && b != 1) {
+			// if (b % 2 == 1) {
 			//     if (a > b) {
 			//         a, b = b, a;
 			//         c, d = d, c;
@@ -198,7 +199,7 @@ public final class Int256Math {
 			//     b -= a;
 			//     d -= c;
 			// }
-			int enable = val[bOff] & ~equalTo(val, bOff, oneOff) & 1;
+			int enable = val[bOff] & 1;
 			int doswap = enable & lessThan(val, bOff, aOff);
 			swap(val, aOff, bOff, doswap);
 			uintSubtract(val, bOff, aOff, enable, bOff);
@@ -207,8 +208,8 @@ public final class Int256Math {
 			uintAdd(val, dOff, yOff, borrow, dOff);
 		}
 		System.arraycopy(ZERO, 0, val, tempOff, NUM_WORDS);  // Reuses space
-		replace(val, dOff, tempOff, isZero(val, xOff));
-		System.arraycopy(val, dOff, val, zOff, NUM_WORDS);
+		replace(val, cOff, tempOff, isZero(val, xOff));
+		System.arraycopy(val, cOff, val, zOff, NUM_WORDS);
 	}
 	
 	public static final int RECIPROCAL_TEMP_WORDS = 6 * NUM_WORDS;
