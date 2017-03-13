@@ -96,9 +96,9 @@ void Uint256::shiftRight1(uint32_t enable) {
 
 void Uint256::reciprocal(const Uint256 &modulus) {
 	// Extended binary GCD algorithm
-	assert(&modulus != this);
-	Uint256 x(modulus);  // Must be odd
-	Uint256 y(*this);  // Odd or even, and must be less than x
+	assert(&modulus != this && (modulus.value[0] & 1) == 1 && modulus > ONE && *this < modulus);
+	Uint256 x(modulus);
+	Uint256 y(*this);
 	Uint256 a(ZERO);
 	Uint256 b(ONE);
 	Uint256 halfModulus(modulus);
@@ -137,6 +137,7 @@ void Uint256::reciprocal(const Uint256 &modulus) {
 		uint32_t borrow = b.subtract(a, enable);
 		b.add(modulus, borrow);
 	}
+	assert((x == ONE) | (x == modulus));  // Either gcd(this, modulus) = 1 or this = 0
 	this->replace(a, static_cast<uint32_t>(*this != ZERO));
 }
 

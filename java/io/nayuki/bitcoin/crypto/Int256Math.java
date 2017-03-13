@@ -160,6 +160,10 @@ public final class Int256Math {
 		assert val.length - tempOff >= RECIPROCAL_TEMP_WORDS;
 		if ((val[yOff] & 1) == 0)
 			throw new IllegalArgumentException("Modulus must be odd");
+		if (lessThan(ONE, 0, val, yOff) == 0)
+			throw new IllegalArgumentException("Modulus must be greater than 1");
+		if (lessThan(val, xOff, val, yOff) == 0)
+			throw new IllegalArgumentException("Value must be less than modulus");
 		
 		// Extended binary GCD algorithm
 		int aOff = tempOff + 0 * NUM_WORDS;
@@ -168,8 +172,8 @@ public final class Int256Math {
 		int dOff = tempOff + 3 * NUM_WORDS;
 		int halfModOff = tempOff + 4 * NUM_WORDS;
 		int oneOff = tempOff + 5 * NUM_WORDS;
-		System.arraycopy(val, yOff, val, aOff, NUM_WORDS);  // Must be odd
-		System.arraycopy(val, xOff, val, bOff, NUM_WORDS);  // Odd or even, and must be less than modulus
+		System.arraycopy(val, yOff, val, aOff, NUM_WORDS);
+		System.arraycopy(val, xOff, val, bOff, NUM_WORDS);
 		System.arraycopy(ZERO, 0,   val, cOff, NUM_WORDS);
 		System.arraycopy(ONE , 0,   val, dOff, NUM_WORDS);
 		System.arraycopy(ONE, 0, val, oneOff, NUM_WORDS);
@@ -207,6 +211,8 @@ public final class Int256Math {
 			int borrow = uintSubtract(val, dOff, cOff, enable, dOff);
 			uintAdd(val, dOff, yOff, borrow, dOff);
 		}
+		if ((equalTo(val, aOff, oneOff) | equalTo(val, aOff, yOff)) == 0)  // gcd(x, y) != 1 and x != 0
+			throw new IllegalArgumentException("Value not zero or coprime with modulus");
 		System.arraycopy(ZERO, 0, val, tempOff, NUM_WORDS);  // Reuses space
 		replace(val, cOff, tempOff, isZero(val, xOff));
 		System.arraycopy(val, cOff, val, zOff, NUM_WORDS);
