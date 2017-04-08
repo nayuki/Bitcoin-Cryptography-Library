@@ -23,7 +23,8 @@ class FieldInt;  // Forward declaration
  */
 class Uint256 {
 	
-	#define NUM_WORDS 8
+public:
+	static constexpr int NUM_WORDS = 8;
 	
 	/*---- Fields ----*/
 	
@@ -124,9 +125,6 @@ public:
 	bool operator>(const Uint256 &other) const;
 	
 	bool operator>=(const Uint256 &other) const;
-	
-	
-	#undef NUM_WORDS
 	
 	
 	

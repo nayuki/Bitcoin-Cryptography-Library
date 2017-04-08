@@ -23,6 +23,9 @@
  */
 class FieldInt final : private Uint256 {
 	
+public:
+	using Uint256::NUM_WORDS;
+	
 	/*---- Fields ----*/
 	
 public:

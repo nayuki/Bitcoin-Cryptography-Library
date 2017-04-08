@@ -11,8 +11,6 @@
 #include "Uint256.hpp"
 #include "Utils.hpp"
 
-#define NUM_WORDS 8
-
 
 Uint256::Uint256() :
 	value() {}
@@ -205,9 +203,6 @@ bool Uint256::operator>(const Uint256 &other) const {
 bool Uint256::operator>=(const Uint256 &other) const {
 	return !(*this < other);
 }
-
-
-#undef NUM_WORDS
 
 
 // Static initializers
