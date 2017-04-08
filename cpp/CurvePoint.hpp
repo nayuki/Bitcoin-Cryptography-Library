@@ -34,99 +34,94 @@ class CurvePoint final {
 	
 	/*---- Fields ----*/
 	
-public:
-	FieldInt x;
-	FieldInt y;
-	FieldInt z;  // The point is normalized iff (z = 1 OR (x,y,z)=(0,1,0))
+	public: FieldInt x;
+	public: FieldInt y;
+	public: FieldInt z;  // The point is normalized iff (z = 1 OR (x,y,z)=(0,1,0))
 	
 	
 	
 	/*---- Constructors ----*/
-public:
 	
 	// Constructs a normalized point (z=1) from the given coordinates. Constant-time with respect to the values.
-	CurvePoint(const FieldInt &x_, const FieldInt &y_);
+	public: CurvePoint(const FieldInt &x_, const FieldInt &y_);
 	
 	
 	// Constructs a normalized point (z=1) from the given string coordinates. Not constant-time.
-	CurvePoint(const char *xStr, const char *yStr);
+	public: CurvePoint(const char *xStr, const char *yStr);
 	
 	
 	// Constructs the special "point at infinity" (normalized), which is used by ZERO and in multiply().
-private:
-	CurvePoint();
+	private: CurvePoint();
 	
 	
 	
 	/*---- Arithmetic methods ----*/
-public:
 	
 	// Adds the given curve point to this point. The resulting state is
 	// usually not normalized. Constant-time with respect to both values.
-	void add(const CurvePoint &other);
+	public: void add(const CurvePoint &other);
 	
 	
 	// Doubles this curve point. The resulting state is usually
 	// not normalized. Constant-time with respect to this value.
-	void twice();
+	public: void twice();
 	
 	
 	// Multiplies this point by the given unsigned integer. The resulting state
 	// is usually not normalized. Constant-time with respect to both values.
-	void multiply(const Uint256 &n);
+	public: void multiply(const Uint256 &n);
 	
 	
 	// Normalizes the coordinates of this point. Idempotent operation.
 	// Constant-time with respect to this value.
-	void normalize();
+	public: void normalize();
 	
 	
 	// Copies the given point into this point if enable is 1, or does nothing if enable is 0.
 	// Constant-time with respect to both values and the enable.
-	void replace(const CurvePoint &other, uint32_t enable);
+	public: void replace(const CurvePoint &other, uint32_t enable);
 	
 	
 	// Tests whether this point is on the elliptic curve.
 	// This point needs to be normalized before the method is called.
 	// Zero is considered to be off the curve. Constant-time with respect to this value.
-	bool isOnCurve() const;
+	public: bool isOnCurve() const;
 	
 	
 	// Tests whether this point is equal to the special zero point.
 	// This point need not be normalized. Constant-time with respect to this value.
 	// This method is equivalent to, but more convenient than:
 	// { CurvePoint temp(*this); temp.normalize(); return temp == ZERO; }
-	bool isZero() const;
+	public: bool isZero() const;
 	
 	
 	// Tests whether this point equals the given point in all 3 coordinates. This comparison is
 	// meaningful only if both points are normalized. Constant-time with respect to both values.
-	bool operator==(const CurvePoint &other) const;
+	public: bool operator==(const CurvePoint &other) const;
 	
-	bool operator!=(const CurvePoint &other) const;
+	public: bool operator!=(const CurvePoint &other) const;
 	
 	
 	// Serializes this point in compressed format (header byte, x-coordinate in big-endian).
 	// Constant-time with respect to this value.
-	void toCompressedPoint(uint8_t output[33]) const;
+	public: void toCompressedPoint(uint8_t output[33]) const;
 	
 	
 	/*---- Static functions ----*/
 	
 	// Returns a normalized public curve point for the given private exponent key.
 	// Requires 0 < privExp < ORDER. Constant-time with respect to the value.
-	static CurvePoint privateExponentToPublicPoint(const Uint256 &privExp);
+	public: static CurvePoint privateExponentToPublicPoint(const Uint256 &privExp);
 	
 	
 	/*---- Class constants ----*/
 	
-public:
-	static const FieldInt FI_ZERO;  // These FieldInt constants are declared here because they are only needed in this class,
-	static const FieldInt FI_ONE;   // and because of C++'s lack of guarantee of static initialization order.
-	static const FieldInt A;       // Curve equation parameter
-	static const FieldInt B;       // Curve equation parameter
-	static const Uint256 ORDER;    // Order of base point, which is a prime number
-	static const CurvePoint G;     // Base point (normalized)
-	static const CurvePoint ZERO;  // Dummy point at infinity (normalized)
+	public: static const FieldInt FI_ZERO;  // These FieldInt constants are declared here because they are only needed in this class,
+	public: static const FieldInt FI_ONE;   // and because of C++'s lack of guarantee of static initialization order.
+	public: static const FieldInt A;       // Curve equation parameter
+	public: static const FieldInt B;       // Curve equation parameter
+	public: static const Uint256 ORDER;    // Order of base point, which is a prime number
+	public: static const CurvePoint G;     // Base point (normalized)
+	public: static const CurvePoint ZERO;  // Dummy point at infinity (normalized)
 	
 };

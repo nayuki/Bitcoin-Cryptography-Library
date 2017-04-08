@@ -19,60 +19,51 @@
  */
 class Sha256 final {
 	
-private:
-	static constexpr int SHA256_BLOCK_LEN = 64;
+	private: static constexpr int SHA256_BLOCK_LEN = 64;
 	
 	
 	/*---- Static functions ----*/
 	
-public:
-	
-	static Sha256Hash getHash(const uint8_t *msg, size_t len);
+	public: static Sha256Hash getHash(const uint8_t *msg, size_t len);
 	
 	
-	static Sha256Hash getDoubleHash(const uint8_t *msg, size_t len);
+	public: static Sha256Hash getDoubleHash(const uint8_t *msg, size_t len);
 	
 	
-	static Sha256Hash getHmac(const uint8_t *key, size_t keyLen, const uint8_t *msg, size_t msgLen);
+	public: static Sha256Hash getHmac(const uint8_t *key, size_t keyLen, const uint8_t *msg, size_t msgLen);
 	
 	
-private:
-	static Sha256Hash getHash(const uint8_t *msg, size_t len, const uint32_t initState[8], size_t prefixLen);
+	private: static Sha256Hash getHash(const uint8_t *msg, size_t len, const uint32_t initState[8], size_t prefixLen);
 	
 	
-public:
-	static void compress(uint32_t state[8], const uint8_t *blocks, size_t len);
+	public: static void compress(uint32_t state[8], const uint8_t *blocks, size_t len);
 	
 	
 	
 	/*---- Stateful hasher fields and methods ----*/
 	
-private:
-	uint32_t state[8];
-	uint64_t length;
-	uint8_t buffer[SHA256_BLOCK_LEN];
-	int bufferLen;
+	private: uint32_t state[8];
+	private: uint64_t length;
+	private: uint8_t buffer[SHA256_BLOCK_LEN];
+	private: int bufferLen;
 	
 	
-public:
 	// Constructs a new SHA-256 hasher with an initially blank message.
-	Sha256();
+	public: Sha256();
 	
 	
 	// Appends message bytes to this ongoing hasher.
-	void append(const uint8_t *bytes, size_t len);
+	public: void append(const uint8_t *bytes, size_t len);
 	
 	
 	// Returns the SHA-256 hash of all the bytes seen. Destroys the state so that no further append() or getHash() will be valid.
-	Sha256Hash getHash();
+	public: Sha256Hash getHash();
 	
 	
 	
 	/*---- Class constants ----*/
 	
-public:
-	static const uint32_t INITIAL_STATE[8];
-private:
-	static const uint32_t ROUND_CONSTANTS[64];
+	public: static const uint32_t INITIAL_STATE[8];
+	private: static const uint32_t ROUND_CONSTANTS[64];
 	
 };

@@ -24,14 +24,11 @@
  */
 class Sha256Hash final {
 	
-public:
-	static constexpr int HASH_LEN = 32;
-	
-public:
+	public: static constexpr int HASH_LEN = 32;
 	
 	/*---- Fields ----*/
 	
-	uint8_t value[HASH_LEN];
+	public: uint8_t value[HASH_LEN];
 	
 	
 	
@@ -39,21 +36,21 @@ public:
 	
 	// Constructs a Sha256Hash from the given array of 32 bytes (len is a dummy parameter that must equal 32).
 	// Constant-time with respect to the given array of values.
-	Sha256Hash(const uint8_t hash[HASH_LEN], size_t len);
+	public: Sha256Hash(const uint8_t hash[HASH_LEN], size_t len);
 	
 	
 	// Constructs a Sha256Hash from the given 64-character byte-reversed hexadecimal string. Not constant-time.
-	Sha256Hash(const char *str);
+	public: Sha256Hash(const char *str);
 	
 	
 	
 	/*---- Instance methods ----*/
 	
 	// Tests whether the given hash is equal to this one. Constant-time with respect to both values.
-	bool operator==(const Sha256Hash &other) const;
+	public: bool operator==(const Sha256Hash &other) const;
 	
 	
 	// Tests whether the given hash is unequal to this one. Constant-time with respect to both values.
-	bool operator!=(const Sha256Hash &other) const;
+	public: bool operator!=(const Sha256Hash &other) const;
 	
 };

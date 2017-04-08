@@ -23,91 +23,84 @@
  */
 class FieldInt final : private Uint256 {
 	
-public:
-	using Uint256::NUM_WORDS;
+	public: using Uint256::NUM_WORDS;
 	
 	/*---- Fields ----*/
 	
-public:
-	using Uint256::value;
+	public: using Uint256::value;
 	
 	
 	
 	/*---- Constructors ----*/
-public:
 	
 	// Constructs a FieldInt from the given 64-character hexadecimal string. Not constant-time.
 	// If the syntax of the string is invalid, then an assertion will fail.
-	explicit FieldInt(const char *str);
+	public: explicit FieldInt(const char *str);
 	
 	
 	// Constructs a FieldInt from the given Uint256, reducing it as necessary.
 	// Constant-time with respect to the given value.
-	explicit FieldInt(const Uint256 &val);
+	public: explicit FieldInt(const Uint256 &val);
 	
 	
 	
 	/*---- Arithmetic methods ----*/
-public:
 	
 	// Adds the given number into this number, modulo the prime. Constant-time with respect to both values.
-	void add(const FieldInt &other);
+	public: void add(const FieldInt &other);
 	
 	
 	// Subtracts the given number from this number, modulo the prime. Constant-time with respect to both values.
-	void subtract(const FieldInt &other);
+	public: void subtract(const FieldInt &other);
 	
 	
 	// Doubles this number, modulo the prime. Constant-time with respect to this value.
-	void multiply2();
+	public: void multiply2();
 	
 	
 	// Squares this number, modulo the prime. Constant-time with respect to this value.
-	void square();
+	public: void square();
 	
 	
 	// Multiplies the given number into this number, modulo the prime. Constant-time with respect to both values.
-	void multiply(const FieldInt &other);
+	public: void multiply(const FieldInt &other);
 	
 	
 	// Computes the multiplicative inverse of this number with respect to the modulus.
 	// If this number is zero, the reciprocal is zero. Constant-time with respect to this value.
-	void reciprocal();
+	public: void reciprocal();
 	
 	
 	/*---- Miscellaneous methods ----*/
 	
-	void replace(const FieldInt &other, uint32_t enable);
+	public: void replace(const FieldInt &other, uint32_t enable);
 	
-	using Uint256::getBigEndianBytes;
+	public: using Uint256::getBigEndianBytes;
 	
 	
 	/*---- Equality and inequality operators ----*/
 	
-	bool operator==(const FieldInt &other) const;
+	public: bool operator==(const FieldInt &other) const;
 	
-	bool operator!=(const FieldInt &other) const;
+	public: bool operator!=(const FieldInt &other) const;
 	
-	bool operator<(const FieldInt &other) const;
+	public: bool operator<(const FieldInt &other) const;
 	
-	bool operator<=(const FieldInt &other) const;
+	public: bool operator<=(const FieldInt &other) const;
 	
-	bool operator>(const FieldInt &other) const;
+	public: bool operator>(const FieldInt &other) const;
 	
-	bool operator>=(const FieldInt &other) const;
+	public: bool operator>=(const FieldInt &other) const;
 	
 	
-private:
+	private: bool operator<(const Uint256 &other) const;
 	
-	bool operator<(const Uint256 &other) const;
-	
-	bool operator>=(const Uint256 &other) const;
+	private: bool operator>=(const Uint256 &other) const;
 	
 	
 	
 	/*---- Class constants ----*/
 	
-private:
-	static const Uint256 MODULUS;  // Prime number
+	private: static const Uint256 MODULUS;  // Prime number
 	
 };
