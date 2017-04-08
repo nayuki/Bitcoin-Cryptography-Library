@@ -24,7 +24,7 @@ Sha256Hash Sha256::getHash(const uint8_t *msg, size_t len) {
 Sha256Hash Sha256::getDoubleHash(const uint8_t *msg, size_t len) {
 	assert(msg != nullptr || len == 0);
 	const Sha256Hash innerHash(getHash(msg, len));
-	return getHash(innerHash.value, SHA256_HASH_LEN);
+	return getHash(innerHash.value, Sha256Hash::HASH_LEN);
 }
 
 
@@ -37,7 +37,7 @@ Sha256Hash Sha256::getHmac(const uint8_t *key, size_t keyLen, const uint8_t *msg
 		Utils::copyBytes(tempKey, key, keyLen);
 	else {
 		const Sha256Hash keyHash(getHash(key, keyLen));
-		memcpy(tempKey, keyHash.value, SHA256_HASH_LEN);
+		memcpy(tempKey, keyHash.value, Sha256Hash::HASH_LEN);
 	}
 	
 	// Compute inner hash
@@ -53,7 +53,7 @@ Sha256Hash Sha256::getHmac(const uint8_t *key, size_t keyLen, const uint8_t *msg
 		tempKey[i] ^= 0x36 ^ 0x5C;
 	memcpy(state, INITIAL_STATE, sizeof(state));
 	compress(state, tempKey, SHA256_BLOCK_LEN);
-	return getHash(innerHash.value, SHA256_HASH_LEN, state, SHA256_BLOCK_LEN);
+	return getHash(innerHash.value, Sha256Hash::HASH_LEN, state, SHA256_BLOCK_LEN);
 }
 
 
@@ -82,10 +82,10 @@ Sha256Hash Sha256::getHash(const uint8_t *msg, size_t len, const uint32_t initSt
 	compress(state, block, SHA256_BLOCK_LEN);
 	
 	// Uint32 array to bytes in big endian
-	uint8_t result[SHA256_HASH_LEN];
-	for (int i = 0; i < SHA256_HASH_LEN; i++)
+	uint8_t result[Sha256Hash::HASH_LEN];
+	for (int i = 0; i < Sha256Hash::HASH_LEN; i++)
 		result[i] = static_cast<uint8_t>(state[i >> 2] >> ((3 - (i & 3)) << 3));
-	return Sha256Hash(result, SHA256_HASH_LEN);
+	return Sha256Hash(result, Sha256Hash::HASH_LEN);
 }
 
 
@@ -175,10 +175,10 @@ Sha256Hash Sha256::getHash() {
 		temp = static_cast<uint8_t>(bitLength >> ((7 - i) << 3));
 		append(&temp, 1);
 	}
-	uint8_t result[SHA256_HASH_LEN];
-	for (int i = 0; i < SHA256_HASH_LEN; i++)
+	uint8_t result[Sha256Hash::HASH_LEN];
+	for (int i = 0; i < Sha256Hash::HASH_LEN; i++)
 		result[i] = static_cast<uint8_t>(state[i >> 2] >> ((3 - (i & 3)) << 3));
-	return Sha256Hash(result, SHA256_HASH_LEN);
+	return Sha256Hash(result, Sha256Hash::HASH_LEN);
 }
 
 

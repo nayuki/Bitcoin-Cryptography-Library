@@ -22,13 +22,16 @@
  *                0x17,0x18,0x19,0x20,0x21,0x22,0x23,0x24,0x25,0x26,0x27,0x28,0x29,0x30,0x31,0x32}.
  * - Hex string: "3231302928272625242322212019181716151413121110090807060504030201".
  */
-#define SHA256_HASH_LEN 32
 class Sha256Hash final {
+	
+public:
+	static constexpr int HASH_LEN = 32;
+	
 public:
 	
 	/*---- Fields ----*/
 	
-	uint8_t value[SHA256_HASH_LEN];
+	uint8_t value[HASH_LEN];
 	
 	
 	
@@ -36,7 +39,7 @@ public:
 	
 	// Constructs a Sha256Hash from the given array of 32 bytes (len is a dummy parameter that must equal 32).
 	// Constant-time with respect to the given array of values.
-	Sha256Hash(const uint8_t hash[SHA256_HASH_LEN], size_t len);
+	Sha256Hash(const uint8_t hash[HASH_LEN], size_t len);
 	
 	
 	// Constructs a Sha256Hash from the given 64-character byte-reversed hexadecimal string. Not constant-time.
