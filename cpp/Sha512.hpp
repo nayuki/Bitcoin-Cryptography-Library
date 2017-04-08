@@ -16,13 +16,15 @@
  * Computes the SHA-512 hash of a sequence of bytes. The hash value is 64 bytes long.
  * Provides just one static method.
  */
-#define SHA512_HASH_LEN 64
 class Sha512 final {
+	
+public:
+	static constexpr int HASH_LEN = 64;
 	
 	/*---- Static functions ----*/
 	
 public:
-	static void getHash(const uint8_t *msg, size_t len, uint8_t hashResult[SHA512_HASH_LEN]);
+	static void getHash(const uint8_t *msg, size_t len, uint8_t hashResult[HASH_LEN]);
 	
 	
 private:
