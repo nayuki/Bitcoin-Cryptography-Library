@@ -11,8 +11,8 @@
 #include "Sha512.hpp"
 #include "Utils.hpp"
 
-#define BLOCK_LEN 128
 
+static constexpr int BLOCK_LEN = 128;
 
 static uint64_t rotr64(uint64_t x, uint64_t i);
 
@@ -105,9 +105,6 @@ void Sha512::compress(uint64_t state[8], const uint8_t *blocks, size_t len) {
 
 
 Sha512::Sha512() {}
-
-
-#undef BLOCK_LEN
 
 
 // Static initializers

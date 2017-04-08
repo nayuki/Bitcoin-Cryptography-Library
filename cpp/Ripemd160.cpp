@@ -11,8 +11,8 @@
 #include "Ripemd160.hpp"
 #include "Utils.hpp"
 
-#define BLOCK_LEN 64
 
+static constexpr int BLOCK_LEN = 64;
 
 static uint32_t rotl32(uint32_t x, uint32_t i);
 
@@ -103,9 +103,6 @@ uint32_t Ripemd160::f(unsigned int i, uint32_t x, uint32_t y, uint32_t z) {
 
 
 Ripemd160::Ripemd160() {}
-
-
-#undef BLOCK_LEN
 
 
 // Static initializers

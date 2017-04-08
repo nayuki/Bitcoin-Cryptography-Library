@@ -17,8 +17,11 @@
  * Computes the SHA-256 hash of a sequence of bytes, returning a Sha256Hash object.
  * Provides three static methods, and an instantiable stateful hasher.
  */
-#define SHA256_BLOCK_LEN 64
 class Sha256 final {
+	
+private:
+	static constexpr int SHA256_BLOCK_LEN = 64;
+	
 	
 	/*---- Static functions ----*/
 	
