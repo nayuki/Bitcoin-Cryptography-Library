@@ -24,7 +24,7 @@ public:
 	// Exports the given 20-byte public key hash as a public address.
 	// The outStr array must have length >= 35 (including null terminator).
 	// The output text length is between 25 and 34 characters, inclusive. Not constant-time.
-	static void pubkeyHashToBase58Check(const uint8_t pubkeyHash[RIPEMD160_HASH_LEN], char outStr[35]);
+	static void pubkeyHashToBase58Check(const uint8_t pubkeyHash[Ripemd160::HASH_LEN], char outStr[35]);
 	
 	
 	// Exports the given private key as compressed WIF.
@@ -36,7 +36,7 @@ public:
 	// Parses the given public address string. If the syntax and check digits are correct,
 	// then the output array is set to the decoded value and true is returned.
 	// Otherwise the output array is unchanged and false is returned. Not constant-time.
-	static bool pubkeyHashFromBase58Check(const char *addrStr, uint8_t outPubkeyHash[RIPEMD160_HASH_LEN]);
+	static bool pubkeyHashFromBase58Check(const char *addrStr, uint8_t outPubkeyHash[Ripemd160::HASH_LEN]);
 	
 	
 	// Parses the given compressed WIF string. If the syntax and check digits are correct,

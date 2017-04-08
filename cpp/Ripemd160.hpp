@@ -16,13 +16,15 @@
  * Computes the RIPEMD-160 hash of a sequence of bytes. The hash value is 20 bytes long.
  * Provides just one static method.
  */
-#define RIPEMD160_HASH_LEN 20
 class Ripemd160 final {
+	
+public:
+	static constexpr int HASH_LEN = 20;
 	
 	/*---- Static functions ----*/
 	
 public:
-	static void getHash(const uint8_t *msg, size_t len, uint8_t hashResult[RIPEMD160_HASH_LEN]);
+	static void getHash(const uint8_t *msg, size_t len, uint8_t hashResult[HASH_LEN]);
 	
 	
 private:
