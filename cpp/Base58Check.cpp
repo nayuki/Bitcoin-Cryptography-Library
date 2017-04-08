@@ -38,7 +38,7 @@ void Base58Check::privateKeyToBase58Check(const Uint256 &privKey, char outStr[53
 
 void Base58Check::bytesToBase58Check(uint8_t *data, size_t dataLen, char *outStr) {
 	// Append 4-byte hash
-	#define MAX_TOTAL_BYTES 38  // Including the 4-byte hash
+	constexpr int MAX_TOTAL_BYTES = 38;  // Including the 4-byte hash
 	assert(data != nullptr && dataLen <= MAX_TOTAL_BYTES - 4 && outStr != nullptr);
 	const Sha256Hash sha256Hash = Sha256::getDoubleHash(data, dataLen);
 	for (int i = 0; i < 4; i++, dataLen++)
@@ -72,7 +72,6 @@ void Base58Check::bytesToBase58Check(uint8_t *data, size_t dataLen, char *outStr
 		outStr[i] = outStr[j];
 		outStr[j] = temp;
 	}
-	#undef MAX_TOTAL_BYTES
 }
 
 
