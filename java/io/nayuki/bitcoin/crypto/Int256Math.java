@@ -410,7 +410,7 @@ public final class Int256Math {
 		int diff = 0;
 		for (int i = 0; i < NUM_WORDS; i++)
 			diff |= val[xOff + i] ^ val[yOff + i];
-		return ((diff | -diff) >> 31) + 1;
+		return ~(diff | -diff) >>> 31;
 	}
 	
 	
