@@ -323,10 +323,10 @@ int main() {
 	for (unsigned int i = 0; i < ARRAY_LENGTH(cases); i++) {
 		TestCase &tc = cases[i];
 		Bytes expectHash(hexBytes(tc.expectedHash));
-		assert(expectHash.size() == SHA512_HASH_LEN);
-		uint8_t actualHash[SHA512_HASH_LEN] = {};
+		assert(expectHash.size() == Sha512::HASH_LEN);
+		uint8_t actualHash[Sha512::HASH_LEN] = {};
 		Sha512::getHash(tc.message.data(), tc.message.size(), actualHash);
-		assert((memcmp(actualHash, expectHash.data(), SHA512_HASH_LEN) == 0) == tc.matches);
+		assert((memcmp(actualHash, expectHash.data(), Sha512::HASH_LEN) == 0) == tc.matches);
 		numTestCases++;
 	}
 	printf("All %d test cases passed\n", numTestCases);

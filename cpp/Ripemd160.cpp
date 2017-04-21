@@ -11,13 +11,13 @@
 #include "Ripemd160.hpp"
 #include "Utils.hpp"
 
-#define BLOCK_LEN 64
 
+static constexpr int BLOCK_LEN = 64;
 
 static uint32_t rotl32(uint32_t x, uint32_t i);
 
 
-void Ripemd160::getHash(const uint8_t *msg, size_t len, uint8_t hashResult[RIPEMD160_HASH_LEN]) {
+void Ripemd160::getHash(const uint8_t *msg, size_t len, uint8_t hashResult[HASH_LEN]) {
 	// Compress whole message blocks
 	assert((msg != nullptr || len == 0) && hashResult != nullptr);
 	uint32_t state[5] = {UINT32_C(0x67452301), UINT32_C(0xEFCDAB89), UINT32_C(0x98BADCFE), UINT32_C(0x10325476), UINT32_C(0xC3D2E1F0)};
@@ -41,7 +41,7 @@ void Ripemd160::getHash(const uint8_t *msg, size_t len, uint8_t hashResult[RIPEM
 	compress(state, block, BLOCK_LEN);
 	
 	// Uint32 array to bytes in little endian
-	for (int i = 0; i < RIPEMD160_HASH_LEN; i++)
+	for (int i = 0; i < HASH_LEN; i++)
 		hashResult[i] = static_cast<uint8_t>(state[i >> 2] >> ((i & 3) << 3));
 }
 
@@ -103,9 +103,6 @@ uint32_t Ripemd160::f(unsigned int i, uint32_t x, uint32_t y, uint32_t z) {
 
 
 Ripemd160::Ripemd160() {}
-
-
-#undef BLOCK_LEN
 
 
 // Static initializers

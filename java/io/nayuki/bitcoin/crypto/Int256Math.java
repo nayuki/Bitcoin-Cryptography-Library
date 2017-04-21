@@ -160,6 +160,10 @@ public final class Int256Math {
 		assert val.length - tempOff >= RECIPROCAL_TEMP_WORDS;
 		if ((val[yOff] & 1) == 0)
 			throw new IllegalArgumentException("Modulus must be odd");
+		if (lessThan(ONE, 0, val, yOff) == 0)
+			throw new IllegalArgumentException("Modulus must be greater than 1");
+		if (lessThan(val, xOff, val, yOff) == 0)
+			throw new IllegalArgumentException("Value must be less than modulus");
 		
 		// Extended binary GCD algorithm
 		int aOff = tempOff + 0 * NUM_WORDS;
@@ -168,8 +172,8 @@ public final class Int256Math {
 		int dOff = tempOff + 3 * NUM_WORDS;
 		int halfModOff = tempOff + 4 * NUM_WORDS;
 		int oneOff = tempOff + 5 * NUM_WORDS;
-		System.arraycopy(val, yOff, val, aOff, NUM_WORDS);  // Must be odd
-		System.arraycopy(val, xOff, val, bOff, NUM_WORDS);  // Odd or even, and must be less than modulus
+		System.arraycopy(val, yOff, val, aOff, NUM_WORDS);
+		System.arraycopy(val, xOff, val, bOff, NUM_WORDS);
 		System.arraycopy(ZERO, 0,   val, cOff, NUM_WORDS);
 		System.arraycopy(ONE , 0,   val, dOff, NUM_WORDS);
 		System.arraycopy(ONE, 0, val, oneOff, NUM_WORDS);
@@ -183,14 +187,15 @@ public final class Int256Math {
 			//     b /= 2;
 			//     d = d % 2 == 0 ? d / 2 : y - (y - d) / 2;
 			// }
-			int yEven = ~val[bOff] & 1;
-			int bOdd = val[dOff] & 1;
-			uintShiftRight1(val, bOff, yEven, bOff);
-			uintShiftRight1(val, dOff, yEven, dOff);
-			uintAdd(val, dOff, halfModOff, yEven & bOdd, dOff);
+			assert (val[aOff] & 1) == 1;
+			int bEven = ~val[bOff] & 1;
+			int dOdd = val[dOff] & 1;
+			uintShiftRight1(val, bOff, bEven, bOff);
+			uintShiftRight1(val, dOff, bEven, dOff);
+			uintAdd(val, dOff, halfModOff, bEven & dOdd, dOff);
 			
 			// If allowed, try to swap so that b >= a and then do b -= a. Pseudocode:
-			// if (b % 2 != 0 && b != 1) {
+			// if (b % 2 == 1) {
 			//     if (a > b) {
 			//         a, b = b, a;
 			//         c, d = d, c;
@@ -198,7 +203,7 @@ public final class Int256Math {
 			//     b -= a;
 			//     d -= c;
 			// }
-			int enable = val[bOff] & ~equalTo(val, bOff, oneOff) & 1;
+			int enable = val[bOff] & 1;
 			int doswap = enable & lessThan(val, bOff, aOff);
 			swap(val, aOff, bOff, doswap);
 			uintSubtract(val, bOff, aOff, enable, bOff);
@@ -206,9 +211,11 @@ public final class Int256Math {
 			int borrow = uintSubtract(val, dOff, cOff, enable, dOff);
 			uintAdd(val, dOff, yOff, borrow, dOff);
 		}
+		if ((equalTo(val, aOff, oneOff) | equalTo(val, aOff, yOff)) == 0)  // gcd(x, y) != 1 and x != 0
+			throw new IllegalArgumentException("Value not zero or coprime with modulus");
 		System.arraycopy(ZERO, 0, val, tempOff, NUM_WORDS);  // Reuses space
-		replace(val, dOff, tempOff, isZero(val, xOff));
-		System.arraycopy(val, dOff, val, zOff, NUM_WORDS);
+		replace(val, cOff, tempOff, isZero(val, xOff));
+		System.arraycopy(val, cOff, val, zOff, NUM_WORDS);
 	}
 	
 	public static final int RECIPROCAL_TEMP_WORDS = 6 * NUM_WORDS;
@@ -403,7 +410,7 @@ public final class Int256Math {
 		int diff = 0;
 		for (int i = 0; i < NUM_WORDS; i++)
 			diff |= val[xOff + i] ^ val[yOff + i];
-		return ((diff | -diff) >> 31) + 1;
+		return ~(diff | -diff) >>> 31;
 	}
 	
 	

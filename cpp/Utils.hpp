@@ -14,14 +14,12 @@
  */
 class Utils final {
 	
-public:
-	
-	static const char *HEX_DIGITS;
+	public: static const char *HEX_DIGITS;
 	
 	
 	// Returns the numerical value of a hexadecimal digit character
 	// (e.g. '9' -> 9, 'a' -> 10, 'B' -> 11), or -1 if the character is invalid.
-	static int parseHexDigit(int ch);
+	public: static int parseHexDigit(int ch);
 	
 	
 	// A safe wrapper over memmove() to avoid undefined behavior. This function can be a drop-in replacement
@@ -30,10 +28,9 @@ public:
 	// The function returns immediately if count is 0. This is safer than calling memmove() with a count of 0, because
 	// it would be undefined behavior if src or dest is null, or if either one is pointing to the end of an array.
 	// The function is not helpful for code that calls memcpy/memmove with a known positive constant count value.
-	static void copyBytes(void *dest, const void *src, size_t count);
+	public: static void copyBytes(void *dest, const void *src, size_t count);
 	
 	
-private:
-	Utils();
+	private: Utils();
 	
 };

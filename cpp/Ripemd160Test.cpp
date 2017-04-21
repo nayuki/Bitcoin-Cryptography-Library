@@ -197,10 +197,10 @@ int main() {
 	for (unsigned int i = 0; i < ARRAY_LENGTH(cases); i++) {
 		TestCase &tc = cases[i];
 		Bytes expectHash(hexBytes(tc.expectedHash));
-		assert(expectHash.size() == RIPEMD160_HASH_LEN);
-		uint8_t actualHash[RIPEMD160_HASH_LEN] = {};
+		assert(expectHash.size() == Ripemd160::HASH_LEN);
+		uint8_t actualHash[Ripemd160::HASH_LEN] = {};
 		Ripemd160::getHash(tc.message.data(), tc.message.size(), actualHash);
-		assert((memcmp(actualHash, expectHash.data(), RIPEMD160_HASH_LEN) == 0) == tc.matches);
+		assert((memcmp(actualHash, expectHash.data(), Ripemd160::HASH_LEN) == 0) == tc.matches);
 		numTestCases++;
 	}
 	printf("All %d test cases passed\n", numTestCases);

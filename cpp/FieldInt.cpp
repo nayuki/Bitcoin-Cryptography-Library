@@ -11,8 +11,6 @@
 #include "AsmX8664.hpp"
 #include "FieldInt.hpp"
 
-#define NUM_WORDS 8
-
 
 FieldInt::FieldInt(const char *str) :
 		Uint256(str) {
@@ -125,9 +123,6 @@ bool FieldInt::operator<(const Uint256 &other) const {
 bool FieldInt::operator>=(const Uint256 &other) const {
 	return Uint256::operator>=(other);
 }
-
-
-#undef NUM_WORDS
 
 
 // Static initializers

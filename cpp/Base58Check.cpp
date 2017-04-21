@@ -17,11 +17,11 @@
 
 /*---- Public and private functions for bytes-to-Base58 conversion ----*/
 
-void Base58Check::pubkeyHashToBase58Check(const uint8_t pubkeyHash[RIPEMD160_HASH_LEN], char outStr[35]) {
+void Base58Check::pubkeyHashToBase58Check(const uint8_t pubkeyHash[Ripemd160::HASH_LEN], char outStr[35]) {
 	assert(pubkeyHash != nullptr && outStr != nullptr);
-	uint8_t toEncode[1 + RIPEMD160_HASH_LEN + 4] = {};
+	uint8_t toEncode[1 + Ripemd160::HASH_LEN + 4] = {};
 	toEncode[0] = 0x00;  // Version byte
-	memcpy(&toEncode[1], pubkeyHash, RIPEMD160_HASH_LEN);
+	memcpy(&toEncode[1], pubkeyHash, Ripemd160::HASH_LEN);
 	bytesToBase58Check(toEncode, sizeof(toEncode) - 4, outStr);
 }
 
@@ -38,7 +38,7 @@ void Base58Check::privateKeyToBase58Check(const Uint256 &privKey, char outStr[53
 
 void Base58Check::bytesToBase58Check(uint8_t *data, size_t dataLen, char *outStr) {
 	// Append 4-byte hash
-	#define MAX_TOTAL_BYTES 38  // Including the 4-byte hash
+	constexpr int MAX_TOTAL_BYTES = 38;  // Including the 4-byte hash
 	assert(data != nullptr && dataLen <= MAX_TOTAL_BYTES - 4 && outStr != nullptr);
 	const Sha256Hash sha256Hash = Sha256::getDoubleHash(data, dataLen);
 	for (int i = 0; i < 4; i++, dataLen++)
@@ -72,7 +72,6 @@ void Base58Check::bytesToBase58Check(uint8_t *data, size_t dataLen, char *outStr
 		outStr[i] = outStr[j];
 		outStr[j] = temp;
 	}
-	#undef MAX_TOTAL_BYTES
 }
 
 
@@ -112,14 +111,14 @@ void Base58Check::divide58(const uint8_t *x, uint8_t *y, size_t len) {
 
 /*---- Public and private functions for Base58-to-bytes conversion ----*/
 
-bool Base58Check::pubkeyHashFromBase58Check(const char *addrStr, uint8_t outPubkeyHash[RIPEMD160_HASH_LEN]) {
+bool Base58Check::pubkeyHashFromBase58Check(const char *addrStr, uint8_t outPubkeyHash[Ripemd160::HASH_LEN]) {
 	// Preliminary checks
 	assert(addrStr != nullptr && outPubkeyHash != nullptr);
 	if (strlen(addrStr) < 1 || strlen(addrStr) > 34 || addrStr[0] != '1')
 		return false;
 	
 	// Perform Base58 decoding
-	uint8_t decoded[1 + RIPEMD160_HASH_LEN + 4];
+	uint8_t decoded[1 + Ripemd160::HASH_LEN + 4];
 	if (!base58CheckToBytes(addrStr, decoded, sizeof(decoded) / sizeof(decoded[0])))
 		return false;
 	
@@ -128,7 +127,7 @@ bool Base58Check::pubkeyHashFromBase58Check(const char *addrStr, uint8_t outPubk
 		return false;
 	
 	// Successfully set the output
-	memcpy(outPubkeyHash, &decoded[1], RIPEMD160_HASH_LEN * sizeof(uint8_t));
+	memcpy(outPubkeyHash, &decoded[1], Ripemd160::HASH_LEN * sizeof(uint8_t));
 	return true;
 }
 

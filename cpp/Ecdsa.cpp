@@ -65,9 +65,9 @@ bool Ecdsa::sign(const Uint256 &privateKey, const Sha256Hash &msgHash, const Uin
 
 bool Ecdsa::signWithHmacNonce(const Uint256 &privateKey, const Sha256Hash &msgHash, Uint256 &outR, Uint256 &outS) {
 	uint8_t privkeyBytes[32] = {};
-	uint8_t msghashBytes[SHA256_HASH_LEN] = {};
+	uint8_t msghashBytes[Sha256Hash::HASH_LEN] = {};
 	privateKey.getBigEndianBytes(privkeyBytes);
-	memcpy(msghashBytes, msgHash.value, SHA256_HASH_LEN);
+	memcpy(msghashBytes, msgHash.value, Sha256Hash::HASH_LEN);
 	
 	const Sha256Hash hmac(Sha256::getHmac(privkeyBytes, sizeof(privkeyBytes), msghashBytes, sizeof(msghashBytes)));
 	Uint256 nonce(hmac.value);

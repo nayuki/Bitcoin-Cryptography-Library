@@ -12,8 +12,6 @@
 #include "Uint256.hpp"
 #include "Utils.hpp"
 
-#define NUM_WORDS 8
-
 
 Uint256::Uint256() :
 	value() {}
@@ -68,9 +66,9 @@ void Uint256::shiftRight1(uint32_t enable) {
 
 void Uint256::reciprocal(const Uint256 &modulus) {
 	// Extended binary GCD algorithm
-	assert(&modulus != this);
-	Uint256 x(modulus);  // Must be odd
-	Uint256 y(*this);  // Odd or even, and must be less than x
+	assert(&modulus != this && (modulus.value[0] & 1) == 1 && modulus > ONE && *this < modulus);
+	Uint256 x(modulus);
+	Uint256 y(*this);
 	Uint256 a(ZERO);
 	Uint256 b(ONE);
 	Uint256 halfModulus(modulus);
@@ -84,6 +82,7 @@ void Uint256::reciprocal(const Uint256 &modulus) {
 		//     y /= 2;
 		//     b = b % 2 == 0 ? b / 2 : modulus - (modulus - b) / 2;
 		// }
+		assert((x.value[0] & 1) == 1);
 		uint32_t yEven = (y.value[0] & 1) ^ 1;
 		uint32_t bOdd = b.value[0] & 1;
 		y.shiftRight1(yEven);
@@ -91,7 +90,7 @@ void Uint256::reciprocal(const Uint256 &modulus) {
 		b.add(halfModulus, yEven & bOdd);
 		
 		// If allowed, try to swap so that y >= x and then do y -= x. Pseudocode:
-		// if (y % 2 != 0 && y != 1) {
+		// if (y % 2 == 1) {
 		//     if (x > y) {
 		//         x, y = y, x;
 		//         a, b = b, a;
@@ -100,7 +99,7 @@ void Uint256::reciprocal(const Uint256 &modulus) {
 		//     b -= a;
 		//     b %= modulus;
 		// }
-		uint32_t enable = (y.value[0] & 1) & (static_cast<uint32_t>(y == ONE) ^ 1);
+		uint32_t enable = y.value[0] & 1;
 		uint32_t doswap = enable & static_cast<uint32_t>(x > y);
 		x.swap(y, doswap);
 		y.subtract(x, enable);
@@ -108,7 +107,8 @@ void Uint256::reciprocal(const Uint256 &modulus) {
 		uint32_t borrow = b.subtract(a, enable);
 		b.add(modulus, borrow);
 	}
-	this->replace(b, static_cast<uint32_t>(*this != ZERO));
+	assert((x == ONE) | (x == modulus));  // Either gcd(this, modulus) = 1 or this = 0
+	this->replace(a, static_cast<uint32_t>(*this != ZERO));
 }
 
 
@@ -159,9 +159,6 @@ bool Uint256::operator>(const Uint256 &other) const {
 bool Uint256::operator>=(const Uint256 &other) const {
 	return !(*this < other);
 }
-
-
-#undef NUM_WORDS
 
 
 // Static initializers
