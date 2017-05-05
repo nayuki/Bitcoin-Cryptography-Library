@@ -103,6 +103,7 @@ void Base58Check::divide58(const uint8_t *x, uint8_t *y, size_t len) {
 	int dividend = 0;
 	for (size_t i = 0; i < len; i++) {  // For each input and output byte
 		for (int j = 7; j >= 0; j--) {  // For each bit within the byte
+			assert(0 <= dividend && dividend < 58);
 			dividend = (dividend << 1) | ((x[i] >> j) & 1);  // Shift next input bit into right side
 			if (dividend >= 58) {
 				dividend -= 58;
@@ -198,7 +199,7 @@ bool Base58Check::addUint8(uint8_t *x, uint8_t y, size_t len) {
 	int carry = 0;
 	for (size_t i = len - 1; ; i--) {
 		int sum = x[i] + carry;
-		assert(0 <= sum && sum < 512);
+		assert(0 <= sum && sum <= 256);
 		if (i == len - 1)
 			sum += y;
 		x[i] = static_cast<uint8_t>(sum);
