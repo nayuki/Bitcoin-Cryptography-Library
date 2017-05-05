@@ -28,7 +28,7 @@ class Utils final {
 	// The function returns immediately if count is 0. This is safer than calling memmove() with a count of 0, because
 	// it would be undefined behavior if src or dest is null, or if either one is pointing to the end of an array.
 	// The function is not helpful for code that calls memcpy/memmove with a known positive constant count value.
-	public: static void copyBytes(void *dest, const void *src, size_t count);
+	public: static void copyBytes(void *dest, const void *src, std::size_t count);
 	
 	
 	private: Utils();

@@ -38,9 +38,9 @@ int main() {
 		{false, "FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFFFFF", hexBytes("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF")},
 	};
 	int numTestCases = 0;
-	for (unsigned int i = 0; i < ARRAY_LENGTH(cases); i++) {
+	for (size_t i = 0; i < ARRAY_LENGTH(cases); i++) {
 		TestCase &tc = cases[i];
-		assert(strlen(tc.hexHash) == Sha256Hash::HASH_LEN * 2 && tc.byteHash.size() == Sha256Hash::HASH_LEN);
+		assert(std::strlen(tc.hexHash) == Sha256Hash::HASH_LEN * 2 && tc.byteHash.size() == Sha256Hash::HASH_LEN);
 		assert((Sha256Hash(tc.byteHash.data(), Sha256Hash::HASH_LEN) == Sha256Hash(tc.hexHash)) == tc.matches);
 		numTestCases++;
 	}
@@ -55,6 +55,6 @@ int main() {
 	numTestCases++;
 	
 	// Epilog
-	printf("All %d test cases passed\n", numTestCases);
+	std::printf("All %d test cases passed\n", numTestCases);
 	return EXIT_SUCCESS;
 }

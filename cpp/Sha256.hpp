@@ -24,27 +24,27 @@ class Sha256 final {
 	
 	/*---- Static functions ----*/
 	
-	public: static Sha256Hash getHash(const uint8_t *msg, size_t len);
+	public: static Sha256Hash getHash(const std::uint8_t *msg, std::size_t len);
 	
 	
-	public: static Sha256Hash getDoubleHash(const uint8_t *msg, size_t len);
+	public: static Sha256Hash getDoubleHash(const std::uint8_t *msg, std::size_t len);
 	
 	
-	public: static Sha256Hash getHmac(const uint8_t *key, size_t keyLen, const uint8_t *msg, size_t msgLen);
+	public: static Sha256Hash getHmac(const std::uint8_t *key, std::size_t keyLen, const std::uint8_t *msg, std::size_t msgLen);
 	
 	
-	private: static Sha256Hash getHash(const uint8_t *msg, size_t len, const uint32_t initState[8], size_t prefixLen);
+	private: static Sha256Hash getHash(const std::uint8_t *msg, std::size_t len, const std::uint32_t initState[8], std::size_t prefixLen);
 	
 	
-	public: static void compress(uint32_t state[8], const uint8_t *blocks, size_t len);
+	public: static void compress(std::uint32_t state[8], const std::uint8_t *blocks, std::size_t len);
 	
 	
 	
 	/*---- Stateful hasher fields and methods ----*/
 	
-	private: uint32_t state[8];
-	private: uint64_t length;
-	private: uint8_t buffer[SHA256_BLOCK_LEN];
+	private: std::uint32_t state[8];
+	private: std::uint64_t length;
+	private: std::uint8_t buffer[SHA256_BLOCK_LEN];
 	private: int bufferLen;
 	
 	
@@ -53,7 +53,7 @@ class Sha256 final {
 	
 	
 	// Appends message bytes to this ongoing hasher.
-	public: void append(const uint8_t *bytes, size_t len);
+	public: void append(const std::uint8_t *bytes, std::size_t len);
 	
 	
 	// Returns the SHA-256 hash of all the bytes seen. Destroys the state so that no further append() or getHash() will be valid.
@@ -63,7 +63,7 @@ class Sha256 final {
 	
 	/*---- Class constants ----*/
 	
-	public: static const uint32_t INITIAL_STATE[8];
-	private: static const uint32_t ROUND_CONSTANTS[64];
+	public: static const std::uint32_t INITIAL_STATE[8];
+	private: static const std::uint32_t ROUND_CONSTANTS[64];
 	
 };

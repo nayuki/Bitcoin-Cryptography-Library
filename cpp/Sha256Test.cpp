@@ -35,7 +35,7 @@ struct HmacCase {
 /*---- Test suite ----*/
 
 static void ap(Sha256 &hasher, const char *msg) {
-	hasher.append(reinterpret_cast<const uint8_t*>(msg), strlen(msg));
+	hasher.append(reinterpret_cast<const std::uint8_t*>(msg), std::strlen(msg));
 }
 
 
@@ -185,7 +185,7 @@ int main() {
 		{true, "107C1212954CD5AC0435CABDE0E9D1135EC07D8C42802A00B571F2C8292775B8", asciiBytes("T3#F!B+w`l($](cORXRw5f'/N1S.5sLfbfNhcuSRi0*5E5b$?M%_QGcI/+=Xlwo1~WewY|Y7q.j<rE95-\\?-EteTnO!hh4V\"ucruMc\\N6-@CDDDZ  Rv'`M1KGX(69G")},
 		{true, "2F04A53A7A557AB8D986BA961EEB417C33D1C411399092AFFA33ED0F13F5C504", asciiBytes("[SX]k-w:t,bsdb$(hvN9CJcCR]ln<tpVi0#]-1D\"2SF~t/Y2ITCYWVm|3DvVpK-q{@KrP*+32ZqcMx=`(=##(#53W%[(Y)on.@<g0JO,ic(A_nCF<@ItmGO)S^45ZWBT")},
 	};
-	for (unsigned int i = 0; i < ARRAY_LENGTH(singleCases); i++) {
+	for (size_t i = 0; i < ARRAY_LENGTH(singleCases); i++) {
 		TestCase &tc = singleCases[i];
 		const Sha256Hash actualHash(Sha256::getHash(tc.message.data(), tc.message.size()));
 		assert((actualHash == Sha256Hash(tc.expectedHash)) == tc.matches);
@@ -200,7 +200,7 @@ int main() {
 		{false, "55B852781B9995A44C939B64E441AE2724B96F99C8F4FB9A141CFC9842C4B0E3", asciiBytes("")},
 		{false, "AD1500F261FF10B49C7A1796A36103B02322AE5DDE404141EACF018FBF1678BA", asciiBytes("abc")},
 	};
-	for (unsigned int i = 0; i < ARRAY_LENGTH(doubleCases); i++) {
+	for (size_t i = 0; i < ARRAY_LENGTH(doubleCases); i++) {
 		TestCase &tc = doubleCases[i];
 		const Sha256Hash actualHash(Sha256::getDoubleHash(tc.message.data(), tc.message.size()));
 		assert((actualHash == Sha256Hash(tc.expectedHash)) == tc.matches);
@@ -220,7 +220,7 @@ int main() {
 		{false, "F7CF322E6C37E926A73D83C900C21D982BF10BAFCEAFA85C5338DBD8614C34B0", hexBytes("0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B"), asciiBytes("Hi There")},
 		{false, "F7CF322E6C37E926A73D83C900C21D882BF10BAFCEAFA85C5338DBD8614C34B0", hexBytes("0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B"), asciiBytes("HI There")},
 	};
-	for (unsigned int i = 0; i < ARRAY_LENGTH(hmacCases); i++) {
+	for (size_t i = 0; i < ARRAY_LENGTH(hmacCases); i++) {
 		HmacCase &tc = hmacCases[i];
 		const Sha256Hash actualHash(Sha256::getHmac(tc.key.data(), tc.key.size(), tc.message.data(), tc.message.size()));
 		assert((actualHash == Sha256Hash(tc.expectedHash)) == tc.matches);
@@ -236,6 +236,6 @@ int main() {
 	{ Sha256 h;  ap(h, "abcdbcdecdefde");  ap(h, "fgefghfghighijhijkijkljklmklmnlmnomnopnopq");  assert(h.getHash() == Sha256Hash("C106DB19D4EDECF66721FF6459E43CA339603E0C9326C0E5B83806D2616A8D24")); numTestCases++; }
 	
 	// Epilog
-	printf("All %d test cases passed\n", numTestCases);
+	std::printf("All %d test cases passed\n", numTestCases);
 	return EXIT_SUCCESS;
 }

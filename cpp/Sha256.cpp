@@ -11,6 +11,11 @@
 #include "Sha256.hpp"
 #include "Utils.hpp"
 
+using std::uint8_t;
+using std::uint32_t;
+using std::uint64_t;
+using std::size_t;
+
 
 static uint32_t rotr32(uint32_t x, uint32_t i);
 
@@ -37,21 +42,21 @@ Sha256Hash Sha256::getHmac(const uint8_t *key, size_t keyLen, const uint8_t *msg
 		Utils::copyBytes(tempKey, key, keyLen);
 	else {
 		const Sha256Hash keyHash(getHash(key, keyLen));
-		memcpy(tempKey, keyHash.value, Sha256Hash::HASH_LEN);
+		std::memcpy(tempKey, keyHash.value, Sha256Hash::HASH_LEN);
 	}
 	
 	// Compute inner hash
 	for (int i = 0; i < SHA256_BLOCK_LEN; i++)
 		tempKey[i] ^= 0x36;
 	uint32_t state[8];
-	memcpy(state, INITIAL_STATE, sizeof(state));
+	std::memcpy(state, INITIAL_STATE, sizeof(state));
 	compress(state, tempKey, SHA256_BLOCK_LEN);
 	const Sha256Hash innerHash(getHash(msg, msgLen, state, SHA256_BLOCK_LEN));
 	
 	// Compute outer hash
 	for (int i = 0; i < SHA256_BLOCK_LEN; i++)
 		tempKey[i] ^= 0x36 ^ 0x5C;
-	memcpy(state, INITIAL_STATE, sizeof(state));
+	std::memcpy(state, INITIAL_STATE, sizeof(state));
 	compress(state, tempKey, SHA256_BLOCK_LEN);
 	return getHash(innerHash.value, Sha256Hash::HASH_LEN, state, SHA256_BLOCK_LEN);
 }
@@ -60,7 +65,7 @@ Sha256Hash Sha256::getHmac(const uint8_t *key, size_t keyLen, const uint8_t *msg
 Sha256Hash Sha256::getHash(const uint8_t *msg, size_t len, const uint32_t initState[8], size_t prefixLen) {
 	// Compress whole message blocks
 	uint32_t state[8];
-	memcpy(state, initState, sizeof(state));
+	std::memcpy(state, initState, sizeof(state));
 	size_t off = len & ~static_cast<size_t>(SHA256_BLOCK_LEN - 1);
 	compress(state, msg, off);
 	
@@ -72,7 +77,7 @@ Sha256Hash Sha256::getHash(const uint8_t *msg, size_t len, const uint32_t initSt
 	off++;
 	if (off + 8 > SHA256_BLOCK_LEN) {
 		compress(state, block, SHA256_BLOCK_LEN);
-		memset(block, 0, SHA256_BLOCK_LEN);
+		std::memset(block, 0, SHA256_BLOCK_LEN);
 	}
 	len += prefixLen;
 	block[SHA256_BLOCK_LEN - 1] = static_cast<uint8_t>((len & 0x1FU) << 3);
@@ -146,7 +151,7 @@ Sha256::Sha256() :
 		length(0),
 		buffer(),
 		bufferLen(0) {
-	memcpy(state, INITIAL_STATE, sizeof(state));
+	std::memcpy(state, INITIAL_STATE, sizeof(state));
 }
 
 

@@ -320,15 +320,15 @@ int main() {
 	};
 	
 	int numTestCases = 0;
-	for (unsigned int i = 0; i < ARRAY_LENGTH(cases); i++) {
+	for (size_t i = 0; i < ARRAY_LENGTH(cases); i++) {
 		TestCase &tc = cases[i];
 		Bytes expectHash(hexBytes(tc.expectedHash));
 		assert(expectHash.size() == Sha512::HASH_LEN);
-		uint8_t actualHash[Sha512::HASH_LEN] = {};
+		std::uint8_t actualHash[Sha512::HASH_LEN] = {};
 		Sha512::getHash(tc.message.data(), tc.message.size(), actualHash);
-		assert((memcmp(actualHash, expectHash.data(), Sha512::HASH_LEN) == 0) == tc.matches);
+		assert((std::memcmp(actualHash, expectHash.data(), Sha512::HASH_LEN) == 0) == tc.matches);
 		numTestCases++;
 	}
-	printf("All %d test cases passed\n", numTestCases);
+	std::printf("All %d test cases passed\n", numTestCases);
 	return EXIT_SUCCESS;
 }

@@ -23,16 +23,16 @@ public:
 	
 	/*---- Static functions ----*/
 	
-	public: static void getHash(const uint8_t *msg, size_t len, uint8_t hashResult[HASH_LEN]);
+	public: static void getHash(const std::uint8_t *msg, std::size_t len, std::uint8_t hashResult[HASH_LEN]);
 	
 	
-	private: static void compress(uint64_t state[8], const uint8_t *blocks, size_t len);
+	private: static void compress(std::uint64_t state[8], const std::uint8_t *blocks, std::size_t len);
 	
 	private: Sha512();  // Not instantiable
 	
 	
 	/*---- Class constants ----*/
 	
-	private: static const uint64_t ROUND_CONSTANTS[80];
+	private: static const std::uint64_t ROUND_CONSTANTS[80];
 	
 };

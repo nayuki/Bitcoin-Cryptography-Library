@@ -22,9 +22,9 @@ int Utils::parseHexDigit(int ch) {
 }
 
 
-void Utils::copyBytes(void *dest, const void *src, size_t count) {
+void Utils::copyBytes(void *dest, const void *src, std::size_t count) {
 	if (count > 0)
-		memmove(dest, src, count);
+		std::memmove(dest, src, count);
 }
 
 

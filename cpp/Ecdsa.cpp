@@ -14,6 +14,9 @@
 #include "FieldInt.hpp"
 #include "Sha256.hpp"
 
+using std::uint8_t;
+using std::uint32_t;
+
 
 bool Ecdsa::sign(const Uint256 &privateKey, const Sha256Hash &msgHash, const Uint256 &nonce, Uint256 &outR, Uint256 &outS) {
 	/* 
@@ -67,7 +70,7 @@ bool Ecdsa::signWithHmacNonce(const Uint256 &privateKey, const Sha256Hash &msgHa
 	uint8_t privkeyBytes[32] = {};
 	uint8_t msghashBytes[Sha256Hash::HASH_LEN] = {};
 	privateKey.getBigEndianBytes(privkeyBytes);
-	memcpy(msghashBytes, msgHash.value, Sha256Hash::HASH_LEN);
+	std::memcpy(msghashBytes, msgHash.value, Sha256Hash::HASH_LEN);
 	
 	const Sha256Hash hmac(Sha256::getHmac(privkeyBytes, sizeof(privkeyBytes), msghashBytes, sizeof(msghashBytes)));
 	Uint256 nonce(hmac.value);

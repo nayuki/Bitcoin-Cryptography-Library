@@ -28,7 +28,7 @@ class Sha256Hash final {
 	
 	/*---- Fields ----*/
 	
-	public: uint8_t value[HASH_LEN];
+	public: std::uint8_t value[HASH_LEN];
 	
 	
 	
@@ -36,7 +36,7 @@ class Sha256Hash final {
 	
 	// Constructs a Sha256Hash from the given array of 32 bytes (len is a dummy parameter that must equal 32).
 	// Constant-time with respect to the given array of values.
-	public: Sha256Hash(const uint8_t hash[HASH_LEN], size_t len);
+	public: Sha256Hash(const std::uint8_t hash[HASH_LEN], std::size_t len);
 	
 	
 	// Constructs a Sha256Hash from the given 64-character byte-reversed hexadecimal string. Not constant-time.

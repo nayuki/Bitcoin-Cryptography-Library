@@ -707,7 +707,7 @@ static void testEcdsaSignAndVerify() {
 	};
 	
 	// Test runner
-	for (unsigned int i = 0; i < ARRAY_LENGTH(cases); i++) {
+	for (size_t i = 0; i < ARRAY_LENGTH(cases); i++) {
 		SignCase &tc = cases[i];
 		Uint256 privateKey(tc.privateKey);
 		const Sha256Hash msgHash(tc.msgHash);
@@ -1803,7 +1803,7 @@ static void testEcdsaVerify() {
 		{false, "B36F47DF0A49FED476DEEAC52B38A3148A1A747294B4E3A810C8D1A440DC495E", "7FDA65470DD8FC3D15C0506BCD234CB658F21176DCAAF881A7D46D017DABE644", "434C109551BFB678D28DCFE1D843FAA22C9917803F372FEBD8E677A31BA0ED07", "286D57542F860D15E34DD16F44E7CFAA51F1960425E56984BB7A5415F61EC4A6", "11A423EF2387FE1E2FFD5DCFECC7597349A4C5FC73A5B742190D452FFFFE500B"},
 	};
 	
-	for (unsigned int i = 0; i < ARRAY_LENGTH(cases); i++) {
+	for (size_t i = 0; i < ARRAY_LENGTH(cases); i++) {
 		VerifyCase &tc = cases[i];
 		CurvePoint publicKey(tc.pubPointX, tc.pubPointY);
 		const Sha256Hash msgHash(tc.msgHash);
@@ -1818,6 +1818,6 @@ static void testEcdsaVerify() {
 int main() {
 	testEcdsaSignAndVerify();
 	testEcdsaVerify();
-	printf("All %d test cases passed\n", numTestCases);
+	std::printf("All %d test cases passed\n", numTestCases);
 	return EXIT_SUCCESS;
 }

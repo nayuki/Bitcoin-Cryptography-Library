@@ -30,7 +30,7 @@ class Uint256 {
 	// The words representing this number in little endian, conceptually like this:
 	// actualValue = value[0] << 0 | value[1] << 32 | ... | value[7] << 224.
 	// Remember, this field is public and mutable.
-	public: uint32_t value[NUM_WORDS];
+	public: std::uint32_t value[NUM_WORDS];
 	
 	
 	
@@ -50,7 +50,7 @@ class Uint256 {
 	
 	// Constructs a Uint256 from the given 32 bytes encoded in big-endian.
 	// Constant-time with respect to the input array values. All possible values are valid.
-	public: explicit Uint256(const uint8_t b[NUM_WORDS * 4]);
+	public: explicit Uint256(const std::uint8_t b[NUM_WORDS * 4]);
 	
 	
 	// Constructs a Uint256 from the given FieldInt. Constant-time with respect to the given value.
@@ -63,24 +63,24 @@ class Uint256 {
 	// Adds the given number into this number, modulo 2^256. The other number must be a distinct object.
 	// Enable must be 1 to perform the operation or 0 to do nothing. Returns the carry-out bit, which is 0 or 1.
 	// Constant-time with respect to both values and the enable.
-	public: uint32_t add(const Uint256 &other, uint32_t enable=1);
+	public: std::uint32_t add(const Uint256 &other, std::uint32_t enable=1);
 	
 	
 	// Subtracts the given number from this number, modulo 2^256. The other number must be a distinct object.
 	// Enable must be 1 to perform the operation or 0 to do nothing. Returns the borrow-out bit, which is 0 or 1.
 	// Constant-time with respect to both values and the enable.
-	public: uint32_t subtract(const Uint256 &other, uint32_t enable=1);
+	public: std::uint32_t subtract(const Uint256 &other, std::uint32_t enable=1);
 	
 	
 	// Shifts this number left by 1 bit (same as multiplying by 2), modulo 2^256.
 	// Returns the old leftmost bit, which is 0 or 1. Constant-time with respect to this value.
-	public: uint32_t shiftLeft1();
+	public: std::uint32_t shiftLeft1();
 	
 	
 	// Shifts this number right by 1 bit (same as dividing by 2 and flooring).
 	// Enable must be 1 to perform the operation or 0 to do nothing.
 	// Constant-time with respect to this value and the enable.
-	public: void shiftRight1(uint32_t enable=1);
+	public: void shiftRight1(std::uint32_t enable=1);
 	
 	
 	// Computes the multiplicative inverse of this number with respect to the given modulus.
@@ -93,17 +93,17 @@ class Uint256 {
 	
 	// Copies the given number into this number if enable is 1, or does nothing if enable is 0.
 	// Constant-time with respect to both values and the enable.
-	public: void replace(const Uint256 &other, uint32_t enable);
+	public: void replace(const Uint256 &other, std::uint32_t enable);
 	
 	
 	// Swaps the value of this number with the given number if enable is 1, or does nothing if enable is 0.
 	// Constant-time with respect to both values and the enable.
-	public: void swap(Uint256 &other, uint32_t enable);
+	public: void swap(Uint256 &other, std::uint32_t enable);
 	
 	
 	// Writes this 256-bit integer as 32 bytes encoded in big endian to the given array.
 	// Constant-time with respect to this value.
-	public: void getBigEndianBytes(uint8_t b[NUM_WORDS * 4]) const;
+	public: void getBigEndianBytes(std::uint8_t b[NUM_WORDS * 4]) const;
 	
 	
 	/*---- Equality/inequality operators ----*/

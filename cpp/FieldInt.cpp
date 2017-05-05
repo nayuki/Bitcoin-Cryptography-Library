@@ -11,6 +11,9 @@
 #include "AsmX8664.hpp"
 #include "FieldInt.hpp"
 
+using std::uint32_t;
+using std::uint64_t;
+
 
 FieldInt::FieldInt(const char *str) :
 		Uint256(str) {
@@ -75,7 +78,7 @@ void FieldInt::multiply(const FieldInt &other) {
 	asm_FieldInt_multiplyBarrettStep2(difference, product0, product2);
 	
 	// Final conditional subtraction to yield a FieldInt value
-	memcpy(this->value, difference, sizeof(value));
+	std::memcpy(this->value, difference, sizeof(value));
 	uint32_t dosub = static_cast<uint32_t>((difference[NUM_WORDS] != 0) | (*this >= MODULUS));
 	Uint256::subtract(MODULUS, dosub);
 }

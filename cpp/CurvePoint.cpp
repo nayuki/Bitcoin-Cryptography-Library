@@ -9,6 +9,9 @@
 #include <cassert>
 #include "CurvePoint.hpp"
 
+using std::uint8_t;
+using std::uint32_t;
+
 
 CurvePoint::CurvePoint(const FieldInt &x_, const FieldInt &y_) :
 	x(x_), y(y_), z(FI_ONE) {}

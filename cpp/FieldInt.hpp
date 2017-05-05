@@ -73,7 +73,7 @@ class FieldInt final : private Uint256 {
 	
 	/*---- Miscellaneous methods ----*/
 	
-	public: void replace(const FieldInt &other, uint32_t enable);
+	public: void replace(const FieldInt &other, std::uint32_t enable);
 	
 	public: using Uint256::getBigEndianBytes;
 	

@@ -12,6 +12,10 @@
 #include "Uint256.hpp"
 #include "Utils.hpp"
 
+using std::uint8_t;
+using std::uint32_t;
+using std::uint64_t;
+
 
 Uint256::Uint256() :
 	value() {}
@@ -19,7 +23,7 @@ Uint256::Uint256() :
 
 Uint256::Uint256(const char *str) :
 		value() {
-	assert(str != nullptr && strlen(str) == NUM_WORDS * 8);
+	assert(str != nullptr && std::strlen(str) == NUM_WORDS * 8);
 	for (int i = 0; i < NUM_WORDS * 8; i++) {
 		int digit = Utils::parseHexDigit(str[NUM_WORDS * 8 - 1 - i]);
 		assert(digit != -1);
@@ -37,7 +41,7 @@ Uint256::Uint256(const uint8_t b[NUM_WORDS * 4]) :
 
 
 Uint256::Uint256(const FieldInt &val) {
-	memcpy(this->value, val.value, sizeof(value));
+	std::memcpy(this->value, val.value, sizeof(value));
 }
 
 
