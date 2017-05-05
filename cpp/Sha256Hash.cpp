@@ -17,7 +17,7 @@ using std::size_t;
 
 Sha256Hash::Sha256Hash(const uint8_t hash[HASH_LEN], size_t len) {
 	assert(hash != nullptr && len == HASH_LEN);
-	memcpy(value, hash, sizeof(value));
+	std::memcpy(value, hash, sizeof(value));
 }
 
 

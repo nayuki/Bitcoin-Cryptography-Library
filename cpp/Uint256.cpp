@@ -40,7 +40,7 @@ Uint256::Uint256(const uint8_t b[NUM_WORDS * 4]) :
 
 
 Uint256::Uint256(const FieldInt &val) {
-	memcpy(this->value, val.value, sizeof(value));
+	std::memcpy(this->value, val.value, sizeof(value));
 }
 
 

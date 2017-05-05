@@ -357,7 +357,7 @@ static void testPublicAddressImport() {
 		bool ok = Base58Check::pubkeyHashFromBase58Check(tc.base58, pubAddr);
 		assert(ok == tc.success);
 		if (ok)
-			assert(memcmp(pubAddr, expected.data(), sizeof(pubAddr)) == 0);
+			assert(std::memcmp(pubAddr, expected.data(), sizeof(pubAddr)) == 0);
 		numTestCases++;
 	}
 }

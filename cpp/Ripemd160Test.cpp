@@ -200,7 +200,7 @@ int main() {
 		assert(expectHash.size() == Ripemd160::HASH_LEN);
 		std::uint8_t actualHash[Ripemd160::HASH_LEN] = {};
 		Ripemd160::getHash(tc.message.data(), tc.message.size(), actualHash);
-		assert((memcmp(actualHash, expectHash.data(), Ripemd160::HASH_LEN) == 0) == tc.matches);
+		assert((std::memcmp(actualHash, expectHash.data(), Ripemd160::HASH_LEN) == 0) == tc.matches);
 		numTestCases++;
 	}
 	printf("All %d test cases passed\n", numTestCases);

@@ -36,7 +36,7 @@ void Ripemd160::getHash(const uint8_t *msg, size_t len, uint8_t hashResult[HASH_
 	off++;
 	if (off + 8 > BLOCK_LEN) {
 		compress(state, block, BLOCK_LEN);
-		memset(block, 0, BLOCK_LEN);
+		std::memset(block, 0, BLOCK_LEN);
 	}
 	block[BLOCK_LEN - 8] = static_cast<uint8_t>((len & 0x1FU) << 3);
 	len >>= 5;

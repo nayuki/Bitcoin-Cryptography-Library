@@ -25,7 +25,7 @@ void Base58Check::pubkeyHashToBase58Check(const uint8_t pubkeyHash[Ripemd160::HA
 	assert(pubkeyHash != nullptr && outStr != nullptr);
 	uint8_t toEncode[1 + Ripemd160::HASH_LEN + 4] = {};
 	toEncode[0] = 0x00;  // Version byte
-	memcpy(&toEncode[1], pubkeyHash, Ripemd160::HASH_LEN);
+	std::memcpy(&toEncode[1], pubkeyHash, Ripemd160::HASH_LEN);
 	bytesToBase58Check(toEncode, sizeof(toEncode) - 4, outStr);
 }
 
@@ -100,7 +100,7 @@ uint8_t Base58Check::mod58(const uint8_t *x, size_t len) {
 
 void Base58Check::divide58(const uint8_t *x, uint8_t *y, size_t len) {
 	assert(x != nullptr && y != nullptr);
-	memset(y, 0, len);
+	std::memset(y, 0, len);
 	uint_fast16_t dividend = 0;
 	for (size_t i = 0; i < len * 8; i++) {  // For each output bit
 		dividend = (dividend << 1) | ((x[i >> 3] >> (7 - (i & 7))) & 1);  // Shift next input bit into right side
@@ -131,7 +131,7 @@ bool Base58Check::pubkeyHashFromBase58Check(const char *addrStr, uint8_t outPubk
 		return false;
 	
 	// Successfully set the output
-	memcpy(outPubkeyHash, &decoded[1], Ripemd160::HASH_LEN * sizeof(uint8_t));
+	std::memcpy(outPubkeyHash, &decoded[1], Ripemd160::HASH_LEN * sizeof(uint8_t));
 	return true;
 }
 
@@ -161,7 +161,7 @@ bool Base58Check::base58CheckToBytes(const char *inStr, uint8_t *outData, size_t
 	assert(inStr != nullptr && outData != nullptr && outDataLen >= 4);
 	
 	// Convert from Base 58 to base 256
-	memset(outData, 0, outDataLen * sizeof(outData[0]));
+	std::memset(outData, 0, outDataLen * sizeof(outData[0]));
 	for (size_t i = 0; inStr[i] != '\0'; i++) {
 		if (multiply58(outData, outDataLen))
 			return false;

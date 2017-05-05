@@ -125,7 +125,7 @@ void FieldInt::multiply(const FieldInt &other) {
 	}
 	
 	// Final conditional subtraction to yield a FieldInt value
-	memcpy(this->value, difference, sizeof(value));
+	std::memcpy(this->value, difference, sizeof(value));
 	uint32_t dosub = static_cast<uint32_t>((difference[NUM_WORDS] != 0) | (*this >= MODULUS));
 	Uint256::subtract(MODULUS, dosub);
 }
