@@ -102,11 +102,13 @@ void Base58Check::divide58(const uint8_t *x, uint8_t *y, size_t len) {
 	assert(x != nullptr && y != nullptr);
 	std::memset(y, 0, len);
 	uint_fast16_t dividend = 0;
-	for (size_t i = 0; i < len * 8; i++) {  // For each output bit
-		dividend = (dividend << 1) | ((x[i >> 3] >> (7 - (i & 7))) & 1);  // Shift next input bit into right side
-		if (dividend >= 58) {
-			dividend -= 58;
-			y[i >> 3] |= 1 << (7 - (i & 7));
+	for (size_t i = 0; i < len; i++) {  // For each input and output byte
+		for (int j = 7; j >= 0; j--) {  // For each bit within the byte
+			dividend = (dividend << 1) | ((x[i] >> j) & 1);  // Shift next input bit into right side
+			if (dividend >= 58) {
+				dividend -= 58;
+				y[i] |= 1 << j;  // Set current output bit
+			}
 		}
 	}
 }
