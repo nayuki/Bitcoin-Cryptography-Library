@@ -24,19 +24,19 @@ class Sha256 final {
 	
 	/*---- Static functions ----*/
 	
-	public: static Sha256Hash getHash(const std::uint8_t *msg, std::size_t len);
+	public: static Sha256Hash getHash(const std::uint8_t msg[], std::size_t len);
 	
 	
-	public: static Sha256Hash getDoubleHash(const std::uint8_t *msg, std::size_t len);
+	public: static Sha256Hash getDoubleHash(const std::uint8_t msg[], std::size_t len);
 	
 	
-	public: static Sha256Hash getHmac(const std::uint8_t *key, std::size_t keyLen, const std::uint8_t *msg, std::size_t msgLen);
+	public: static Sha256Hash getHmac(const std::uint8_t key[], std::size_t keyLen, const std::uint8_t msg[], std::size_t msgLen);
 	
 	
-	private: static Sha256Hash getHash(const std::uint8_t *msg, std::size_t len, const std::uint32_t initState[8], std::size_t prefixLen);
+	private: static Sha256Hash getHash(const std::uint8_t msg[], std::size_t len, const std::uint32_t initState[8], std::size_t prefixLen);
 	
 	
-	public: static void compress(std::uint32_t state[8], const std::uint8_t *blocks, std::size_t len);
+	public: static void compress(std::uint32_t state[8], const std::uint8_t blocks[], std::size_t len);
 	
 	
 	
@@ -53,7 +53,7 @@ class Sha256 final {
 	
 	
 	// Appends message bytes to this ongoing hasher.
-	public: void append(const std::uint8_t *bytes, std::size_t len);
+	public: void append(const std::uint8_t bytes[], std::size_t len);
 	
 	
 	// Returns the SHA-256 hash of all the bytes seen. Destroys the state so that no further append() or getHash() will be valid.

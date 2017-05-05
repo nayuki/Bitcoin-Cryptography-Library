@@ -39,7 +39,7 @@ void Base58Check::privateKeyToBase58Check(const Uint256 &privKey, char outStr[53
 }
 
 
-void Base58Check::bytesToBase58Check(uint8_t *data, size_t dataLen, char *outStr) {
+void Base58Check::bytesToBase58Check(uint8_t data[], size_t dataLen, char *outStr) {
 	// Append 4-byte hash
 	constexpr int MAX_TOTAL_BYTES = 38;  // Including the 4-byte hash
 	assert(data != nullptr && dataLen <= MAX_TOTAL_BYTES - 4 && outStr != nullptr);
@@ -78,7 +78,7 @@ void Base58Check::bytesToBase58Check(uint8_t *data, size_t dataLen, char *outStr
 }
 
 
-bool Base58Check::isZero(const uint8_t *x, size_t len) {
+bool Base58Check::isZero(const uint8_t x[], size_t len) {
 	assert(len == 0 || x != nullptr);
 	for (size_t i = 0; i < len; i++) {
 		if (x[i] != 0)
@@ -88,7 +88,7 @@ bool Base58Check::isZero(const uint8_t *x, size_t len) {
 }
 
 
-uint8_t Base58Check::mod58(const uint8_t *x, size_t len) {
+uint8_t Base58Check::mod58(const uint8_t x[], size_t len) {
 	assert(len == 0 || x != nullptr);
 	unsigned int sum = 0;
 	for (size_t i = 0; i < len; i++)
@@ -97,7 +97,7 @@ uint8_t Base58Check::mod58(const uint8_t *x, size_t len) {
 }
 
 
-void Base58Check::divide58(const uint8_t *x, uint8_t *y, size_t len) {
+void Base58Check::divide58(const uint8_t x[], uint8_t y[], size_t len) {
 	assert(x != nullptr && y != nullptr);
 	std::memset(y, 0, len);
 	int dividend = 0;
@@ -159,7 +159,7 @@ bool Base58Check::privateKeyFromBase58Check(const char wifStr[53], Uint256 &outP
 }
 
 
-bool Base58Check::base58CheckToBytes(const char *inStr, uint8_t *outData, size_t outDataLen) {
+bool Base58Check::base58CheckToBytes(const char *inStr, uint8_t outData[], size_t outDataLen) {
 	assert(inStr != nullptr && outData != nullptr && outDataLen >= 4);
 	
 	// Convert from Base 58 to base 256
@@ -194,7 +194,7 @@ bool Base58Check::base58CheckToBytes(const char *inStr, uint8_t *outData, size_t
 }
 
 
-bool Base58Check::addUint8(uint8_t *x, uint8_t y, size_t len) {
+bool Base58Check::addUint8(uint8_t x[], uint8_t y, size_t len) {
 	assert(len >= 1 && x != nullptr);
 	int carry = 0;
 	for (size_t i = len - 1; ; i--) {
@@ -212,7 +212,7 @@ bool Base58Check::addUint8(uint8_t *x, uint8_t y, size_t len) {
 }
 
 
-bool Base58Check::multiply58(uint8_t *x, size_t len) {
+bool Base58Check::multiply58(uint8_t x[], size_t len) {
 	assert(len >= 1 && x != nullptr);
 	int carry = 0;
 	for (size_t i = len - 1; ; i--) {

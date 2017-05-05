@@ -20,20 +20,20 @@ using std::size_t;
 static uint32_t rotr32(uint32_t x, uint32_t i);
 
 
-Sha256Hash Sha256::getHash(const uint8_t *msg, size_t len) {
+Sha256Hash Sha256::getHash(const uint8_t msg[], size_t len) {
 	assert(msg != nullptr || len == 0);
 	return getHash(msg, len, INITIAL_STATE, 0);
 }
 
 
-Sha256Hash Sha256::getDoubleHash(const uint8_t *msg, size_t len) {
+Sha256Hash Sha256::getDoubleHash(const uint8_t msg[], size_t len) {
 	assert(msg != nullptr || len == 0);
 	const Sha256Hash innerHash(getHash(msg, len));
 	return getHash(innerHash.value, Sha256Hash::HASH_LEN);
 }
 
 
-Sha256Hash Sha256::getHmac(const uint8_t *key, size_t keyLen, const uint8_t *msg, size_t msgLen) {
+Sha256Hash Sha256::getHmac(const uint8_t key[], size_t keyLen, const uint8_t msg[], size_t msgLen) {
 	assert((key != nullptr || keyLen == 0) && (msg != nullptr || msgLen == 0));
 	
 	// Preprocess key
@@ -62,7 +62,7 @@ Sha256Hash Sha256::getHmac(const uint8_t *key, size_t keyLen, const uint8_t *msg
 }
 
 
-Sha256Hash Sha256::getHash(const uint8_t *msg, size_t len, const uint32_t initState[8], size_t prefixLen) {
+Sha256Hash Sha256::getHash(const uint8_t msg[], size_t len, const uint32_t initState[8], size_t prefixLen) {
 	// Compress whole message blocks
 	uint32_t state[8];
 	std::memcpy(state, initState, sizeof(state));
@@ -94,7 +94,7 @@ Sha256Hash Sha256::getHash(const uint8_t *msg, size_t len, const uint32_t initSt
 }
 
 
-void Sha256::compress(uint32_t state[8], const uint8_t *blocks, size_t len) {
+void Sha256::compress(uint32_t state[8], const uint8_t blocks[], size_t len) {
 	assert(state != nullptr && (blocks != nullptr || len == 0));
 	assert(len % SHA256_BLOCK_LEN == 0);
 	uint32_t schedule[64];
@@ -155,7 +155,7 @@ Sha256::Sha256() :
 }
 
 
-void Sha256::append(const uint8_t *bytes, size_t len) {
+void Sha256::append(const uint8_t bytes[], size_t len) {
 	assert(bytes != nullptr || len == 0);
 	for (size_t i = 0; i < len; i++) {
 		buffer[bufferLen] = bytes[i];
