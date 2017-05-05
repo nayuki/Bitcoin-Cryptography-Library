@@ -353,7 +353,7 @@ static void testPublicAddressImport() {
 		TestCase &tc = cases[i];
 		Bytes expected(hexBytes(tc.hexadecimal));
 		assert(expected.size() == 20);
-		uint8_t pubAddr[Ripemd160::HASH_LEN];
+		std::uint8_t pubAddr[Ripemd160::HASH_LEN];
 		bool ok = Base58Check::pubkeyHashFromBase58Check(tc.base58, pubAddr);
 		assert(ok == tc.success);
 		if (ok)

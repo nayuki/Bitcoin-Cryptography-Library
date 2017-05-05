@@ -324,7 +324,7 @@ int main() {
 		TestCase &tc = cases[i];
 		Bytes expectHash(hexBytes(tc.expectedHash));
 		assert(expectHash.size() == Sha512::HASH_LEN);
-		uint8_t actualHash[Sha512::HASH_LEN] = {};
+		std::uint8_t actualHash[Sha512::HASH_LEN] = {};
 		Sha512::getHash(tc.message.data(), tc.message.size(), actualHash);
 		assert((memcmp(actualHash, expectHash.data(), Sha512::HASH_LEN) == 0) == tc.matches);
 		numTestCases++;

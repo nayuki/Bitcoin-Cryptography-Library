@@ -307,7 +307,7 @@ static void testReplaceAndSwap() {
 
 
 static void testConstructorBytes() {
-	uint8_t b[32] = {
+	std::uint8_t b[32] = {
 		0x03, 0x4D, 0x03, 0x33,
 		0x2D, 0xCE, 0x3A, 0x5F,
 		0xA5, 0xCA, 0x65, 0x3B,
@@ -327,7 +327,7 @@ static void testConstructorBytes() {
 
 static void testGetBigEndianByte() {
 	Uint256 x("292180DB102E1F14BB371F9016E785D2C83B59AA29497BA9E595025D9373A038");
-	uint8_t b[32];
+	std::uint8_t b[32];
 	x.getBigEndianBytes(b);
 	assert(b[ 0] == 0x29);
 	assert(b[ 1] == 0x21);
