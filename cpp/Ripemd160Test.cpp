@@ -194,7 +194,7 @@ int main() {
 	};
 	
 	int numTestCases = 0;
-	for (unsigned int i = 0; i < ARRAY_LENGTH(cases); i++) {
+	for (size_t i = 0; i < ARRAY_LENGTH(cases); i++) {
 		TestCase &tc = cases[i];
 		Bytes expectHash(hexBytes(tc.expectedHash));
 		assert(expectHash.size() == Ripemd160::HASH_LEN);
