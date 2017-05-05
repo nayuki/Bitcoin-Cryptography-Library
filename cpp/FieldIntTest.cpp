@@ -15,6 +15,8 @@
 #include "AsmX8664.hpp"
 #include "FieldInt.hpp"
 
+using std::uint32_t;
+
 
 /*---- Structures ----*/
 
