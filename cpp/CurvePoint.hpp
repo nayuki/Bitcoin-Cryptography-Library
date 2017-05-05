@@ -79,7 +79,7 @@ class CurvePoint final {
 	
 	// Copies the given point into this point if enable is 1, or does nothing if enable is 0.
 	// Constant-time with respect to both values and the enable.
-	public: void replace(const CurvePoint &other, uint32_t enable);
+	public: void replace(const CurvePoint &other, std::uint32_t enable);
 	
 	
 	// Tests whether this point is on the elliptic curve.
@@ -104,7 +104,7 @@ class CurvePoint final {
 	
 	// Serializes this point in compressed format (header byte, x-coordinate in big-endian).
 	// Constant-time with respect to this value.
-	public: void toCompressedPoint(uint8_t output[33]) const;
+	public: void toCompressedPoint(std::uint8_t output[33]) const;
 	
 	
 	/*---- Static functions ----*/
