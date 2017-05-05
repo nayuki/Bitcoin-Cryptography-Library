@@ -14,7 +14,6 @@
 #include "Utils.hpp"
 
 using std::uint8_t;
-using std::uint_fast16_t;
 using std::size_t;
 
 
@@ -91,7 +90,7 @@ bool Base58Check::isZero(const uint8_t *x, size_t len) {
 
 uint8_t Base58Check::mod58(const uint8_t *x, size_t len) {
 	assert(len == 0 || x != nullptr);
-	uint_fast16_t sum = 0;
+	unsigned int sum = 0;
 	for (size_t i = 0; i < len; i++)
 		sum = ((sum * 24) + x[i]) % 58;  // Note: 256 % 58 = 24
 	return static_cast<uint8_t>(sum);
@@ -101,7 +100,7 @@ uint8_t Base58Check::mod58(const uint8_t *x, size_t len) {
 void Base58Check::divide58(const uint8_t *x, uint8_t *y, size_t len) {
 	assert(x != nullptr && y != nullptr);
 	std::memset(y, 0, len);
-	uint_fast16_t dividend = 0;
+	int dividend = 0;
 	for (size_t i = 0; i < len; i++) {  // For each input and output byte
 		for (int j = 7; j >= 0; j--) {  // For each bit within the byte
 			dividend = (dividend << 1) | ((x[i] >> j) & 1);  // Shift next input bit into right side
@@ -196,9 +195,9 @@ bool Base58Check::base58CheckToBytes(const char *inStr, uint8_t *outData, size_t
 
 bool Base58Check::addUint8(uint8_t *x, uint8_t y, size_t len) {
 	assert(len >= 1 && x != nullptr);
-	uint_fast16_t carry = 0;
+	int carry = 0;
 	for (size_t i = len - 1; ; i--) {
-		uint_fast16_t sum = static_cast<uint_fast16_t>(x[i]) + carry;
+		int sum = x[i] + carry;
 		assert(0 <= sum && sum < 512);
 		if (i == len - 1)
 			sum += y;
@@ -214,9 +213,9 @@ bool Base58Check::addUint8(uint8_t *x, uint8_t y, size_t len) {
 
 bool Base58Check::multiply58(uint8_t *x, size_t len) {
 	assert(len >= 1 && x != nullptr);
-	uint_fast16_t carry = 0;
+	int carry = 0;
 	for (size_t i = len - 1; ; i--) {
-		uint_fast16_t temp = static_cast<uint_fast16_t>(x[i]) * 58 + carry;
+		int temp = x[i] * 58 + carry;
 		x[i] = static_cast<uint8_t>(temp);
 		carry = temp >> 8;
 		assert(0 <= carry && carry < 58);
