@@ -40,7 +40,7 @@ Bytes hexBytes(const char *str) {
 	length /= 2;
 	for (size_t i = 0; i < length; i++) {
 		unsigned int temp;
-		sscanf(&str[i * 2], "%02x", &temp);
+		std::sscanf(&str[i * 2], "%02x", &temp);
 		result.push_back(static_cast<std::uint8_t>(temp));
 	}
 	return result;
