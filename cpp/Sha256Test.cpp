@@ -35,7 +35,7 @@ struct HmacCase {
 /*---- Test suite ----*/
 
 static void ap(Sha256 &hasher, const char *msg) {
-	hasher.append(reinterpret_cast<const std::uint8_t*>(msg), strlen(msg));
+	hasher.append(reinterpret_cast<const std::uint8_t*>(msg), std::strlen(msg));
 }
 
 

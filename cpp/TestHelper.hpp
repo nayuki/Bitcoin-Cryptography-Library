@@ -26,7 +26,7 @@ typedef std::vector<std::uint8_t> Bytes;
 
 Bytes asciiBytes(const char *str) {
 	Bytes result;
-	size_t length = strlen(str);
+	size_t length = std::strlen(str);
 	for (size_t i = 0; i < length; i++)
 		result.push_back(static_cast<std::uint8_t>(str[i]));
 	return result;
@@ -35,7 +35,7 @@ Bytes asciiBytes(const char *str) {
 
 Bytes hexBytes(const char *str) {
 	Bytes result;
-	size_t length = strlen(str);
+	size_t length = std::strlen(str);
 	assert(length % 2 == 0);
 	length /= 2;
 	for (size_t i = 0; i < length; i++) {

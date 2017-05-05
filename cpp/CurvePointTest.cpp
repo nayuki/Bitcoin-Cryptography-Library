@@ -1102,7 +1102,7 @@ static void testIsOnCurve() {
 	for (size_t i = 0; i < ARRAY_LENGTH(cases); i++) {
 		ThreeStrings &tc = cases[i];
 		CurvePoint p(tc.b, tc.c);
-		bool ans = strcmp(tc.a, "1") == 0;
+		bool ans = std::strcmp(tc.a, "1") == 0;
 		assert(p.isOnCurve() == ans);
 		numTestCases++;
 	}

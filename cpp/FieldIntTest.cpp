@@ -45,7 +45,7 @@ static void testComparison() {
 	};
 	for (size_t i = 0; i < ARRAY_LENGTH(cases); i++) {
 		BinaryCase &tc = cases[i];
-		int cmp = strcmp(tc.x, tc.y);
+		int cmp = std::strcmp(tc.x, tc.y);
 		FieldInt x(tc.x);
 		FieldInt y(tc.y);
 		assert((x == y) == (cmp == 0));

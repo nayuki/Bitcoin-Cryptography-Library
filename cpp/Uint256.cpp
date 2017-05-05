@@ -22,7 +22,7 @@ Uint256::Uint256() :
 
 Uint256::Uint256(const char *str) :
 		value() {
-	assert(str != nullptr && strlen(str) == NUM_WORDS * 8);
+	assert(str != nullptr && std::strlen(str) == NUM_WORDS * 8);
 	for (int i = 0; i < NUM_WORDS * 8; i++) {
 		int digit = Utils::parseHexDigit(str[NUM_WORDS * 8 - 1 - i]);
 		assert(digit != -1);

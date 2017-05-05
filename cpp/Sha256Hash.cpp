@@ -23,7 +23,7 @@ Sha256Hash::Sha256Hash(const uint8_t hash[HASH_LEN], size_t len) {
 
 Sha256Hash::Sha256Hash(const char *str) :
 			value() {
-	assert(str != nullptr && strlen(str) == HASH_LEN * 2);
+	assert(str != nullptr && std::strlen(str) == HASH_LEN * 2);
 	for (int i = 0; i < HASH_LEN * 2; i++) {
 		int digit = Utils::parseHexDigit(str[HASH_LEN * 2 - 1 - i]);
 		assert(digit != -1);

@@ -188,7 +188,7 @@ static void testPublicAddressExport() {
 		assert(pubkeyHash.size() == 20);
 		char actual[35];
 		Base58Check::pubkeyHashToBase58Check(pubkeyHash.data(), actual);
-		assert((strcmp(actual, tc.base58) == 0) == tc.success);
+		assert((std::strcmp(actual, tc.base58) == 0) == tc.success);
 		numTestCases++;
 	}
 }
@@ -518,10 +518,10 @@ static void testPrivateKeyExport() {
 	
 	for (size_t i = 0; i < ARRAY_LENGTH(cases); i++) {
 		TestCase &tc = cases[i];
-		assert(strlen(tc.hexadecimal) == 64);
+		assert(std::strlen(tc.hexadecimal) == 64);
 		char actual[53];
 		Base58Check::privateKeyToBase58Check(Uint256(tc.hexadecimal), actual);
-		assert((strcmp(actual, tc.base58) == 0) == tc.success);
+		assert((std::strcmp(actual, tc.base58) == 0) == tc.success);
 		numTestCases++;
 	}
 }
@@ -687,7 +687,7 @@ static void testPrivateKeyImport() {
 	
 	for (size_t i = 0; i < ARRAY_LENGTH(cases); i++) {
 		TestCase &tc = cases[i];
-		assert(strlen(tc.hexadecimal) == 64);
+		assert(std::strlen(tc.hexadecimal) == 64);
 		Uint256 privKey;
 		bool ok = Base58Check::privateKeyFromBase58Check(tc.base58, privKey);
 		assert(ok == tc.success);

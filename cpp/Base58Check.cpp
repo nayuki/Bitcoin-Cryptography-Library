@@ -118,7 +118,7 @@ void Base58Check::divide58(const uint8_t *x, uint8_t *y, size_t len) {
 bool Base58Check::pubkeyHashFromBase58Check(const char *addrStr, uint8_t outPubkeyHash[Ripemd160::HASH_LEN]) {
 	// Preliminary checks
 	assert(addrStr != nullptr && outPubkeyHash != nullptr);
-	if (strlen(addrStr) < 1 || strlen(addrStr) > 34 || addrStr[0] != '1')
+	if (std::strlen(addrStr) < 1 || std::strlen(addrStr) > 34 || addrStr[0] != '1')
 		return false;
 	
 	// Perform Base58 decoding
@@ -139,7 +139,7 @@ bool Base58Check::pubkeyHashFromBase58Check(const char *addrStr, uint8_t outPubk
 bool Base58Check::privateKeyFromBase58Check(const char wifStr[53], Uint256 &outPrivKey) {
 	// Preliminary checks
 	assert(wifStr != nullptr);
-	if (strlen(wifStr) != 52 || (wifStr[0] != 'L' && wifStr[0] != 'K'))
+	if (std::strlen(wifStr) != 52 || (wifStr[0] != 'L' && wifStr[0] != 'K'))
 		return false;
 	
 	// Perform Base58 decoding
@@ -165,7 +165,7 @@ bool Base58Check::base58CheckToBytes(const char *inStr, uint8_t *outData, size_t
 	for (size_t i = 0; inStr[i] != '\0'; i++) {
 		if (multiply58(outData, outDataLen))
 			return false;
-		const char *p = strchr(ALPHABET, inStr[i]);
+		const char *p = std::strchr(ALPHABET, inStr[i]);
 		if (p == nullptr)
 			return false;
 		if (addUint8(outData, p - &ALPHABET[0], outDataLen))
