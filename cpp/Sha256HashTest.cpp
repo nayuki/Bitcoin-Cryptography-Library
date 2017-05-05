@@ -55,6 +55,6 @@ int main() {
 	numTestCases++;
 	
 	// Epilog
-	printf("All %d test cases passed\n", numTestCases);
+	std::printf("All %d test cases passed\n", numTestCases);
 	return EXIT_SUCCESS;
 }

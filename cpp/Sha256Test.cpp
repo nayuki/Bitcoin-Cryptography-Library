@@ -236,6 +236,6 @@ int main() {
 	{ Sha256 h;  ap(h, "abcdbcdecdefde");  ap(h, "fgefghfghighijhijkijkljklmklmnlmnomnopnopq");  assert(h.getHash() == Sha256Hash("C106DB19D4EDECF66721FF6459E43CA339603E0C9326C0E5B83806D2616A8D24")); numTestCases++; }
 	
 	// Epilog
-	printf("All %d test cases passed\n", numTestCases);
+	std::printf("All %d test cases passed\n", numTestCases);
 	return EXIT_SUCCESS;
 }

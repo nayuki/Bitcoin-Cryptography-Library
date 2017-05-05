@@ -302,6 +302,6 @@ int main() {
 	testSquare();
 	testReciprocal();
 	testConstructorUint256();
-	printf("All %d test cases passed\n", numTestCases);
+	std::printf("All %d test cases passed\n", numTestCases);
 	return EXIT_SUCCESS;
 }

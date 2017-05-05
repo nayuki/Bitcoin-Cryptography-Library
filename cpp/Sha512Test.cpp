@@ -329,6 +329,6 @@ int main() {
 		assert((std::memcmp(actualHash, expectHash.data(), Sha512::HASH_LEN) == 0) == tc.matches);
 		numTestCases++;
 	}
-	printf("All %d test cases passed\n", numTestCases);
+	std::printf("All %d test cases passed\n", numTestCases);
 	return EXIT_SUCCESS;
 }

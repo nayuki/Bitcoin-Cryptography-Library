@@ -1139,6 +1139,6 @@ int main() {
 	testMultiplyModOrder();
 	testIsOnCurve();
 	testPrivateExponentToPublicPoint();
-	printf("All %d test cases passed\n", numTestCases);
+	std::printf("All %d test cases passed\n", numTestCases);
 	return EXIT_SUCCESS;
 }
