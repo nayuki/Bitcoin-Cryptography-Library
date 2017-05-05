@@ -10,6 +10,9 @@
 #include <cstring>
 #include "FieldInt.hpp"
 
+using std::uint32_t;
+using std::uint64_t;
+
 
 FieldInt::FieldInt(const char *str) :
 		Uint256(str) {

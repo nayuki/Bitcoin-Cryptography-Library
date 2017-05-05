@@ -11,6 +11,9 @@
 #include "Sha256Hash.hpp"
 #include "Utils.hpp"
 
+using std::uint8_t;
+using std::size_t;
+
 
 Sha256Hash::Sha256Hash(const uint8_t hash[HASH_LEN], size_t len) {
 	assert(hash != nullptr && len == HASH_LEN);

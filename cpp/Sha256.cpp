@@ -11,6 +11,11 @@
 #include "Sha256.hpp"
 #include "Utils.hpp"
 
+using std::uint8_t;
+using std::uint32_t;
+using std::uint64_t;
+using std::size_t;
+
 
 static uint32_t rotr32(uint32_t x, uint32_t i);
 

@@ -13,6 +13,10 @@
 #include "Sha256Hash.hpp"
 #include "Utils.hpp"
 
+using std::uint8_t;
+using std::uint_fast16_t;
+using std::size_t;
+
 
 
 /*---- Public and private functions for bytes-to-Base58 conversion ----*/

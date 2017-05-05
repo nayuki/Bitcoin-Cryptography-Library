@@ -14,6 +14,9 @@
 #include "FieldInt.hpp"
 #include "Sha256.hpp"
 
+using std::uint8_t;
+using std::uint32_t;
+
 
 bool Ecdsa::sign(const Uint256 &privateKey, const Sha256Hash &msgHash, const Uint256 &nonce, Uint256 &outR, Uint256 &outS) {
 	/* 

@@ -11,6 +11,10 @@
 #include "Sha512.hpp"
 #include "Utils.hpp"
 
+using std::uint8_t;
+using std::uint64_t;
+using std::size_t;
+
 
 static constexpr int BLOCK_LEN = 128;
 

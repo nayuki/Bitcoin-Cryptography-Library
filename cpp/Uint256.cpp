@@ -11,6 +11,10 @@
 #include "Uint256.hpp"
 #include "Utils.hpp"
 
+using std::uint8_t;
+using std::uint32_t;
+using std::uint64_t;
+
 
 Uint256::Uint256() :
 	value() {}
