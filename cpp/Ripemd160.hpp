@@ -22,10 +22,10 @@ class Ripemd160 final {
 	
 	/*---- Static functions ----*/
 	
-	public: static void getHash(const std::uint8_t *msg, std::size_t len, std::uint8_t hashResult[HASH_LEN]);
+	public: static void getHash(const std::uint8_t msg[], std::size_t len, std::uint8_t hashResult[HASH_LEN]);
 	
 	
-	private: static void compress(std::uint32_t state[5], const std::uint8_t *blocks, std::size_t len);
+	private: static void compress(std::uint32_t state[5], const std::uint8_t blocks[], std::size_t len);
 	
 	private: static std::uint32_t f(unsigned int i, std::uint32_t x, std::uint32_t y, std::uint32_t z);
 	

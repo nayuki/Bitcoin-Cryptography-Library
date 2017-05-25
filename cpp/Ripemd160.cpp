@@ -21,7 +21,7 @@ static constexpr int BLOCK_LEN = 64;
 static uint32_t rotl32(uint32_t x, uint32_t i);
 
 
-void Ripemd160::getHash(const uint8_t *msg, size_t len, uint8_t hashResult[HASH_LEN]) {
+void Ripemd160::getHash(const uint8_t msg[], size_t len, uint8_t hashResult[HASH_LEN]) {
 	// Compress whole message blocks
 	assert((msg != nullptr || len == 0) && hashResult != nullptr);
 	uint32_t state[5] = {UINT32_C(0x67452301), UINT32_C(0xEFCDAB89), UINT32_C(0x98BADCFE), UINT32_C(0x10325476), UINT32_C(0xC3D2E1F0)};
@@ -50,7 +50,7 @@ void Ripemd160::getHash(const uint8_t *msg, size_t len, uint8_t hashResult[HASH_
 }
 
 
-void Ripemd160::compress(uint32_t state[5], const uint8_t *blocks, size_t len) {
+void Ripemd160::compress(uint32_t state[5], const uint8_t blocks[], size_t len) {
 	assert(len % BLOCK_LEN == 0);
 	uint32_t schedule[16];
 	for (size_t i = 0; i < len; ) {
