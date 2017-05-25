@@ -91,88 +91,53 @@ asm_Uint256_shiftRight1:
 /* void asm_Uint256_replace(uint32_t dest[8], const uint32_t src[8], uint32_t enable) */
 .globl asm_Uint256_replace
 asm_Uint256_replace:
-	testl   %edx, %edx
-	movq     0(%rsi), %rax
-	movq     0(%rdi), %rcx
-	movq     8(%rsi), %r8
-	movq     8(%rdi), %r9
-	cmovzq  %rcx, %rax
-	cmovzq  %r9 , %r8
-	movq    %rax,  0(%rdi)
-	movq    %r8 ,  8(%rdi)
-	movq    16(%rsi), %rax
-	movq    16(%rdi), %rcx
-	movq    24(%rsi), %r8
-	movq    24(%rdi), %r9
-	cmovzq  %rcx, %rax
-	cmovzq  %r9 , %r8
-	movq    %rax, 16(%rdi)
-	movq    %r8 , 24(%rdi)
+	negl      %edx
+	movd      %edx, %xmm0
+	pshufd    $0, %xmm0, %xmm0
+	movdqu     0(%rdi), %xmm1
+	movdqu    16(%rdi), %xmm2
+	pblendvb   0(%rsi), %xmm1
+	pblendvb  16(%rsi), %xmm2
+	movdqu    %xmm1,  0(%rdi)
+	movdqu    %xmm2, 16(%rdi)
 	retq
 
 
 /* void asm_Uint256_swap(uint32_t left[8], uint32_t right[8], uint32_t enable) */
 .globl asm_Uint256_swap
 asm_Uint256_swap:
-	pushq  %rbx
-	negq   %rdx
-	movq   0(%rdi), %rax
-	movq   8(%rdi), %rcx
-	movq   0(%rsi), %r8
-	movq   8(%rsi), %r9
-	movq   %rax, %rbx
-	xorq   %r8, %rbx
-	andq   %rdx, %rbx
-	xorq   %rbx, %rax
-	xorq   %rbx, %r8
-	movq   %rax, 0(%rdi)
-	movq   %r8, 0(%rsi)
-	movq   %rcx, %rbx
-	xorq   %r9, %rbx
-	andq   %rdx, %rbx
-	xorq   %rbx, %rcx
-	xorq   %rbx, %r9
-	movq   %rcx, 8(%rdi)
-	movq   %r9, 8(%rsi)
-	movq   16(%rdi), %rax
-	movq   24(%rdi), %rcx
-	movq   16(%rsi), %r8
-	movq   24(%rsi), %r9
-	movq   %rax, %rbx
-	xorq   %r8, %rbx
-	andq   %rdx, %rbx
-	xorq   %rbx, %rax
-	xorq   %rbx, %r8
-	movq   %rax, 16(%rdi)
-	movq   %r8, 16(%rsi)
-	movq   %rcx, %rbx
-	xorq   %r9, %rbx
-	andq   %rdx, %rbx
-	xorq   %rbx, %rcx
-	xorq   %rbx, %r9
-	movq   %rcx, 24(%rdi)
-	movq   %r9, 24(%rsi)
-	popq   %rbx
+	negl      %edx
+	movd      %edx, %xmm0
+	pshufd    $0, %xmm0, %xmm0
+	movdqu     0(%rdi), %xmm1
+	movdqu    16(%rdi), %xmm2
+	movdqu     0(%rsi), %xmm3
+	movdqu    16(%rsi), %xmm4
+	movdqa    %xmm1, %xmm5
+	movdqa    %xmm2, %xmm6
+	pblendvb  %xmm3, %xmm1
+	pblendvb  %xmm4, %xmm2
+	pblendvb  %xmm5, %xmm3
+	pblendvb  %xmm6, %xmm4
+	movdqu    %xmm1,  0(%rdi)
+	movdqu    %xmm2, 16(%rdi)
+	movdqu    %xmm3,  0(%rsi)
+	movdqu    %xmm4, 16(%rsi)
 	retq
 
 
 /* bool asm_Uint256_equalTo(const uint32_t left[8], const uint32_t right[8]) */
 .globl asm_Uint256_equalTo
 asm_Uint256_equalTo:
-	movq      0(%rdi), %rcx
-	movq      8(%rdi), %rdx
-	movq     16(%rdi), %r8
-	movq     24(%rdi), %r9
-	movl     $1, %eax
-	xorl     %edi, %edi
-	cmpq     0(%rsi), %rcx
-	cmovnel  %edi, %eax
-	cmpq     8(%rsi), %rdx
-	cmovnel  %edi, %eax
-	cmpq     16(%rsi), %r8
-	cmovnel  %edi, %eax
-	cmpq     24(%rsi), %r9
-	cmovnel  %edi, %eax
+	movdqu     0(%rdi), %xmm0
+	movdqu    16(%rdi), %xmm1
+	pcmpeqb    0(%rsi), %xmm0
+	pcmpeqb   16(%rsi), %xmm1
+	pand      %xmm1, %xmm0
+	pmovmskb  %xmm0, %eax
+	cmpl      $0xFFFF, %eax
+	sete      %al
+	movzbl    %al, %eax
 	retq
 
 
