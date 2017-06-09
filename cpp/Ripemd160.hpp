@@ -19,6 +19,7 @@
 class Ripemd160 final {
 	
 	public: static constexpr int HASH_LEN = 20;
+	private: static constexpr int BLOCK_LEN = 64;
 	
 	/*---- Static functions ----*/
 	

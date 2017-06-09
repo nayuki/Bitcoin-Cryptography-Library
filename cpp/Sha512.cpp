@@ -16,8 +16,6 @@ using std::uint64_t;
 using std::size_t;
 
 
-static constexpr int BLOCK_LEN = 128;
-
 static uint64_t rotr64(uint64_t x, uint64_t i);
 
 

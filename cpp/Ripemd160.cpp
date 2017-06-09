@@ -16,8 +16,6 @@ using std::uint32_t;
 using std::size_t;
 
 
-static constexpr int BLOCK_LEN = 64;
-
 static uint32_t rotl32(uint32_t x, uint32_t i);
 
 

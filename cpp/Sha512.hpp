@@ -20,6 +20,7 @@ class Sha512 final {
 	
 public:
 	static constexpr int HASH_LEN = 64;
+	private: static constexpr int BLOCK_LEN = 128;
 	
 	/*---- Static functions ----*/
 	
