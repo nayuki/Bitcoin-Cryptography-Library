@@ -37,8 +37,8 @@ Sha256Hash Sha256::getHmac(const uint8_t key[], size_t keyLen, const uint8_t msg
 	assert((key != nullptr || keyLen == 0) && (msg != nullptr || msgLen == 0));
 	
 	// Preprocess key
-	uint8_t tempKey[SHA256_BLOCK_LEN] = {};
-	if (keyLen <= SHA256_BLOCK_LEN)
+	uint8_t tempKey[BLOCK_LEN] = {};
+	if (keyLen <= BLOCK_LEN)
 		Utils::copyBytes(tempKey, key, keyLen);
 	else {
 		const Sha256Hash keyHash(getHash(key, keyLen));
@@ -46,19 +46,19 @@ Sha256Hash Sha256::getHmac(const uint8_t key[], size_t keyLen, const uint8_t msg
 	}
 	
 	// Compute inner hash
-	for (int i = 0; i < SHA256_BLOCK_LEN; i++)
+	for (int i = 0; i < BLOCK_LEN; i++)
 		tempKey[i] ^= 0x36;
 	uint32_t state[8];
 	std::memcpy(state, INITIAL_STATE, sizeof(state));
-	compress(state, tempKey, SHA256_BLOCK_LEN);
-	const Sha256Hash innerHash(getHash(msg, msgLen, state, SHA256_BLOCK_LEN));
+	compress(state, tempKey, BLOCK_LEN);
+	const Sha256Hash innerHash(getHash(msg, msgLen, state, BLOCK_LEN));
 	
 	// Compute outer hash
-	for (int i = 0; i < SHA256_BLOCK_LEN; i++)
+	for (int i = 0; i < BLOCK_LEN; i++)
 		tempKey[i] ^= 0x36 ^ 0x5C;
 	std::memcpy(state, INITIAL_STATE, sizeof(state));
-	compress(state, tempKey, SHA256_BLOCK_LEN);
-	return getHash(innerHash.value, Sha256Hash::HASH_LEN, state, SHA256_BLOCK_LEN);
+	compress(state, tempKey, BLOCK_LEN);
+	return getHash(innerHash.value, Sha256Hash::HASH_LEN, state, BLOCK_LEN);
 }
 
 
@@ -66,25 +66,25 @@ Sha256Hash Sha256::getHash(const uint8_t msg[], size_t len, const uint32_t initS
 	// Compress whole message blocks
 	uint32_t state[8];
 	std::memcpy(state, initState, sizeof(state));
-	size_t off = len & ~static_cast<size_t>(SHA256_BLOCK_LEN - 1);
+	size_t off = len & ~static_cast<size_t>(BLOCK_LEN - 1);
 	compress(state, msg, off);
 	
 	// Final blocks, padding, and length
-	uint8_t block[SHA256_BLOCK_LEN] = {};
+	uint8_t block[BLOCK_LEN] = {};
 	Utils::copyBytes(block, &msg[off], len - off);
-	off = len & (SHA256_BLOCK_LEN - 1);
+	off = len & (BLOCK_LEN - 1);
 	block[off] = 0x80;
 	off++;
-	if (off + 8 > SHA256_BLOCK_LEN) {
-		compress(state, block, SHA256_BLOCK_LEN);
-		std::memset(block, 0, SHA256_BLOCK_LEN);
+	if (off + 8 > BLOCK_LEN) {
+		compress(state, block, BLOCK_LEN);
+		std::memset(block, 0, BLOCK_LEN);
 	}
 	len += prefixLen;
-	block[SHA256_BLOCK_LEN - 1] = static_cast<uint8_t>((len & 0x1FU) << 3);
+	block[BLOCK_LEN - 1] = static_cast<uint8_t>((len & 0x1FU) << 3);
 	len >>= 5;
 	for (int i = 1; i < 8; i++, len >>= 8)
-		block[SHA256_BLOCK_LEN - 1 - i] = static_cast<uint8_t>(len);
-	compress(state, block, SHA256_BLOCK_LEN);
+		block[BLOCK_LEN - 1 - i] = static_cast<uint8_t>(len);
+	compress(state, block, BLOCK_LEN);
 	
 	// Uint32 array to bytes in big endian
 	uint8_t result[Sha256Hash::HASH_LEN];
@@ -96,7 +96,7 @@ Sha256Hash Sha256::getHash(const uint8_t msg[], size_t len, const uint32_t initS
 
 void Sha256::compress(uint32_t state[8], const uint8_t blocks[], size_t len) {
 	assert(state != nullptr && (blocks != nullptr || len == 0));
-	assert(len % SHA256_BLOCK_LEN == 0);
+	assert(len % BLOCK_LEN == 0);
 	uint32_t schedule[64];
 	for (size_t i = 0; i < len; ) {
 		
@@ -160,8 +160,8 @@ void Sha256::append(const uint8_t bytes[], size_t len) {
 	for (size_t i = 0; i < len; i++) {
 		buffer[bufferLen] = bytes[i];
 		bufferLen++;
-		if (bufferLen == SHA256_BLOCK_LEN) {
-			compress(state, buffer, SHA256_BLOCK_LEN);
+		if (bufferLen == BLOCK_LEN) {
+			compress(state, buffer, BLOCK_LEN);
 			bufferLen = 0;
 		}
 	}

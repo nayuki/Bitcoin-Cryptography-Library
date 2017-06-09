@@ -19,7 +19,7 @@
  */
 class Sha256 final {
 	
-	private: static constexpr int SHA256_BLOCK_LEN = 64;
+	private: static constexpr int BLOCK_LEN = 64;
 	
 	
 	/*---- Static functions ----*/
@@ -44,7 +44,7 @@ class Sha256 final {
 	
 	private: std::uint32_t state[8];
 	private: std::uint64_t length;
-	private: std::uint8_t buffer[SHA256_BLOCK_LEN];
+	private: std::uint8_t buffer[BLOCK_LEN];
 	private: int bufferLen;
 	
 	
