@@ -19,7 +19,7 @@
  */
 class Sha256 final {
 	
-	private: static constexpr int BLOCK_LEN = 64;
+	public: static constexpr int BLOCK_LEN = 64;  // In bytes
 	
 	
 	/*---- Static functions ----*/
