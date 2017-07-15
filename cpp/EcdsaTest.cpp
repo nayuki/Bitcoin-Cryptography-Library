@@ -19,7 +19,7 @@
 /*---- Structures ----*/
 
 struct SignCase {
-	const bool matches;
+	bool matches;
 	const char *privateKey;
 	const char *msgHash;  // Byte-reversed
 	const char *nonce;    // Can be null
@@ -28,7 +28,7 @@ struct SignCase {
 };
 
 struct VerifyCase {
-	const bool answer;
+	bool answer;
 	const char *pubPointX;
 	const char *pubPointY;
 	const char *msgHash;  // Byte-reversed

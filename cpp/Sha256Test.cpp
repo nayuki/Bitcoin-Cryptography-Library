@@ -20,15 +20,15 @@
 /*---- Structures ----*/
 
 struct TestCase {
-	const bool matches;
+	bool matches;
 	const char *expectedHash;  // In byte-reversed order
-	const Bytes message;
+	Bytes message;
 };
 struct HmacCase {
-	const bool matches;
+	bool matches;
 	const char *expectedHash;  // In byte-reversed order
-	const Bytes key;
-	const Bytes message;
+	Bytes key;
+	Bytes message;
 };
 
 

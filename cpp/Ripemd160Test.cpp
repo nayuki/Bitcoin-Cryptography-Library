@@ -19,9 +19,9 @@
 /*---- Structures ----*/
 
 struct TestCase {
-	const bool matches;
+	bool matches;
 	const char *expectedHash;
-	const Bytes message;
+	Bytes message;
 };
 
 
