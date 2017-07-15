@@ -44,7 +44,7 @@ int main() {
 	int numTestCases = 0;
 	
 	// Single SHA-256 hash
-	TestCase singleCases[] = {
+	const TestCase singleCases[] = {
 		// Standard test vectors
 		{true, "55B852781B9995A44C939B64E441AE2724B96F99C8F4FB9A141CFC9842C4B0E3", asciiBytes("")},
 		{true, "BB48EEAF857780B9724E7C14F8EF86A74DDC239AB331C2FACABD1BCA128197CA", asciiBytes("a")},
@@ -186,14 +186,14 @@ int main() {
 		{true, "2F04A53A7A557AB8D986BA961EEB417C33D1C411399092AFFA33ED0F13F5C504", asciiBytes("[SX]k-w:t,bsdb$(hvN9CJcCR]ln<tpVi0#]-1D\"2SF~t/Y2ITCYWVm|3DvVpK-q{@KrP*+32ZqcMx=`(=##(#53W%[(Y)on.@<g0JO,ic(A_nCF<@ItmGO)S^45ZWBT")},
 	};
 	for (size_t i = 0; i < arrayLength(singleCases); i++) {
-		TestCase &tc = singleCases[i];
+		const TestCase &tc = singleCases[i];
 		const Sha256Hash actualHash(Sha256::getHash(tc.message.data(), tc.message.size()));
 		assert((actualHash == Sha256Hash(tc.expectedHash)) == tc.matches);
 		numTestCases++;
 	}
 	
 	// Double SHA-256 hash
-	TestCase doubleCases[] = {
+	const TestCase doubleCases[] = {
 		{true, "56944C5D3F98413EF45CF54545538103CC9F298E0575820AD3591376E2E0F65D", asciiBytes("")},
 		{true, "58636C3EC08C12D55AEDDA056D602D5BCCA72D8DF6A69B519B72D32DC2428B4F", asciiBytes("abc")},
 		{true, "AF63952F8155CBB708B3B24997440992C95EBD5814FB843AAC4D95687FE1FF0C", asciiBytes("abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq")},
@@ -201,14 +201,14 @@ int main() {
 		{false, "AD1500F261FF10B49C7A1796A36103B02322AE5DDE404141EACF018FBF1678BA", asciiBytes("abc")},
 	};
 	for (size_t i = 0; i < arrayLength(doubleCases); i++) {
-		TestCase &tc = doubleCases[i];
+		const TestCase &tc = doubleCases[i];
 		const Sha256Hash actualHash(Sha256::getDoubleHash(tc.message.data(), tc.message.size()));
 		assert((actualHash == Sha256Hash(tc.expectedHash)) == tc.matches);
 		numTestCases++;
 	}
 	
 	// HMAC-SHA-256 message authentication code
-	HmacCase hmacCases[] = {
+	const HmacCase hmacCases[] = {
 		{true, "F7CF322E6C37E926A73D83C900C21D882BF10BAFCEAFA85C5338DBD8614C34B0", hexBytes("0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B"), asciiBytes("Hi There")},
 		{true, "4338EC64B958EC9D8339279D083F005AC77595082624046A4E7560BF46C1DC5B", asciiBytes("Jefe"), asciiBytes("what do ya want for nothing?")},
 		{true, "FE65D5CE145563D922C1F83E8B095929A78191D0EBB84D85460E80361EA93E77", hexBytes("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"), hexBytes("DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD")},
@@ -221,7 +221,7 @@ int main() {
 		{false, "F7CF322E6C37E926A73D83C900C21D882BF10BAFCEAFA85C5338DBD8614C34B0", hexBytes("0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B"), asciiBytes("HI There")},
 	};
 	for (size_t i = 0; i < arrayLength(hmacCases); i++) {
-		HmacCase &tc = hmacCases[i];
+		const HmacCase &tc = hmacCases[i];
 		const Sha256Hash actualHash(Sha256::getHmac(tc.key.data(), tc.key.size(), tc.message.data(), tc.message.size()));
 		assert((actualHash == Sha256Hash(tc.expectedHash)) == tc.matches);
 		numTestCases++;

@@ -29,7 +29,7 @@ struct TestCase {
 
 int main() {
 	// ASCII test vectors
-	TestCase cases[] = {
+	const TestCase cases[] = {
 		// Standard test vectors
 		{true, "CF83E1357EEFB8BDF1542850D66D8007D620E4050B5715DC83F4A921D36CE9CE47D0D13C5D85F2B0FF8318D2877EEC2F63B931BD47417A81A538327AF927DA3E", asciiBytes("")},
 		{true, "1F40FC92DA241694750979EE6CF582F2D5D7D28E18335DE05ABC54D0560E0F5302860C652BF08D560252AA5E74210546F369FBBBCE8C12CFC7957B2652FE9A75", asciiBytes("a")},
@@ -321,7 +321,7 @@ int main() {
 	
 	int numTestCases = 0;
 	for (size_t i = 0; i < arrayLength(cases); i++) {
-		TestCase &tc = cases[i];
+		const TestCase &tc = cases[i];
 		Bytes expectHash(hexBytes(tc.expectedHash));
 		assert(expectHash.size() == Sha512::HASH_LEN);
 		std::uint8_t actualHash[Sha512::HASH_LEN] = {};

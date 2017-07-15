@@ -33,7 +33,7 @@ static int numTestCases = 0;
 /*---- Test suite ----*/
 
 static void testPublicAddressExport() {
-	TestCase cases[] = {
+	const TestCase cases[] = {
 		// Extremes
 		{true, "0000000000000000000000000000000000000000", "1111111111111111111114oLvT2"},
 		{true, "FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF", "1QLbz7JHiBTspS962RLKV8GndWFwi5j6Qr"},
@@ -183,7 +183,7 @@ static void testPublicAddressExport() {
 	};
 	
 	for (size_t i = 0; i < arrayLength(cases); i++) {
-		TestCase &tc = cases[i];
+		const TestCase &tc = cases[i];
 		Bytes pubkeyHash(hexBytes(tc.hexadecimal));
 		assert(pubkeyHash.size() == 20);
 		char actual[35];
@@ -195,7 +195,7 @@ static void testPublicAddressExport() {
 
 
 static void testPublicAddressImport() {
-	TestCase cases[] = {
+	const TestCase cases[] = {
 		// Bad syntax or hash
 		{false, "0000000000000000000000000000000000000000", ""},
 		{false, "0000000000000000000000000000000000000000", "2123456789123456789123456789"},
@@ -350,7 +350,7 @@ static void testPublicAddressImport() {
 	};
 	
 	for (size_t i = 0; i < arrayLength(cases); i++) {
-		TestCase &tc = cases[i];
+		const TestCase &tc = cases[i];
 		Bytes expected(hexBytes(tc.hexadecimal));
 		assert(expected.size() == 20);
 		std::uint8_t pubAddr[Ripemd160::HASH_LEN];
@@ -364,7 +364,7 @@ static void testPublicAddressImport() {
 
 
 static void testPrivateKeyExport() {
-	TestCase cases[] = {
+	const TestCase cases[] = {
 		// Extremes
 		{true, "0000000000000000000000000000000000000000000000000000000000000001", "KwDiBf89QgGbjEhKnhXJuH7LrciVrZi3qYjgd9M7rFU73sVHnoWn"},
 		{true, "FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEBAAEDCE6AF48A03BBFD25E8CD0364140", "L5oLkpV3aqBjhki6LmvChTCV6odsp4SXM6FfU2Gppt5kFLaHLuZ9"},
@@ -517,7 +517,7 @@ static void testPrivateKeyExport() {
 	};
 	
 	for (size_t i = 0; i < arrayLength(cases); i++) {
-		TestCase &tc = cases[i];
+		const TestCase &tc = cases[i];
 		assert(std::strlen(tc.hexadecimal) == 64);
 		char actual[53];
 		Base58Check::privateKeyToBase58Check(Uint256(tc.hexadecimal), actual);
@@ -528,7 +528,7 @@ static void testPrivateKeyExport() {
 
 
 static void testPrivateKeyImport() {
-	TestCase cases[] = {
+	const TestCase cases[] = {
 		// Bad syntax or hash
 		{false, "0000000000000000000000000000000000000000000000000000000000000000", "KwDiBf"},
 		{false, "0000000000000000000000000000000000000000000000000000000000000000", "11111111111111111111111111111111W3xrUjb"},
@@ -686,7 +686,7 @@ static void testPrivateKeyImport() {
 	};
 	
 	for (size_t i = 0; i < arrayLength(cases); i++) {
-		TestCase &tc = cases[i];
+		const TestCase &tc = cases[i];
 		assert(std::strlen(tc.hexadecimal) == 64);
 		Uint256 privKey;
 		bool ok = Base58Check::privateKeyFromBase58Check(tc.base58, privKey);

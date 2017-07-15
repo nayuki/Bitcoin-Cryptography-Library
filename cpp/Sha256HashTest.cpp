@@ -28,7 +28,7 @@ struct TestCase {
 
 int main() {
 	// Test equality
-	TestCase cases[] = {
+	const TestCase cases[] = {
 		{true , "0000000000000000000000000000000000000000000000000000000000000000", hexBytes("0000000000000000000000000000000000000000000000000000000000000000")},
 		{true , "FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF", hexBytes("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF")},
 		{true , "00112233445566778899AABBCCDDEEFF0112233445566778899AABBCCDDEEFF0", hexBytes("F0EFDECDBCAB9A897867564534231201FFEEDDCCBBAA99887766554433221100")},
@@ -39,7 +39,7 @@ int main() {
 	};
 	int numTestCases = 0;
 	for (size_t i = 0; i < arrayLength(cases); i++) {
-		TestCase &tc = cases[i];
+		const TestCase &tc = cases[i];
 		assert(std::strlen(tc.hexHash) == Sha256Hash::HASH_LEN * 2 && tc.byteHash.size() == Sha256Hash::HASH_LEN);
 		assert((Sha256Hash(tc.byteHash.data(), Sha256Hash::HASH_LEN) == Sha256Hash(tc.hexHash)) == tc.matches);
 		numTestCases++;
