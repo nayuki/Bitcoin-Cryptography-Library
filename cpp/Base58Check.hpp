@@ -8,6 +8,7 @@
 
 #pragma once
 
+#include <cstddef>
 #include <cstdint>
 #include "Ripemd160.hpp"
 #include "Uint256.hpp"

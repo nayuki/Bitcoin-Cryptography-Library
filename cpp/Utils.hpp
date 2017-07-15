@@ -8,6 +8,8 @@
 
 #pragma once
 
+#include <cstddef>
+
 
 /* 
  * Miscellaneous utilities used in a variety of places.
