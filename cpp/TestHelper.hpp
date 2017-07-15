@@ -20,15 +20,12 @@
 
 using std::size_t;
 using std::vector;
-typedef std::vector<std::uint8_t> Bytes;
+
+typedef vector<std::uint8_t> Bytes;
 
 
 Bytes asciiBytes(const char *str) {
-	Bytes result;
-	size_t length = std::strlen(str);
-	for (size_t i = 0; i < length; i++)
-		result.push_back(static_cast<std::uint8_t>(str[i]));
-	return result;
+	return Bytes(str, str + std::strlen(str));
 }
 
 
@@ -36,10 +33,9 @@ Bytes hexBytes(const char *str) {
 	Bytes result;
 	size_t length = std::strlen(str);
 	assert(length % 2 == 0);
-	length /= 2;
-	for (size_t i = 0; i < length; i++) {
+	for (size_t i = 0; i < length; i += 2) {
 		unsigned int temp;
-		std::sscanf(&str[i * 2], "%02x", &temp);
+		std::sscanf(&str[i], "%02x", &temp);
 		result.push_back(static_cast<std::uint8_t>(temp));
 	}
 	return result;
