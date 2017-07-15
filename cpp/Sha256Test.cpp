@@ -24,6 +24,7 @@ struct TestCase {
 	const char *expectedHash;  // In byte-reversed order
 	Bytes message;
 };
+
 struct HmacCase {
 	bool matches;
 	const char *expectedHash;  // In byte-reversed order

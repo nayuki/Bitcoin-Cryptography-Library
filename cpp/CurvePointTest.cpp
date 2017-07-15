@@ -90,9 +90,9 @@ static void testTwice() {
 		};
 		CurvePoint p(CurvePoint::G);
 		for (size_t i = 0; i < arrayLength(cases); i++) {
+			const TwoStrings &tc = cases[i];
 			p.twice();
 			p.normalize();
-			const TwoStrings &tc = cases[i];
 			assert(p == CurvePoint(tc.a, tc.b));
 			numTestCases++;
 		}
@@ -211,9 +211,9 @@ static void testAdd() {
 		};
 		CurvePoint p(CurvePoint::G);
 		for (size_t i = 0; i < arrayLength(cases); i++) {
+			const TwoStrings &tc = cases[i];
 			p.add(p);
 			p.normalize();
-			const TwoStrings &tc = cases[i];
 			assert(p == CurvePoint(tc.a, tc.b));
 			numTestCases++;
 		}
@@ -235,9 +235,9 @@ static void testAdd() {
 		};
 		CurvePoint p(CurvePoint::G);
 		for (size_t i = 0; i < arrayLength(cases); i++) {
+			const TwoStrings &tc = cases[i];
 			p.add(CurvePoint::G);
 			p.normalize();
-			const TwoStrings &tc = cases[i];
 			assert(p == CurvePoint(tc.a, tc.b));
 			numTestCases++;
 		}
