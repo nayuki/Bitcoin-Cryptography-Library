@@ -314,7 +314,7 @@ public final class Int256Math {
 				long sum = carry;
 				if (i < NUM_WORDS * 2)
 					sum += (val[product0Off + i] & LONG_MASK) * 0x3D1;
-				if (i >= 1 && i < NUM_WORDS * 2 + 1)
+				if (1 <= i && i < NUM_WORDS * 2 + 1)
 					sum += val[product0Off + i - 1] & LONG_MASK;
 				if (i >= NUM_WORDS)
 					sum += val[product0Off + i - NUM_WORDS] & LONG_MASK;
@@ -335,7 +335,7 @@ public final class Int256Math {
 				long diff = -borrow;
 				if (i < NUM_WORDS)
 					diff -= (val[p1Shift + i] & LONG_MASK) * 0x3D1;
-				if (i >= 1 && i < NUM_WORDS + 1)
+				if (1 <= i && i < NUM_WORDS + 1)
 					diff -= val[p1Shift + i - 1] & LONG_MASK;
 				if (i >= NUM_WORDS)
 					diff += val[p1Shift + i - NUM_WORDS] & LONG_MASK;

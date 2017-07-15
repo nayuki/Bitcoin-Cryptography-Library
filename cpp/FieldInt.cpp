@@ -80,7 +80,7 @@ void FieldInt::multiply(const FieldInt &other) {
 			uint64_t sum = carry;
 			if (i < NUM_WORDS * 2)
 				sum += static_cast<uint64_t>(product0[i]) * 0x3D1;
-			if (i >= 1 && i < NUM_WORDS * 2 + 1)
+			if (1 <= i && i < NUM_WORDS * 2 + 1)
 				sum += product0[i - 1];
 			if (i >= NUM_WORDS)
 				sum += product0[i - NUM_WORDS];
@@ -101,7 +101,7 @@ void FieldInt::multiply(const FieldInt &other) {
 			uint64_t diff = -static_cast<uint64_t>(borrow);
 			if (i < NUM_WORDS)
 				diff -= static_cast<uint64_t>(product1Shifted[i]) * 0x3D1;
-			if (i >= 1 && i < NUM_WORDS + 1)
+			if (1 <= i && i < NUM_WORDS + 1)
 				diff -= product1Shifted[i - 1];
 			if (i >= NUM_WORDS)
 				diff += product1Shifted[i - NUM_WORDS];

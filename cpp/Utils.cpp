@@ -11,11 +11,11 @@
 
 
 int Utils::parseHexDigit(int ch) {
-	if (ch >= '0' && ch <= '9')
+	if ('0' <= ch && ch <= '9')
 		return ch - '0';
-	else if (ch >= 'a' && ch <= 'f')
+	else if ('a' <= ch && ch <= 'f')
 		return ch - 'a' + 10;
-	else if (ch >= 'A' && ch <= 'F')
+	else if ('A' <= ch && ch <= 'F')
 		return ch - 'A' + 10;
 	else
 		return -1;
