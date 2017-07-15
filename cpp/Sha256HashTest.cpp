@@ -38,7 +38,7 @@ int main() {
 		{false, "FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFFFFF", hexBytes("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF")},
 	};
 	int numTestCases = 0;
-	for (size_t i = 0; i < ARRAY_LENGTH(cases); i++) {
+	for (size_t i = 0; i < arrayLength(cases); i++) {
 		TestCase &tc = cases[i];
 		assert(std::strlen(tc.hexHash) == Sha256Hash::HASH_LEN * 2 && tc.byteHash.size() == Sha256Hash::HASH_LEN);
 		assert((Sha256Hash(tc.byteHash.data(), Sha256Hash::HASH_LEN) == Sha256Hash(tc.hexHash)) == tc.matches);

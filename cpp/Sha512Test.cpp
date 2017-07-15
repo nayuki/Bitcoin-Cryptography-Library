@@ -320,7 +320,7 @@ int main() {
 	};
 	
 	int numTestCases = 0;
-	for (size_t i = 0; i < ARRAY_LENGTH(cases); i++) {
+	for (size_t i = 0; i < arrayLength(cases); i++) {
 		TestCase &tc = cases[i];
 		Bytes expectHash(hexBytes(tc.expectedHash));
 		assert(expectHash.size() == Sha512::HASH_LEN);
