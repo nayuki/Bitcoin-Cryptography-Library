@@ -19,13 +19,8 @@
 #include <vector>
 
 using std::size_t;
+using std::vector;
 typedef std::vector<std::uint8_t> Bytes;
-
-
-template <typename T, size_t N>
-size_t arrayLength(const T (&array)[N]) {
-	return N;
-}
 
 
 Bytes asciiBytes(const char *str) {

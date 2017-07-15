@@ -28,7 +28,7 @@ struct TestCase {
 /*---- Test suite ----*/
 
 int main() {
-	const TestCase cases[] = {
+	const vector<TestCase> cases{
 		// Standard test vectors
 		{true, "9C1185A5C5E9FC54612808977EE8F548B2258D31", asciiBytes("")},
 		{true, "0BDC9D2D256B3EE9DAAE347BE6F4DC835A467FFE", asciiBytes("a")},
@@ -194,8 +194,7 @@ int main() {
 	};
 	
 	int numTestCases = 0;
-	for (size_t i = 0; i < arrayLength(cases); i++) {
-		const TestCase &tc = cases[i];
+	for (const TestCase &tc : cases) {
 		Bytes expectHash(hexBytes(tc.expectedHash));
 		assert(expectHash.size() == Ripemd160::HASH_LEN);
 		std::uint8_t actualHash[Ripemd160::HASH_LEN] = {};
