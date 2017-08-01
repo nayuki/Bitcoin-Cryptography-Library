@@ -16,18 +16,12 @@
 #include "Sha512.hpp"
 
 
-/*---- Structures ----*/
-
-struct TestCase {
-	bool matches;
-	const char *expectedHash;
-	Bytes message;
-};
-
-
-/*---- Test suite ----*/
-
 int main() {
+	struct TestCase {
+		bool matches;
+		const char *expectedHash;
+		Bytes message;
+	};
 	// ASCII test vectors
 	const vector<TestCase> cases{
 		// Standard test vectors

@@ -16,18 +16,12 @@
 #include "Ripemd160.hpp"
 
 
-/*---- Structures ----*/
-
-struct TestCase {
-	bool matches;
-	const char *expectedHash;
-	Bytes message;
-};
-
-
-/*---- Test suite ----*/
-
 int main() {
+	struct TestCase {
+		bool matches;
+		const char *expectedHash;
+		Bytes message;
+	};
 	const vector<TestCase> cases{
 		// Standard test vectors
 		{true, "9C1185A5C5E9FC54612808977EE8F548B2258D31", asciiBytes("")},

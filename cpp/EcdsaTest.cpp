@@ -16,27 +16,6 @@
 #include "Uint256.hpp"
 
 
-/*---- Structures ----*/
-
-struct SignCase {
-	bool matches;
-	const char *privateKey;
-	const char *msgHash;  // Byte-reversed
-	const char *nonce;    // Can be null
-	const char *expectedR;
-	const char *expectedS;
-};
-
-struct VerifyCase {
-	bool answer;
-	const char *pubPointX;
-	const char *pubPointY;
-	const char *msgHash;  // Byte-reversed
-	const char *rValue;
-	const char *sValue;
-};
-
-
 // Global variables
 static int numTestCases = 0;
 
@@ -45,6 +24,14 @@ static int numTestCases = 0;
 
 static void testEcdsaSignAndVerify() {
 	// Define test cases
+	struct SignCase {
+		bool matches;
+		const char *privateKey;
+		const char *msgHash;  // Byte-reversed
+		const char *nonce;    // Can be null
+		const char *expectedR;
+		const char *expectedS;
+	};
 	const vector<SignCase> cases{
 		// Hand-crafted cases
 		{true, "0000000000000000000000000000000000000000000000000000000000000123", "8900000000000000000000000000000000000000000000000000000000000000", "0000000000000000000000000000000000000000000000000000000000000457", "28B7F3A019749CCE6FC677AFA8FAE72EC10E811ED4B04E1963143CEF87654B75", "04719F34FE9A47F2C9A22045485F3654DC3AC4A910A7B0B4C7A318F41DB65C9B"},
@@ -735,6 +722,14 @@ static void testEcdsaSignAndVerify() {
 
 
 static void testEcdsaVerify() {
+	struct VerifyCase {
+		bool answer;
+		const char *pubPointX;
+		const char *pubPointY;
+		const char *msgHash;  // Byte-reversed
+		const char *rValue;
+		const char *sValue;
+	};
 	const vector<VerifyCase> cases{
 		{false, "77D9ECB1D22A45C107EE36FC6D62A4D32BAB6689A50F0FAE587E0B95A795E833", "9BB5CF3051C7FCD5B69CB80A59B052D75BB6C6090B28C1E5AC0C6502B04BE63B", "EF54D03E7453CED1A0A9529ADFBE46CE7440E40E3457CA1C040B6CAC9E3209E4", "EB4E0C2C1723EFE8192F2F8743D343F45B5B8A9A12012EE71743247B0F65DAD8", "08F4E06799E5919F72EE39D3473EB473BD8ADC672694D895734E8AE4D049E038"},
 		{false, "CE43D19BA6906DB94B203B0A392D38C5A6C9BFC3CC0749E2E192C96D5B740196", "F013EF6362F96FF880CA0F24596889498ADF9957AA58EA0DD7C5881B0CE1513C", "76B72677F9FE01A6812093A363170B1150E9B563D43EF011CD4FB45661986EDB", "36414D257C69B283DCAC512F201D95AE8AF564D07EFAEBE18760526BA368CB99", "6CF0632C4B15D7902BD159948C3FBA8A6D60E6630618E9459E4F83702C18E099"},

@@ -15,19 +15,13 @@
 #include "Sha256Hash.hpp"
 
 
-/*---- Structures ----*/
-
-struct TestCase {
-	bool matches;
-	const char *hexHash;
-	Bytes byteHash;
-};
-
-
-/*---- Test suite ----*/
-
 int main() {
 	// Test equality
+	struct TestCase {
+		bool matches;
+		const char *hexHash;
+		Bytes byteHash;
+	};
 	const vector<TestCase> cases{
 		{true , "0000000000000000000000000000000000000000000000000000000000000000", hexBytes("0000000000000000000000000000000000000000000000000000000000000000")},
 		{true , "FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF", hexBytes("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF")},
