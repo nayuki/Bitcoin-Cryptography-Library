@@ -13,6 +13,7 @@
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
+#include <vector>
 #include "Sha256.hpp"
 #include "Sha256Hash.hpp"
 
@@ -36,7 +37,8 @@ struct HmacCase {
 /*---- Test suite ----*/
 
 static void ap(Sha256 &hasher, const char *msg) {
-	hasher.append(reinterpret_cast<const std::uint8_t*>(msg), std::strlen(msg));
+	std::vector<std::uint8_t> temp(msg, msg + std::strlen(msg));
+	hasher.append(temp.data(), temp.size());
 }
 
 
