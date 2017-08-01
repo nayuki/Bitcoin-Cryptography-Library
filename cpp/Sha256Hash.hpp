@@ -40,7 +40,7 @@ class Sha256Hash final {
 	
 	
 	// Constructs a Sha256Hash from the given 64-character byte-reversed hexadecimal string. Not constant-time.
-	public: Sha256Hash(const char *str);
+	public: explicit Sha256Hash(const char *str);
 	
 	
 	
