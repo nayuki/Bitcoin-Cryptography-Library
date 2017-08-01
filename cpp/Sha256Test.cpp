@@ -26,26 +26,16 @@ struct TestCase {
 	Bytes message;
 };
 
-struct HmacCase {
-	bool matches;
-	const char *expectedHash;  // In byte-reversed order
-	Bytes key;
-	Bytes message;
-};
+
+// Global variables
+static int numTestCases = 0;
 
 
 /*---- Test suite ----*/
 
-static void ap(Sha256 &hasher, const char *msg) {
-	std::vector<std::uint8_t> temp(msg, msg + std::strlen(msg));
-	hasher.append(temp.data(), temp.size());
-}
-
-
 // Remember that all 256-bit hash strings are byte-reversed as per the Bitcoin convention.
-int main() {
-	int numTestCases = 0;
-	
+
+static void testSingleHash() {
 	// Single SHA-256 hash
 	const vector<TestCase> singleCases{
 		// Standard test vectors
@@ -193,7 +183,10 @@ int main() {
 		assert((actualHash == Sha256Hash(tc.expectedHash)) == tc.matches);
 		numTestCases++;
 	}
-	
+}
+
+
+static void testDoubleHash() {
 	// Double SHA-256 hash
 	const vector<TestCase> doubleCases{
 		{true, "56944C5D3F98413EF45CF54545538103CC9F298E0575820AD3591376E2E0F65D", asciiBytes("")},
@@ -207,8 +200,17 @@ int main() {
 		assert((actualHash == Sha256Hash(tc.expectedHash)) == tc.matches);
 		numTestCases++;
 	}
-	
+}
+
+
+static void testHmac() {
 	// HMAC-SHA-256 message authentication code
+	struct HmacCase {
+		bool matches;
+		const char *expectedHash;  // In byte-reversed order
+		Bytes key;
+		Bytes message;
+	};
 	const vector<HmacCase> hmacCases{
 		{true, "F7CF322E6C37E926A73D83C900C21D882BF10BAFCEAFA85C5338DBD8614C34B0", hexBytes("0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B"), asciiBytes("Hi There")},
 		{true, "4338EC64B958EC9D8339279D083F005AC77595082624046A4E7560BF46C1DC5B", asciiBytes("Jefe"), asciiBytes("what do ya want for nothing?")},
@@ -226,16 +228,30 @@ int main() {
 		assert((actualHash == Sha256Hash(tc.expectedHash)) == tc.matches);
 		numTestCases++;
 	}
-	
-	// Stateful SHA-256 hasher
+}
+
+
+static void ap(Sha256 &hasher, const char *msg) {
+	std::vector<std::uint8_t> temp(msg, msg + std::strlen(msg));
+	hasher.append(temp.data(), temp.size());
+}
+
+
+static void testStatefulHasher() {
 	{ Sha256 h;                                                                                  assert(h.getHash() == Sha256Hash("55B852781B9995A44C939B64E441AE2724B96F99C8F4FB9A141CFC9842C4B0E3")); numTestCases++; }
 	{ Sha256 h;  ap(h, "a");                                                                     assert(h.getHash() == Sha256Hash("BB48EEAF857780B9724E7C14F8EF86A74DDC239AB331C2FACABD1BCA128197CA")); numTestCases++; }
 	{ Sha256 h;  ap(h, "a");  ap(h, "bc");                                                       assert(h.getHash() == Sha256Hash("AD1500F261FF10B49C7A1796A36103B02322AE5DDE404141EACF018FBF1678BA")); numTestCases++; }
 	{ Sha256 h;  ap(h, "ab");  ap(h, "c");                                                       assert(h.getHash() == Sha256Hash("AD1500F261FF10B49C7A1796A36103B02322AE5DDE404141EACF018FBF1678BA")); numTestCases++; }
 	{ Sha256 h;  ap(h, "abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq");              assert(h.getHash() == Sha256Hash("C106DB19D4EDECF66721FF6459E43CA339603E0C9326C0E5B83806D2616A8D24")); numTestCases++; }
 	{ Sha256 h;  ap(h, "abcdbcdecdefde");  ap(h, "fgefghfghighijhijkijkljklmklmnlmnomnopnopq");  assert(h.getHash() == Sha256Hash("C106DB19D4EDECF66721FF6459E43CA339603E0C9326C0E5B83806D2616A8D24")); numTestCases++; }
-	
-	// Epilog
+}
+
+
+int main() {
+	testSingleHash();
+	testDoubleHash();
+	testHmac();
+	testStatefulHasher();
 	std::printf("All %d test cases passed\n", numTestCases);
 	return EXIT_SUCCESS;
 }
