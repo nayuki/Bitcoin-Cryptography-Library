@@ -34,8 +34,8 @@ Uint256::Uint256(const char *str) :
 Uint256::Uint256(const uint8_t b[NUM_WORDS * 4]) :
 		value() {
 	assert(b != nullptr);
-	for (int i = 0; i < 32; i++)
-		value[i >> 2] |= static_cast<uint32_t>(b[32 - 1 - i]) << ((i & 3) << 3);
+	for (int i = 0; i < NUM_WORDS * 4; i++)
+		value[i >> 2] |= static_cast<uint32_t>(b[NUM_WORDS * 4 - 1 - i]) << ((i & 3) << 3);
 }
 
 

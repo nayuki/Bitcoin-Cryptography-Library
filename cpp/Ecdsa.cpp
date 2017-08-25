@@ -66,7 +66,7 @@ bool Ecdsa::sign(const Uint256 &privateKey, const Sha256Hash &msgHash, const Uin
 
 
 bool Ecdsa::signWithHmacNonce(const Uint256 &privateKey, const Sha256Hash &msgHash, Uint256 &outR, Uint256 &outS) {
-	uint8_t privkeyBytes[32] = {};
+	uint8_t privkeyBytes[Uint256::NUM_WORDS * 4] = {};
 	uint8_t msghashBytes[Sha256Hash::HASH_LEN] = {};
 	privateKey.getBigEndianBytes(privkeyBytes);
 	std::memcpy(msghashBytes, msgHash.value, Sha256Hash::HASH_LEN);
@@ -138,7 +138,7 @@ void Ecdsa::multiplyModOrder(Uint256 &x, const Uint256 &y) {
 	assert(&x != &y && x < mod);
 	Uint256 z(Uint256::ZERO);
 	
-	for (int i = 255; i >= 0; i--) {
+	for (int i = Uint256::NUM_WORDS * 32 - 1; i >= 0; i--) {
 		// Multiply by 2
 		uint32_t c = z.shiftLeft1();
 		z.subtract(mod, c | static_cast<uint32_t>(z >= mod));

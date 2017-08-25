@@ -206,7 +206,7 @@ public final class Ecdsa {
 		System.arraycopy(Int256Math.ZERO, 0, x, zOff, NUM_WORDS);
 		assert Int256Math.lessThan(x, xOff, modOff) == 1;
 		
-		for (int i = 255; i >= 0; i--) {
+		for (int i = Int256Math.NUM_WORDS * 32 - 1; i >= 0; i--) {
 			// Multiply by 2
 			int c = Int256Math.uintShiftLeft1(x, zOff, zOff);
 			Int256Math.uintSubtract(x, zOff, modOff, c | (Int256Math.lessThan(x, zOff, modOff) ^ 1), zOff);

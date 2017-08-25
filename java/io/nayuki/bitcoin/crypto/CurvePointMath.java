@@ -210,8 +210,8 @@ public final class CurvePointMath {
 		// Process 4 bits per iteration (windowed method)
 		System.arraycopy(ZERO_POINT, 0, val, pOff, POINT_WORDS);
 		int qOff = tempOff + 16 * POINT_WORDS;
-		for (int i = 256 - 4; i >= 0; i -= 4) {
-			if (i != 256 - 4) {
+		for (int i = Int256Math.NUM_WORDS * 32 - 4; i >= 0; i -= 4) {
+			if (i != Int256Math.NUM_WORDS * 32 - 4) {
 				for (int j = 0; j < 4; j++)
 					CurvePointMath.twice(val, pOff, newTempOff);
 			}

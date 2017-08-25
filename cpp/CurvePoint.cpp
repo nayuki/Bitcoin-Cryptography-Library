@@ -180,7 +180,7 @@ void CurvePoint::multiply(const Uint256 &n) {
 	
 	// Process 4 bits per iteration (windowed method)
 	*this = ZERO;
-	for (int i = 256 - 4; i >= 0; i -= 4) {
+	for (int i = Uint256::NUM_WORDS * 32 - 4; i >= 0; i -= 4) {
 		unsigned int inc = (n.value[i >> 5] >> (i & 31)) & 15;
 		CurvePoint q(ZERO);  // Dummy initial value
 		for (unsigned int j = 0; j < 16; j++)
