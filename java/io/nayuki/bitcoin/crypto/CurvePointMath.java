@@ -198,7 +198,7 @@ public final class CurvePointMath {
 		// Precompute [p*0, p*1, ..., p*15]
 		final int tableBits = 4;  // Do not modify
 		final int tableLen = 1 << tableBits;
-		int newTempOff = tempOff + (tableLen + 1) * 3 * NUM_WORDS;
+		int newTempOff = tempOff + (tableLen + 1) * POINT_WORDS;
 		int tableOff = tempOff;  // Uses tableLen * POINT_WORDS elements
 		System.arraycopy(ZERO_POINT, 0, val, tableOff, POINT_WORDS);
 		System.arraycopy(val, pOff, val, tableOff + 1 * POINT_WORDS, POINT_WORDS);
@@ -213,14 +213,14 @@ public final class CurvePointMath {
 		System.arraycopy(ZERO_POINT, 0, val, pOff, POINT_WORDS);
 		int qOff = tempOff + tableLen * POINT_WORDS;
 		for (int i = Int256Math.NUM_WORDS * 32 - tableBits; i >= 0; i -= tableBits) {
-			if (i != Int256Math.NUM_WORDS * 32 - tableBits) {
-				for (int j = 0; j < tableBits; j++)
-					CurvePointMath.twice(val, pOff, newTempOff);
-			}
 			int inc = (val[nOff + (i >>> 5)] >>> (i & 31)) & (tableLen - 1);
 			for (int j = 0; j < tableLen; j++)
 				CurvePointMath.replace(val, qOff, tableOff + j * POINT_WORDS, Int256Math.equalTo(j, inc));
 			CurvePointMath.add(val, pOff, qOff, newTempOff);
+			if (i != 0) {
+				for (int j = 0; j < tableBits; j++)
+					CurvePointMath.twice(val, pOff, newTempOff);
+			}
 		}
 	}
 	
