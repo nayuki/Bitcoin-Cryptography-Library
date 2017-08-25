@@ -169,25 +169,27 @@ void CurvePoint::twice() {
 
 void CurvePoint::multiply(const Uint256 &n) {
 	// Precompute [this*0, this*1, ..., this*15]
-	CurvePoint table[16];  // Default-initialized with ZERO
+	constexpr int tableBits = 4;  // Do not modify
+	constexpr int tableLen = 1 << tableBits;
+	CurvePoint table[tableLen];  // Default-initialized with ZERO
 	table[1] = *this;
 	table[2] = *this;
 	table[2].twice();
-	for (int i = 3; i < 16; i++) {
+	for (int i = 3; i < tableLen; i++) {
 		table[i] = table[i - 1];
 		table[i].add(*this);
 	}
 	
-	// Process 4 bits per iteration (windowed method)
+	// Process tableBits per iteration (windowed method)
 	*this = ZERO;
-	for (int i = Uint256::NUM_WORDS * 32 - 4; i >= 0; i -= 4) {
-		unsigned int inc = (n.value[i >> 5] >> (i & 31)) & 15;
+	for (int i = Uint256::NUM_WORDS * 32 - tableBits; i >= 0; i -= tableBits) {
+		unsigned int inc = (n.value[i >> 5] >> (i & 31)) & (tableLen - 1);
 		CurvePoint q(ZERO);  // Dummy initial value
-		for (unsigned int j = 0; j < 16; j++)
+		for (unsigned int j = 0; j < tableLen; j++)
 			q.replace(table[j], static_cast<uint32_t>(j == inc));
 		this->add(q);
 		if (i != 0) {
-			for (int j = 0; j < 4; j++)
+			for (int j = 0; j < tableBits; j++)
 				this->twice();
 		}
 	}
