@@ -10,7 +10,6 @@
 #include <cstdint>
 #include <cstring>
 #include "Ecdsa.hpp"
-#include "CurvePoint.hpp"
 #include "FieldInt.hpp"
 #include "Sha256.hpp"
 

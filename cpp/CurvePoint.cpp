@@ -182,7 +182,7 @@ void CurvePoint::multiply(const Uint256 &n) {
 	*this = ZERO;
 	for (int i = 256 - 4; i >= 0; i -= 4) {
 		unsigned int inc = (n.value[i >> 5] >> (i & 31)) & 15;
-		CurvePoint q(ZERO);
+		CurvePoint q(ZERO);  // Dummy initial value
 		for (unsigned int j = 0; j < 16; j++)
 			q.replace(table[j], static_cast<uint32_t>(j == inc));
 		this->add(q);

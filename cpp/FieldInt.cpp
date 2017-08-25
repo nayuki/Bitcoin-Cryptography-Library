@@ -28,6 +28,7 @@ FieldInt::FieldInt(const char *str) :
 FieldInt::FieldInt(const Uint256 &val) :
 		Uint256(val) {
 	Uint256::subtract(MODULUS, static_cast<uint32_t>(*this >= MODULUS));
+	assert(*this < MODULUS);
 }
 
 
@@ -176,4 +177,4 @@ bool FieldInt::operator>=(const Uint256 &other) const {
 
 
 // Static initializers
-const Uint256  FieldInt::MODULUS("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFFFFFC2F");
+const Uint256 FieldInt::MODULUS("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFFFFFC2F");
