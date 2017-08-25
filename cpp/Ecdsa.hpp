@@ -14,8 +14,7 @@
 
 
 /* 
- * Performs ECDSA signature generation and verification.
- * Provides just three static methods.
+ * Performs ECDSA signature generation and verification. Provides just three static functions.
  */
 class Ecdsa final {
 	
@@ -31,10 +30,12 @@ class Ecdsa final {
 	
 	// Computes a deterministic nonce based on the HMAC-SHA-256 of the message hash with the private key,
 	// and then performs ECDSA signing. Returns true iff signing is successful (with overwhelming probability).
+	// This has the same constant-time behavior as sign().
 	public: static bool signWithHmacNonce(const Uint256 &privateKey, const Sha256Hash &msgHash, Uint256 &outR, Uint256 &outS);
 	
 	
-	// Checks whether the given signature, message, and public key are valid together. The public key point must be normalized.
+	// Checks whether the given signature, message, and public key are valid together. The public key point
+	// must be normalized. This function does not need to be constant-time because all inputs are public.
 	public: static bool verify(const CurvePoint &publicKey, const Sha256Hash &msgHash, const Uint256 &r, const Uint256 &s);
 	
 	

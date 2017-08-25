@@ -14,7 +14,7 @@ import java.util.Objects;
 
 
 /**
- * Performs ECDSA signature generation and verification. Not instantiable.
+ * Performs ECDSA signature generation and verification. Provides just three static functions.
  */
 public final class Ecdsa {
 	
@@ -93,6 +93,7 @@ public final class Ecdsa {
 	
 	// Computes a deterministic nonce based on the HMAC-SHA-256 of the message hash with the private key,
 	// and then performs ECDSA signing. Returns true iff signing is successful (with overwhelming probability).
+	// This has the same constant-time behavior as sign().
 	public static boolean signWithHmacNonce(int[] privateKey, Sha256Hash msgHash, int[] outR, int[] outS) {
 		Objects.requireNonNull(privateKey);
 		Objects.requireNonNull(msgHash);
@@ -112,6 +113,7 @@ public final class Ecdsa {
 	
 	// Checks whether the given signature, message, and public key are valid together.
 	// publicKey is a normalized CurvePoint, r is a Uint256, and s is a Uint256.
+	// This function does not need to be constant-time because all inputs are public.
 	public static boolean verify(int[] publicKey, Sha256Hash msgHash, int[] r, int[] s) {
 		Objects.requireNonNull(publicKey);
 		Objects.requireNonNull(msgHash);

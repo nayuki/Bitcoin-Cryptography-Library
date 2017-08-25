@@ -27,9 +27,8 @@ class Uint256 {
 	
 	/*---- Fields ----*/
 	
-	// The words representing this number in little endian, conceptually like this:
+	// The mutable words representing this number in little endian, conceptually like this:
 	// actualValue = value[0] << 0 | value[1] << 32 | ... | value[7] << 224.
-	// Remember, this field is public and mutable.
 	public: std::uint32_t value[NUM_WORDS];
 	
 	
@@ -54,6 +53,7 @@ class Uint256 {
 	
 	
 	// Constructs a Uint256 from the given FieldInt. Constant-time with respect to the given value.
+	// All possible FieldInt values are valid.
 	public: explicit Uint256(const FieldInt &val);
 	
 	
