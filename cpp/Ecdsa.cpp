@@ -34,10 +34,7 @@ bool Ecdsa::sign(const Uint256 &privateKey, const Sha256Hash &msgHash, const Uin
 	if (nonce == zero || nonce >= order)
 		return false;
 	
-	CurvePoint p(CurvePoint::G);
-	p.multiply(nonce);
-	p.normalize();
-	
+	CurvePoint p(CurvePoint::privateExponentToPublicPoint(nonce));
 	Uint256 r(p.x);
 	r.subtract(order, static_cast<uint32_t>(r >= order));
 	if (r == zero)
@@ -67,11 +64,8 @@ bool Ecdsa::sign(const Uint256 &privateKey, const Sha256Hash &msgHash, const Uin
 
 bool Ecdsa::signWithHmacNonce(const Uint256 &privateKey, const Sha256Hash &msgHash, Uint256 &outR, Uint256 &outS) {
 	uint8_t privkeyBytes[Uint256::NUM_WORDS * 4] = {};
-	uint8_t msghashBytes[Sha256Hash::HASH_LEN] = {};
 	privateKey.getBigEndianBytes(privkeyBytes);
-	std::memcpy(msghashBytes, msgHash.value, Sha256Hash::HASH_LEN);
-	
-	const Sha256Hash hmac(Sha256::getHmac(privkeyBytes, sizeof(privkeyBytes), msghashBytes, sizeof(msghashBytes)));
+	const Sha256Hash hmac(Sha256::getHmac(privkeyBytes, sizeof(privkeyBytes), msgHash.value, Sha256Hash::HASH_LEN));
 	Uint256 nonce(hmac.value);
 	return sign(privateKey, msgHash, nonce, outR, outS);
 }
