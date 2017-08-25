@@ -111,16 +111,20 @@ class Uint256 {
 	// Tests whether this number is equal to the given number. Constant-time with respect to both values.
 	public: bool operator==(const Uint256 &other) const;
 	
+	// Tests whether this number is unequal to the given number. Constant-time with respect to both values.
 	public: bool operator!=(const Uint256 &other) const;
 	
 	
 	// Tests whether this number is less than the given number. Constant-time with respect to both values.
 	public: bool operator<(const Uint256 &other) const;
 	
+	// Tests whether this number is less than or equal to the given number. Constant-time with respect to both values.
 	public: bool operator<=(const Uint256 &other) const;
 	
+	// Tests whether this number is greater than the given number. Constant-time with respect to both values.
 	public: bool operator>(const Uint256 &other) const;
 	
+	// Tests whether this number is greater than or equal to the given number. Constant-time with respect to both values.
 	public: bool operator>=(const Uint256 &other) const;
 	
 	

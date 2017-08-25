@@ -99,6 +99,8 @@ class CurvePoint final {
 	// meaningful only if both points are normalized. Constant-time with respect to both values.
 	public: bool operator==(const CurvePoint &other) const;
 	
+	// Tests whether this point mismatches the given point in any of the 3 coordinates. This comparison
+	// is meaningful only if both points are normalized. Constant-time with respect to both values.
 	public: bool operator!=(const CurvePoint &other) const;
 	
 	
