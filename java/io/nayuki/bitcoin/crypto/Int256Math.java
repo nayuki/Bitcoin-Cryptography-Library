@@ -184,8 +184,8 @@ public final class Int256Math {
 		for (int i = 0; i < NUM_WORDS * 32 * 2; i++) {
 			// Try to reduce a trailing zero of y. Pseudocode:
 			// if (b % 2 == 0) {
-			//     b /= 2;
-			//     d = d % 2 == 0 ? d / 2 : y - (y - d) / 2;
+			//     b /= 2
+			//     d = d % 2 == 0 ? d / 2 : y - (y - d) / 2
 			// }
 			assert (val[aOff] & 1) == 1;
 			int bEven = ~val[bOff] & 1;
@@ -197,11 +197,11 @@ public final class Int256Math {
 			// If allowed, try to swap so that b >= a and then do b -= a. Pseudocode:
 			// if (b % 2 == 1) {
 			//     if (a > b) {
-			//         a, b = b, a;
-			//         c, d = d, c;
+			//         a, b = b, a
+			//         c, d = d, c
 			//     }
-			//     b -= a;
-			//     d -= c;
+			//     b -= a
+			//     d -= c
 			// }
 			int enable = val[bOff] & 1;
 			int doswap = enable & lessThan(val, bOff, aOff);

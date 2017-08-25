@@ -231,13 +231,13 @@ public final class CurvePointMath {
 		/* 
 		 * Algorithm pseudocode:
 		 * if (z != 0) {
-		 *   x /= z;
-		 *   y /= z;
-		 *   z = 1;
+		 *   x /= z
+		 *   y /= z
+		 *   z = 1
 		 * } else {
-		 *   x = x != 0 ? 1 : 0;
-		 *   y = y != 0 ? 1 : 0;
-		 *   z = 0;
+		 *   x = x != 0 ? 1 : 0
+		 *   y = y != 0 ? 1 : 0
+		 *   z = 0
 		 * }
 		 */
 		
