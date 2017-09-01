@@ -38,6 +38,9 @@ class Sha256 final {
 	
 	public: static void compress(std::uint32_t state[8], const std::uint8_t blocks[], std::size_t len);
 	
+	// Requires 1 <= i <= 31
+	private: static std::uint32_t rotr32(std::uint32_t x, std::uint32_t i);
+	
 	
 	
 	/*---- Stateful hasher fields and methods ----*/

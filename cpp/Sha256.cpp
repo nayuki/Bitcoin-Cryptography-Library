@@ -17,9 +17,6 @@ using std::uint64_t;
 using std::size_t;
 
 
-static uint32_t rotr32(uint32_t x, uint32_t i);
-
-
 Sha256Hash Sha256::getHash(const uint8_t msg[], size_t len) {
 	assert(msg != nullptr || len == 0);
 	return getHash(msg, len, INITIAL_STATE, 0);
@@ -147,6 +144,11 @@ void Sha256::compress(uint32_t state[8], const uint8_t blocks[], size_t len) {
 }
 
 
+uint32_t Sha256::rotr32(uint32_t x, uint32_t i) {
+	return ((0U + x) << (32 - i)) | (x >> i);
+}
+
+
 Sha256::Sha256() :
 		length(0),
 		buffer(),
@@ -210,9 +212,3 @@ const uint32_t Sha256::ROUND_CONSTANTS[64] = {
 	UINT32_C(0x748F82EE), UINT32_C(0x78A5636F), UINT32_C(0x84C87814), UINT32_C(0x8CC70208),
 	UINT32_C(0x90BEFFFA), UINT32_C(0xA4506CEB), UINT32_C(0xBEF9A3F7), UINT32_C(0xC67178F2),
 };
-
-
-// Requires 1 <= i <= 31
-static uint32_t rotr32(uint32_t x, uint32_t i) {
-	return ((0U + x) << (32 - i)) | (x >> i);
-}

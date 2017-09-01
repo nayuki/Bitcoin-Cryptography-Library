@@ -16,9 +16,6 @@ using std::uint64_t;
 using std::size_t;
 
 
-static uint64_t rotr64(uint64_t x, uint64_t i);
-
-
 void Sha512::getHash(const uint8_t msg[], size_t len, uint8_t hashResult[HASH_LEN]) {
 	// Compress whole message blocks
 	assert((msg != nullptr || len == 0) && hashResult != nullptr);
@@ -106,6 +103,11 @@ void Sha512::compress(uint64_t state[8], const uint8_t blocks[], size_t len) {
 }
 
 
+uint64_t Sha512::rotr64(uint64_t x, uint64_t i) {
+	return ((0U + x) << (64 - i)) | (x >> i);
+}
+
+
 Sha512::Sha512() {}
 
 
@@ -132,9 +134,3 @@ const uint64_t Sha512::ROUND_CONSTANTS[80] = {
 	UINT64_C(0x28DB77F523047D84), UINT64_C(0x32CAAB7B40C72493), UINT64_C(0x3C9EBE0A15C9BEBC), UINT64_C(0x431D67C49C100D4C),
 	UINT64_C(0x4CC5D4BECB3E42B6), UINT64_C(0x597F299CFC657E2A), UINT64_C(0x5FCB6FAB3AD6FAEC), UINT64_C(0x6C44198C4A475817),
 };
-
-
-// Requires 1 <= i <= 63
-static uint64_t rotr64(uint64_t x, uint64_t i) {
-	return ((0U + x) << (64 - i)) | (x >> i);
-}

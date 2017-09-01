@@ -16,9 +16,6 @@ using std::uint32_t;
 using std::size_t;
 
 
-static uint32_t rotl32(uint32_t x, uint32_t i);
-
-
 void Ripemd160::getHash(const uint8_t msg[], size_t len, uint8_t hashResult[HASH_LEN]) {
 	// Compress whole message blocks
 	assert((msg != nullptr || len == 0) && hashResult != nullptr);
@@ -104,6 +101,11 @@ uint32_t Ripemd160::f(unsigned int i, uint32_t x, uint32_t y, uint32_t z) {
 }
 
 
+uint32_t Ripemd160::rotl32(uint32_t x, uint32_t i) {
+	return ((0U + x) << i) | (x >> (32 - i));
+}
+
+
 Ripemd160::Ripemd160() {}
 
 
@@ -136,9 +138,3 @@ const unsigned int Ripemd160::SR[80] = {
 	 9,  7, 15, 11,  8,  6,  6, 14, 12, 13,  5, 14, 13, 13,  7,  5,
 	15,  5,  8, 11, 14, 14,  6, 14,  6,  9, 12,  9, 12,  5, 15,  8,
 	 8,  5, 12,  9, 12,  5, 14,  6,  8, 13,  6,  5, 15, 13, 11, 11};
-
-
-// Requires 1 <= i <= 31
-static uint32_t rotl32(uint32_t x, uint32_t i) {
-	return ((0U + x) << i) | (x >> (32 - i));
-}

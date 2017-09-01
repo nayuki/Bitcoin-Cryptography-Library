@@ -30,6 +30,9 @@ class Ripemd160 final {
 	
 	private: static std::uint32_t f(unsigned int i, std::uint32_t x, std::uint32_t y, std::uint32_t z);
 	
+	// Requires 1 <= i <= 31
+	private: static std::uint32_t rotl32(std::uint32_t x, std::uint32_t i);
+	
 	private: Ripemd160();  // Not instantiable
 	
 	
