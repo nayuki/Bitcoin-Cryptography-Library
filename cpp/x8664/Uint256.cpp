@@ -33,10 +33,10 @@ Uint256::Uint256(const char *str) :
 
 
 Uint256::Uint256(const uint8_t b[NUM_WORDS * 4]) :
-			value() {
+		value() {
 	assert(b != nullptr);
-	for (int i = 0; i < 32; i++)
-		value[i >> 2] |= static_cast<uint32_t>(b[32 - 1 - i]) << ((i & 3) << 3);
+	for (int i = 0; i < NUM_WORDS * 4; i++)
+		value[i >> 2] |= static_cast<uint32_t>(b[NUM_WORDS * 4 - 1 - i]) << ((i & 3) << 3);
 }
 
 
@@ -83,8 +83,8 @@ void Uint256::reciprocal(const Uint256 &modulus) {
 	for (int i = 0; i < NUM_WORDS * 32 * 2; i++) {
 		// Try to reduce a trailing zero of y. Pseudocode:
 		// if (y % 2 == 0) {
-		//     y /= 2;
-		//     b = b % 2 == 0 ? b / 2 : modulus - (modulus - b) / 2;
+		//     y /= 2
+		//     b = b % 2 == 0 ? b / 2 : modulus - (modulus - b) / 2
 		// }
 		assert((x.value[0] & 1) == 1);
 		uint32_t yEven = (y.value[0] & 1) ^ 1;
@@ -96,12 +96,12 @@ void Uint256::reciprocal(const Uint256 &modulus) {
 		// If allowed, try to swap so that y >= x and then do y -= x. Pseudocode:
 		// if (y % 2 == 1) {
 		//     if (x > y) {
-		//         x, y = y, x;
-		//         a, b = b, a;
+		//         x, y = y, x
+		//         a, b = b, a
 		//     }
-		//     y -= x;
-		//     b -= a;
-		//     b %= modulus;
+		//     y -= x
+		//     b -= a
+		//     b %= modulus
 		// }
 		uint32_t enable = y.value[0] & 1;
 		uint32_t doswap = enable & static_cast<uint32_t>(x > y);
