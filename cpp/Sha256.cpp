@@ -144,7 +144,7 @@ void Sha256::compress(uint32_t state[8], const uint8_t blocks[], size_t len) {
 }
 
 
-uint32_t Sha256::rotr32(uint32_t x, uint32_t i) {
+uint32_t Sha256::rotr32(uint32_t x, int i) {
 	return ((0U + x) << (32 - i)) | (x >> i);
 }
 

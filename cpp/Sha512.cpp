@@ -103,7 +103,7 @@ void Sha512::compress(uint64_t state[8], const uint8_t blocks[], size_t len) {
 }
 
 
-uint64_t Sha512::rotr64(uint64_t x, uint64_t i) {
+uint64_t Sha512::rotr64(uint64_t x, int i) {
 	return ((0U + x) << (64 - i)) | (x >> i);
 }
 

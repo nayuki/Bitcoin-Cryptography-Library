@@ -101,7 +101,7 @@ uint32_t Ripemd160::f(unsigned int i, uint32_t x, uint32_t y, uint32_t z) {
 }
 
 
-uint32_t Ripemd160::rotl32(uint32_t x, uint32_t i) {
+uint32_t Ripemd160::rotl32(uint32_t x, int i) {
 	return ((0U + x) << i) | (x >> (32 - i));
 }
 
