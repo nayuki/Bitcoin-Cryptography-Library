@@ -33,7 +33,7 @@ Sha256Hash::Sha256Hash(const char *str) :
 
 
 bool Sha256Hash::operator==(const Sha256Hash &other) const {
-	uint8_t diff = 0;
+	int diff = 0;
 	for (int i = 0; i < HASH_LEN; i++)
 		diff |= value[i] ^ other.value[i];
 	return diff == 0;

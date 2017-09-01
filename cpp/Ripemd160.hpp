@@ -29,7 +29,7 @@ class Ripemd160 final {
 	
 	private: static void compress(std::uint32_t state[5], const std::uint8_t blocks[], std::size_t len);
 	
-	private: static std::uint32_t f(unsigned int i, std::uint32_t x, std::uint32_t y, std::uint32_t z);
+	private: static std::uint32_t f(int i, std::uint32_t x, std::uint32_t y, std::uint32_t z);
 	
 	// Requires 1 <= i <= 31
 	private: static std::uint32_t rotl32(std::uint32_t x, int i);
@@ -42,9 +42,9 @@ class Ripemd160 final {
 	
 	private: static const std::uint32_t KL[5];       // Round constants for left line
 	private: static const std::uint32_t KR[5];       // Round constants for right line
-	private: static const unsigned int RL[NUM_ROUNDS];  // Message schedule for left line
-	private: static const unsigned int RR[NUM_ROUNDS];  // Message schedule for right line
-	private: static const unsigned int SL[NUM_ROUNDS];  // Left-rotation for left line
-	private: static const unsigned int SR[NUM_ROUNDS];  // Left-rotation for right line
+	private: static const int RL[NUM_ROUNDS];  // Message schedule for left line
+	private: static const int RR[NUM_ROUNDS];  // Message schedule for right line
+	private: static const int SL[NUM_ROUNDS];  // Left-rotation for left line
+	private: static const int SR[NUM_ROUNDS];  // Left-rotation for right line
 	
 };
