@@ -49,7 +49,7 @@ void Sha512::getHash(const uint8_t msg[], size_t len, uint8_t hashResult[HASH_LE
 
 void Sha512::compress(uint64_t state[8], const uint8_t blocks[], size_t len) {
 	assert(len % BLOCK_LEN == 0);
-	uint64_t schedule[80];
+	uint64_t schedule[NUM_ROUNDS];
 	for (size_t i = 0; i < len; ) {
 		
 		// Message schedule
@@ -64,7 +64,7 @@ void Sha512::compress(uint64_t state[8], const uint8_t blocks[], size_t len) {
 			            | static_cast<uint64_t>(blocks[i + 7]) <<  0;
 		}
 		
-		for (int j = 16; j < 80; j++) {
+		for (int j = 16; j < NUM_ROUNDS; j++) {
 			schedule[j] = 0U + schedule[j - 16] + schedule[j - 7]
 				+ (rotr64(schedule[j - 15],  1) ^ rotr64(schedule[j - 15],  8) ^ (schedule[j - 15] >> 7))
 				+ (rotr64(schedule[j -  2], 19) ^ rotr64(schedule[j -  2], 61) ^ (schedule[j -  2] >> 6));
@@ -79,7 +79,7 @@ void Sha512::compress(uint64_t state[8], const uint8_t blocks[], size_t len) {
 		uint64_t f = state[5];
 		uint64_t g = state[6];
 		uint64_t h = state[7];
-		for (int j = 0; j < 80; j++) {
+		for (int j = 0; j < NUM_ROUNDS; j++) {
 			uint64_t t1 = 0U + h + (rotr64(e, 14) ^ rotr64(e, 18) ^ rotr64(e, 41)) + (g ^ (e & (f ^ g))) + ROUND_CONSTANTS[j] + schedule[j];
 			uint64_t t2 = 0U + (rotr64(a, 28) ^ rotr64(a, 34) ^ rotr64(a, 39)) + ((a & (b | c)) | (b & c));
 			h = g;
@@ -112,7 +112,7 @@ Sha512::Sha512() {}
 
 
 // Static initializers
-const uint64_t Sha512::ROUND_CONSTANTS[80] = {
+const uint64_t Sha512::ROUND_CONSTANTS[NUM_ROUNDS] = {
 	UINT64_C(0x428A2F98D728AE22), UINT64_C(0x7137449123EF65CD), UINT64_C(0xB5C0FBCFEC4D3B2F), UINT64_C(0xE9B5DBA58189DBBC),
 	UINT64_C(0x3956C25BF348B538), UINT64_C(0x59F111F1B605D019), UINT64_C(0x923F82A4AF194F9B), UINT64_C(0xAB1C5ED5DA6D8118),
 	UINT64_C(0xD807AA98A3030242), UINT64_C(0x12835B0145706FBE), UINT64_C(0x243185BE4EE4B28C), UINT64_C(0x550C7DC3D5FFB4E2),

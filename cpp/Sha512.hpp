@@ -20,6 +20,7 @@ class Sha512 final {
 	
 	public: static constexpr int HASH_LEN = 64;
 	private: static constexpr int BLOCK_LEN = 128;
+	private: static constexpr int NUM_ROUNDS = 80;
 	
 	/*---- Static functions ----*/
 	
@@ -36,6 +37,6 @@ class Sha512 final {
 	
 	/*---- Class constants ----*/
 	
-	private: static const std::uint64_t ROUND_CONSTANTS[80];
+	private: static const std::uint64_t ROUND_CONSTANTS[NUM_ROUNDS];
 	
 };

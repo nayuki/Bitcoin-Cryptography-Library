@@ -20,6 +20,7 @@ class Ripemd160 final {
 	
 	public: static constexpr int HASH_LEN = 20;
 	private: static constexpr int BLOCK_LEN = 64;
+	private: static constexpr int NUM_ROUNDS = 80;
 	
 	/*---- Static functions ----*/
 	
@@ -41,9 +42,9 @@ class Ripemd160 final {
 	
 	private: static const std::uint32_t KL[5];       // Round constants for left line
 	private: static const std::uint32_t KR[5];       // Round constants for right line
-	private: static const unsigned int RL[80];  // Message schedule for left line
-	private: static const unsigned int RR[80];  // Message schedule for right line
-	private: static const unsigned int SL[80];  // Left-rotation for left line
-	private: static const unsigned int SR[80];  // Left-rotation for right line
+	private: static const unsigned int RL[NUM_ROUNDS];  // Message schedule for left line
+	private: static const unsigned int RR[NUM_ROUNDS];  // Message schedule for right line
+	private: static const unsigned int SL[NUM_ROUNDS];  // Left-rotation for left line
+	private: static const unsigned int SR[NUM_ROUNDS];  // Left-rotation for right line
 	
 };

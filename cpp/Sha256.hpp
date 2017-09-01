@@ -20,6 +20,7 @@
 class Sha256 final {
 	
 	public: static constexpr int BLOCK_LEN = 64;  // In bytes
+	private: static constexpr int NUM_ROUNDS = 64;
 	
 	
 	/*---- Static functions ----*/
@@ -67,6 +68,6 @@ class Sha256 final {
 	/*---- Class constants ----*/
 	
 	public: static const std::uint32_t INITIAL_STATE[8];
-	private: static const std::uint32_t ROUND_CONSTANTS[64];
+	private: static const std::uint32_t ROUND_CONSTANTS[NUM_ROUNDS];
 	
 };
