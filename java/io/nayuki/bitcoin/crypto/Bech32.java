@@ -19,7 +19,133 @@ import java.util.Objects;
  */
 public final class Bech32 {
 	
-	/*---- Static functions ----*/
+	/*---- Static functions for segregated witness addresses ----*/
+	
+	/**
+	 * Encodes the specified segregated witness output into a Bech32 address string.
+	 * @param humanPart the prefix given to the resulting string, which should be a mnemonic for
+	 * the cryptocurrency name; must be not {@code null}, must have length in the range [1, 83],
+	 * must have all characters in the ASCII range [33, 126] but excluding uppercase characters
+	 * @param witVer the witness version number; must be in the range [0, 16]
+	 * @param witProg the raw witness program, without the length byte;
+	 * must be not {@code null}, must have length in the range [2, 40]
+	 * @return the Bech32 address of the specified segregated witness output;
+	 * the result is entirely ASCII, lacks uppercase, and at most 90 characters long
+	 * @throws NullPointerException if humanPart or witProg is {@code null}
+	 * @throws IllegalArgumentException if any argument violates the stated preconditions,
+	 * or the combination of humanPart and witProg would make the result exceed 90 characters
+	 */
+	public static String segwitToBech32(String humanPart, int witVer, byte[] witProg) {
+		// Check arguments
+		Objects.requireNonNull(humanPart);
+		Objects.requireNonNull(witProg);
+		if (witVer < 0 || witVer > 16)
+			throw new IllegalArgumentException("Invalid witness version");
+		if (witProg.length < 2 || witProg.length > 40)
+			throw new IllegalArgumentException("Invalid witness program length");
+		
+		// Create buffer of 5-bit groups
+		ByteArrayOutputStream data = new ByteArrayOutputStream();  // Every element is uint5
+		assert (witVer >>> 5) == 0;
+		data.write(witVer);  // uint5
+		
+		// Variables/constants for bit processing
+		final int IN_BITS = 8;
+		final int OUT_BITS = 5;
+		int inputIndex = 0;
+		int bitBuffer = 0;  // Topmost bitBufferLen bits are valid; remaining lower bits are zero
+		int bitBufferLen = 0;  // Always in the range [0, 12]
+		
+		// Repack all 8-bit bytes into 5-bit groups, adding padding
+		while (inputIndex < witProg.length || bitBufferLen > 0) {
+			assert 0 <= bitBufferLen && bitBufferLen <= IN_BITS + OUT_BITS - 1;
+			assert (bitBuffer << bitBufferLen) == 0;
+			
+			if (bitBufferLen < OUT_BITS) {
+				if (inputIndex < witProg.length) {  // Read a byte
+					bitBuffer |= (witProg[inputIndex] & 0xFF) << (32 - IN_BITS - bitBufferLen);
+					inputIndex++;
+					bitBufferLen += IN_BITS;
+				} else  // Create final padding
+					bitBufferLen = OUT_BITS;
+			}
+			assert bitBufferLen >= 5;
+			
+			// Write a 5-bit group
+			data.write(bitBuffer >>> (32 - OUT_BITS));  // uint5
+			bitBuffer <<= OUT_BITS;
+			bitBufferLen -= OUT_BITS;
+		}
+		return bitGroupsToBech32(humanPart, data.toByteArray());
+	}
+	
+	
+	/**
+	 * Decodes the specified Bech32 address string into a segregated witness output.
+	 * The result is a triple (human-readable part, witness version, witness program).
+	 * @param s the Bech32 string to decode, which must be either
+	 * all-lowercase or all-uppercase, and at most 90 characters long
+	 * @return a triple where index 0 is a {@code String} representing the human-readable part
+	 * (which obeys all the rules as stated in the encoder), index 1 is an {@code Integer}
+	 * representing the witness version (in the range [0, 16]), and index 2 is a new
+	 * {@code byte[]} containing the witness program (whose length is in the range [2, 40];
+	 * the array contains 8-bit data)
+	 * @throws NullPointerException if the string is {@code null}
+	 * @throws IllegalArgumentException if the string is too long, has mixed case,
+	 * lacks a separator, has an invalid human-readable part, has non-base-32
+	 * characters in the data, lacks a full checksum, has an incorrect checksum,
+	 * has an invalid witness version, or has an invalid length of witness program
+	 */
+	public static Object[] bech32ToSegwit(String s) {
+		Object[] decoded = bech32ToBitGroups(s);
+		byte[] data = (byte[])decoded[1];
+		
+		// Extract leading value representing version
+		if (data.length < 1)
+			throw new IllegalArgumentException("Missing witness version");
+		int witVer = data[0];
+		if (witVer < 0 || witVer > 16)
+			throw new IllegalArgumentException("Invalid witness version");
+		
+		// Initialize output array
+		byte[] witProg = new byte[(data.length - 1) * 5 / 8];  // Discard version prefix and padding suffix
+		if (witProg.length < 2 || witProg.length > 40)
+			throw new IllegalArgumentException("Invalid witness program length");
+		
+		// Variables/constants for bit processing
+		final int IN_BITS = 5;
+		final int OUT_BITS = 8;
+		int outputIndex = 0;
+		int bitBuffer = 0;  // Topmost bitBufferLen bits are valid; remaining lower bits are zero
+		int bitBufferLen = 0;  // Always in the range [0, 10]
+		
+		// Repack all 5-bit groups into 8-bit bytes, discarding padding
+		for (int i = 1; i < data.length; i++) {
+			int b = data[i];
+			assert 0 <= bitBufferLen && bitBufferLen <= IN_BITS * 2;
+			assert (bitBuffer << bitBufferLen) == 0;
+			
+			bitBuffer |= b << (32 - IN_BITS - bitBufferLen);
+			bitBufferLen += IN_BITS;
+			
+			if (bitBufferLen >= OUT_BITS) {
+				witProg[outputIndex] = (byte)(bitBuffer >>> (32 - OUT_BITS));
+				outputIndex++;
+				bitBuffer <<= OUT_BITS;
+				bitBufferLen -= OUT_BITS;
+			}
+		}
+		
+		// Final checks and return
+		assert outputIndex == witProg.length;
+		if (bitBuffer != 0)
+			throw new IllegalArgumentException("Non-zero padding");
+		return new Object[]{decoded[0], witVer, witProg};
+	}
+	
+	
+	
+	/*---- Static functions for bit groups ----*/
 	
 	/**
 	 * Encodes the specified human-readable part prefix plus

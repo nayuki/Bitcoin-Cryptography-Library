@@ -20,6 +20,23 @@ import org.junit.Test;
  */
 public final class Bech32Test {
 	
+	@Test public void testSegwitToAndFromBech32() {
+		String[][] cases = {
+			{"bc1qw508d6qejxtdg4y5r3zarvary0c5xw7kv8f3t4", "bc", "0", "751E76E8199196D454941C45D1B3A323F1433BD6"},
+			{"tb1qw508d6qejxtdg4y5r3zarvary0c5xw7kxpjzsx", "tb", "0", "751E76E8199196D454941C45D1B3A323F1433BD6"},
+			{"bc1qrp33g0q5c5txsp9arysrx4k6zdkfs4nce4xj0gdcccefvpysxf3qccfmv3", "bc", "0", "1863143C14C5166804BD19203356DA136C985678CD4D27A1B8C6329604903262"},
+			{"tb1qrp33g0q5c5txsp9arysrx4k6zdkfs4nce4xj0gdcccefvpysxf3q0sl5k7", "tb", "0", "1863143C14C5166804BD19203356DA136C985678CD4D27A1B8C6329604903262"},
+		};
+		for (String[] cs : cases) {
+			assertEquals(cs[0], Bech32.segwitToBech32(cs[1], Integer.parseInt(cs[2]), Utils.hexToBytes(cs[3])));
+			Object[] temp = Bech32.bech32ToSegwit(cs[0]);
+			assertEquals(cs[1], temp[0]);
+			assertEquals(new Integer(cs[2]), temp[1]);
+			assertArrayEquals((byte[])temp[2], Utils.hexToBytes(cs[3]));
+		}
+	}
+	
+	
 	@Test public void testBitGroupsToAndFromBech32() {
 		Object[][] cases = {
 			{"a12uel5l", "a", new byte[0]},
