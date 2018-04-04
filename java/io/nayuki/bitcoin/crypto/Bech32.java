@@ -10,6 +10,7 @@ package io.nayuki.bitcoin.crypto;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Objects;
 
 
@@ -64,6 +65,77 @@ public final class Bech32 {
 			sb.append(ALPHABET.charAt(b));
 		}
 		return sb.toString();
+	}
+	
+	
+	/**
+	 * Decodes the specified Bech32 string into a human-readable part and an array of 5-bit data.
+	 * @param s the Bech32 string to decode, which must be either
+	 * all-lowercase or all-uppercase, and at most 90 characters long
+	 * @return a pair where index 0 is a {@code String} representing the human-readable part
+	 * (which obeys all the rules as stated in the encoder), and index 1 is a new
+	 * {@code byte[]} containing the 5-bit data (whose length is in the range [0, 82])
+	 * @throws NullPointerException if the string is {@code null}
+	 * @throws IllegalArgumentException if the string is too long, has mixed case,
+	 * lacks a separator, has an invalid human-readable part, has non-base-32
+	 * characters in the data, lacks a full checksum, or has an incorrect checksum
+	 */
+	public static Object[] bech32ToBitGroups(String s) {
+		// Basic checks
+		Objects.requireNonNull(s);
+		if (s.length() > 90)
+			throw new IllegalArgumentException("Input too long");
+		
+		{  // Normalize to lowercase, rejecting mixed case
+			boolean hasLower = false;
+			char[] temp = s.toCharArray();
+			for (int i = 0; i < temp.length; i++) {
+				char c = temp[i];
+				hasLower |= 'a' <= c && c <= 'z';
+				if ('A' <= c && c <= 'Z') {
+					if (hasLower)
+						throw new IllegalArgumentException("String has mixed case");
+					temp[i] += 'a' - 'A';
+				}
+			}
+			s = new String(temp);
+		}
+		
+		// Split human-readable part and data
+		String humanPart;
+		{
+			int i = s.lastIndexOf('1');
+			if (i == -1)
+				throw new IllegalArgumentException("No separator found");
+			humanPart = s.substring(0, i);
+			s = s.substring(i + 1);
+		}
+		char[] human = humanPart.toCharArray();
+		checkHumanReadablePart(human);
+		
+		// Decode from base-32
+		if (s.length() < CHECKSUM_LEN)
+			throw new IllegalArgumentException("Data too short");
+		byte[] dataAndCheck = new byte[s.length()];  // Every element is uint5
+		for (int i = 0; i < s.length(); i++) {
+			int index = ALPHABET.indexOf(s.charAt(i));
+			if (index == -1)
+				throw new IllegalArgumentException("Invalid data character");
+			dataAndCheck[i] = (byte)index;
+		}
+		
+		try {  // Verify checksum
+			ByteArrayOutputStream temp = expandHumanReadablePart(human);
+			temp.write(dataAndCheck);
+			if (polymod(temp.toByteArray()) != 1)
+				throw new IllegalArgumentException("Checksum mismatch");
+		} catch (IOException e) {
+			throw new AssertionError(e);  // Impossible
+		}
+		
+		// Remove checksum, return pair
+		byte[] data = Arrays.copyOf(dataAndCheck, dataAndCheck.length - CHECKSUM_LEN);
+		return new Object[]{humanPart, data};
 	}
 	
 	

@@ -8,6 +8,7 @@
 
 package io.nayuki.bitcoin.crypto;
 
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import org.junit.Assert;
 import org.junit.Test;
@@ -19,7 +20,7 @@ import org.junit.Test;
  */
 public final class Bech32Test {
 	
-	@Test public void testBitGroupsToBech32() {
+	@Test public void testBitGroupsToAndFromBech32() {
 		Object[][] cases = {
 			{"a12uel5l", "a", new byte[0]},
 			{"an83characterlonghumanreadablepartthatcontainsthenumber1andtheexcludedcharactersbio1tt5tgs", "an83characterlonghumanreadablepartthatcontainsthenumber1andtheexcludedcharactersbio", new byte[0]},
@@ -28,8 +29,12 @@ public final class Bech32Test {
 			{"split1checkupstagehandshakeupstreamerranterredcaperred2y9e3w", "split", new byte[]{24,23,25,24,22,28,1,16,11,29,8,25,23,29,19,13,16,23,29,22,25,28,1,16,11,3,25,29,27,25,3,3,29,19,11,25,3,3,25,13,24,29,1,25,3,3,25,13}},
 			{"?1ezyfcl", "?", new byte[0]},
 		};
-		for (Object[] cs : cases)
+		for (Object[] cs : cases) {
 			assertEquals(cs[0], Bech32.bitGroupsToBech32((String)cs[1], (byte[])cs[2]));
+			Object[] temp = Bech32.bech32ToBitGroups((String)cs[0]);
+			assertEquals(cs[1], temp[0]);
+			assertArrayEquals((byte[])cs[2], (byte[])temp[1]);
+		}
 	}
 	
 	
