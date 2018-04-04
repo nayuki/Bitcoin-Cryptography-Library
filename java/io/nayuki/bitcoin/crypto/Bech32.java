@@ -30,14 +30,16 @@ public final class Bech32 {
 	 * @param data a non-{@code null} sequence of zero or more values, where each value is a uint5
 	 * @return the Bech32 string representing the specified two pieces of data;
 	 * the result is entirely ASCII, lacks uppercase, and at most 90 characters long
+	 * @throws NullPointerException if the string or data is {@code null}
 	 * @throws IllegalArgumentException if any argument violates the stated
 	 * preconditions, or {@code humanPart.length() + data.length > 83}
 	 */
 	public static String bitGroupsToBech32(String humanPart, byte[] data) {
 		// Check arguments
+		Objects.requireNonNull(humanPart);
+		Objects.requireNonNull(data);
 		char[] human = humanPart.toCharArray();
 		checkHumanReadablePart(human);
-		Objects.requireNonNull(data);
 		for (byte b : data) {
 			if ((b >>> 5) != 0)
 				throw new IllegalArgumentException("Expected 5-bit groups");
@@ -140,13 +142,11 @@ public final class Bech32 {
 	
 	
 	// Throws an exception if any of the following:
-	// * The string is null.
 	// * Its length is outside the range [1, 83].
 	// * It contains non-ASCII characters outside the range [33, 126].
 	// * It contains uppercase characters.
 	// Otherwise returns silently.
 	static void checkHumanReadablePart(char[] s) {
-		Objects.requireNonNull(s);
 		int n = s.length;
 		if (n < 1 || n > 83)
 			throw new IllegalArgumentException("Invalid length of human-readable part string");
