@@ -55,10 +55,10 @@ void CurvePoint::add(const CurvePoint &other) {
 	bool otherZero = other.isZero();
 	this->replace(other, static_cast<uint32_t>(thisZero));
 	
-	FieldInt u0(this->x);
-	FieldInt u1(other.x);
-	FieldInt v0(this->y);
-	FieldInt v1(other.y);
+	FieldInt u0 = this->x;
+	FieldInt u1 = other.x;
+	FieldInt v0 = this->y;
+	FieldInt v1 = other.y;
 	u0.multiply(other.z);
 	u1.multiply(this->z);
 	v0.multiply(other.z);
@@ -66,24 +66,24 @@ void CurvePoint::add(const CurvePoint &other) {
 	
 	bool sameX = u0 == u1;
 	bool sameY = v0 == v1;
-	CurvePoint twiced(*this);
+	CurvePoint twiced = *this;
 	twiced.twice();
 	
-	FieldInt u(u0);
+	FieldInt u = u0;
 	u.subtract(u1);
-	FieldInt v(v0);
+	FieldInt v = v0;
 	v.subtract(v1);
-	FieldInt w(this->z);
+	FieldInt w = this->z;
 	w.multiply(other.z);
 	
-	FieldInt u2(u);
+	FieldInt u2 = u;
 	u2.square();
-	FieldInt u3(u2);
+	FieldInt u3 = u2;
 	u3.multiply(u);
 	
 	u1.add(u0);
 	u1.multiply(u2);
-	FieldInt t(v);
+	FieldInt t = v;
 	t.square();
 	t.multiply(w);
 	t.subtract(u1);
@@ -125,21 +125,21 @@ void CurvePoint::twice() {
 	 */
 	bool zeroResult = isZero() | (y == FI_ZERO);
 	
-	FieldInt s(z);
+	FieldInt s = z;
 	s.multiply(y);
 	s.multiply2();
 	
-	FieldInt t(s);
+	FieldInt t = s;
 	t.multiply(y);
 	t.multiply(x);
 	t.multiply2();
 	
-	FieldInt t2(t);
+	FieldInt t2 = t;
 	t2.multiply2();
 	
-	FieldInt u(x);
+	FieldInt u = x;
 	u.square();
-	FieldInt v(u);
+	FieldInt v = u;
 	u.multiply2();
 	u.add(v);
 	v = u;
@@ -149,7 +149,7 @@ void CurvePoint::twice() {
 	x = v;
 	x.multiply(s);
 	
-	FieldInt s2(s);
+	FieldInt s2 = s;
 	s2.square();
 	
 	z = s2;
@@ -184,7 +184,7 @@ void CurvePoint::multiply(const Uint256 &n) {
 	*this = ZERO;
 	for (int i = Uint256::NUM_WORDS * 32 - tableBits; i >= 0; i -= tableBits) {
 		unsigned int inc = (n.value[i >> 5] >> (i & 31)) & (tableLen - 1);
-		CurvePoint q(ZERO);  // Dummy initial value
+		CurvePoint q = ZERO;  // Dummy initial value
 		for (unsigned int j = 0; j < tableLen; j++)
 			q.replace(table[j], static_cast<uint32_t>(j == inc));
 		this->add(q);
@@ -209,7 +209,7 @@ void CurvePoint::normalize() {
 	 *   z = 0
 	 * }
 	 */
-	CurvePoint norm(*this);
+	CurvePoint norm = *this;
 	norm.z.reciprocal();
 	norm.x.multiply(norm.z);
 	norm.y.multiply(norm.z);
@@ -229,9 +229,9 @@ void CurvePoint::replace(const CurvePoint &other, uint32_t enable) {
 
 
 bool CurvePoint::isOnCurve() const {
-	FieldInt left(y);
+	FieldInt left = y;
 	left.square();
-	FieldInt right(x);
+	FieldInt right = x;
 	right.square();
 	right.add(A);
 	right.multiply(x);
@@ -263,7 +263,7 @@ void CurvePoint::toCompressedPoint(uint8_t output[33]) const {
 
 CurvePoint CurvePoint::privateExponentToPublicPoint(const Uint256 &privExp) {
 	assert((Uint256::ZERO < privExp) & (privExp < CurvePoint::ORDER));
-	CurvePoint result(CurvePoint::G);
+	CurvePoint result = CurvePoint::G;
 	result.multiply(privExp);
 	result.normalize();
 	return result;

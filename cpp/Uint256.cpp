@@ -99,11 +99,11 @@ void Uint256::shiftRight1(uint32_t enable) {
 void Uint256::reciprocal(const Uint256 &modulus) {
 	// Extended binary GCD algorithm
 	assert(&modulus != this && (modulus.value[0] & 1) == 1 && modulus > ONE && *this < modulus);
-	Uint256 x(modulus);
-	Uint256 y(*this);
-	Uint256 a(ZERO);
-	Uint256 b(ONE);
-	Uint256 halfModulus(modulus);
+	Uint256 x = modulus;
+	Uint256 y = *this;
+	Uint256 a = ZERO;
+	Uint256 b = ONE;
+	Uint256 halfModulus = modulus;
 	halfModulus.add(ONE);
 	halfModulus.shiftRight1();
 	
