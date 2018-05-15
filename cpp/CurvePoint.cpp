@@ -27,141 +27,146 @@ CurvePoint::CurvePoint() :
 
 void CurvePoint::add(const CurvePoint &other) {
 	/* 
-	 * (Derived from http://en.wikibooks.org/wiki/Cryptography/Prime_Curve/Standard_Projective_Coordinates)
+	 * (See https://www.nayuki.io/page/elliptic-curve-point-addition-in-projective-coordinates)
 	 * Algorithm pseudocode:
 	 * if (this == ZERO)
 	 *   this = other
 	 * else if (other == ZERO)
 	 *   this = this
 	 * else {
+	 *   t0 = y0 * z1
+	 *   t1 = y1 * z0
 	 *   u0 = x0 * z1
 	 *   u1 = x1 * z0
-	 *   v0 = y0 * z1
-	 *   v1 = y1 * z0
-	 *   if (v0 == v1)  // Same y coordinates
-	 *     this = (u0 != u1) ? ZERO : twice()
-	 *   else {
+	 *   if (u0 == u1) {  // Same x coordinates
+	 *     if (t0 == t1)  // Same y coordinates
+	 *       this = twice()
+	 *     else
+	 *       this = ZERO
+	 *   } else {
+	 *     t = t0 - t1
 	 *     u = u0 - u1
-	 *     v = v0 - v1
-	 *     w = z0 * z1
-	 *     t = w * v^2 - (u0 + u1) * u^2
-	 *     x' = u * t
-	 *     y' = v * (u0 * u^2 - t) - v0 * u^3
-	 *     z' = u^3 * w
+	 *     u2 = u^2
+	 *     v = z0 * z1
+	 *     w = t^2 * v - u2 * (u0 + u1)
+	 *     x' = u * w
+	 *     u3 = u2 * u
+	 *     y' = t * (u0 * u2 - w) - t0 * u3
+	 *     z' = u3 * v
 	 *   }
 	 * }
 	 */
 	bool thisZero  = this->isZero();
 	bool otherZero = other.isZero();
-	this->replace(other, static_cast<uint32_t>(thisZero));
+	CurvePoint temp = *this;
+	temp.twice();
+	temp.replace(*this, static_cast<uint32_t>(otherZero));
+	temp.replace(other, static_cast<uint32_t>(thisZero ));
 	
 	FieldInt u0 = this->x;
 	FieldInt u1 = other.x;
-	FieldInt v0 = this->y;
-	FieldInt v1 = other.y;
+	FieldInt t0 = this->y;
+	FieldInt &t1 = x;  // Reuse memory
+	t1 = other.y;
 	u0.multiply(other.z);
 	u1.multiply(this->z);
-	v0.multiply(other.z);
-	v1.multiply(this->z);
-	
+	t0.multiply(other.z);
+	t1.multiply(this->z);
 	bool sameX = u0 == u1;
-	bool sameY = v0 == v1;
-	CurvePoint twiced = *this;
-	twiced.twice();
+	bool sameY = t0 == t1;
+	temp.replace(ZERO, static_cast<uint32_t>(!thisZero & !otherZero & sameX & !sameY));
 	
+	FieldInt &t = y;  // Reuse memory
+	t = t0;
+	t.subtract(t1);
 	FieldInt u = u0;
 	u.subtract(u1);
-	FieldInt v = v0;
-	v.subtract(v1);
-	FieldInt w = this->z;
-	w.multiply(other.z);
-	
 	FieldInt u2 = u;
 	u2.square();
-	FieldInt u3 = u2;
-	u3.multiply(u);
+	FieldInt &v = z;  // Reuse memory
+	v.multiply(other.z);
 	
+	FieldInt w = t;
+	w.square();
+	w.multiply(v);
 	u1.add(u0);
 	u1.multiply(u2);
-	FieldInt t = v;
-	t.square();
-	t.multiply(w);
-	t.subtract(u1);
+	w.subtract(u1);
 	
-	uint32_t assign = static_cast<uint32_t>(!thisZero & !otherZero & !sameY);
-	u.multiply(t);
-	this->x.replace(u, assign);
-	w.multiply(u3);
-	this->z.replace(w, assign);
+	x = u;
+	x.multiply(w);
+	
+	FieldInt &u3 = u1;  // Reuse memory
+	u3 = u;
+	u3.multiply(u2);
+	
 	u0.multiply(u2);
-	u0.subtract(t);
-	u0.multiply(v);
-	v0.multiply(u3);
-	u0.subtract(v0);
-	this->y.replace(u0, assign);
+	u0.subtract(w);
+	t.multiply(u0);
+	t0.multiply(u3);
+	t.subtract(t0);  // Assigns to y
 	
-	bool cond = !thisZero & !otherZero & sameY;
-	this->replace(ZERO  , static_cast<uint32_t>(cond & !sameX));
-	this->replace(twiced, static_cast<uint32_t>(cond &  sameX));
+	v.multiply(u3);  // Assigns to z
+	
+	this->replace(temp, static_cast<uint32_t>(thisZero | otherZero | sameX));
 }
 
 
 void CurvePoint::twice() {
 	/* 
-	 * (Derived from http://en.wikibooks.org/wiki/Cryptography/Prime_Curve/Standard_Projective_Coordinates)
+	 * (See https://www.nayuki.io/page/elliptic-curve-point-addition-in-projective-coordinates)
 	 * Algorithm pseudocode:
 	 * if (this == ZERO || y == 0)
 	 *   this = ZERO
 	 * else {
 	 *   a = 0 (curve parameter)
-	 *   s = 2 * y * z
-	 *   t = 2 * x * y * s
-	 *   u = 3 * x^2 + a * z^2
-	 *   v = u^2 - 2 * t
-	 *   x' = s * v
-	 *   y' = u * (t - v) - 2 * (y * s)^2
-	 *   z' = s^3
+	 *   t = 3 * x^2 + a * z^2
+	 *   u = 2 * y * z
+	 *   v = 2 * u * x * y
+	 *   w = t^2 - 2 * v
+	 *   x' = u * w
+	 *   y' = t * (v - w) - 2 * (u * y)^2
+	 *   z' = u^3
 	 * }
 	 */
 	bool zeroResult = isZero() | (y == FI_ZERO);
 	
-	FieldInt s = z;
-	s.multiply(y);
-	s.multiply2();
-	
-	FieldInt t = s;
-	t.multiply(y);
-	t.multiply(x);
-	t.multiply2();
-	
-	FieldInt t2 = t;
-	t2.multiply2();
-	
-	FieldInt u = x;
-	u.square();
-	FieldInt v = u;
+	FieldInt u = y;
+	u.multiply(z);
 	u.multiply2();
-	u.add(v);
-	v = u;
-	v.square();
-	v.subtract(t2);
+	
+	FieldInt v = u;
+	v.multiply(x);
+	v.multiply(y);
+	v.multiply2();
+	
+	x.square();
+	FieldInt t = x;
+	t.multiply2();
+	t.add(x);
+	
+	FieldInt &w = z;  // Reuse memory
+	w = t;
+	w.square();
+	x = v;
+	x.multiply2();
+	w.subtract(x);
 	
 	x = v;
-	x.multiply(s);
-	
-	FieldInt s2 = s;
-	s2.square();
-	
-	z = s2;
-	z.multiply(s);
-	
+	x.subtract(w);
+	x.multiply(t);
+	y.multiply(u);
 	y.square();
-	s2.multiply(y);
-	s2.multiply2();
-	t.subtract(v);
-	u.multiply(t);
-	u.subtract(s2);
-	y = u;
+	y.multiply2();
+	x.subtract(y);
+	y = x;
+	
+	x = u;
+	x.multiply(w);
+	
+	z = u;
+	z.square();
+	z.multiply(u);
 	
 	this->replace(ZERO, static_cast<uint32_t>(zeroResult));
 }
