@@ -39,7 +39,7 @@ class Uint256 {
 	// For clarity, only use this constructor if the variable will be overwritten immediately
 	// (pretend that this constructor leaves the value array uninitialized).
 	// For actual zero values, please explicitly initialize them with: Uint256 num(Uint256::ZERO);
-	public: Uint256();
+	public: explicit Uint256();
 	
 	
 	// Constructs a Uint256 from the given 64-character hexadecimal string. Not constant-time.

@@ -43,11 +43,11 @@ class CurvePoint final {
 	/*---- Constructors ----*/
 	
 	// Constructs a normalized point (z=1) from the given coordinates. Constant-time with respect to the values.
-	public: CurvePoint(const FieldInt &x_, const FieldInt &y_);
+	public: explicit CurvePoint(const FieldInt &x_, const FieldInt &y_);
 	
 	
 	// Constructs a normalized point (z=1) from the given string coordinates. Not constant-time.
-	public: CurvePoint(const char *xStr, const char *yStr);
+	public: explicit CurvePoint(const char *xStr, const char *yStr);
 	
 	
 	// Constructs the special "point at infinity" (normalized), which is used by ZERO and in multiply().

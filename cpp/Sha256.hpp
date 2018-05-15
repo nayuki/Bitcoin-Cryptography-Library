@@ -53,7 +53,7 @@ class Sha256 final {
 	
 	
 	// Constructs a new SHA-256 hasher with an initially blank message.
-	public: Sha256();
+	public: explicit Sha256();
 	
 	
 	// Appends message bytes to this ongoing hasher.
