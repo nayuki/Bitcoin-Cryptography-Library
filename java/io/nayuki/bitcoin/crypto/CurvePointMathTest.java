@@ -39,7 +39,7 @@ public final class CurvePointMathTest {
 			// Prepare array and offsets
 			int pOff = rand.nextInt(5) * Int256Math.NUM_WORDS;
 			int tempOff = pOff + CurvePointMath.POINT_WORDS + rand.nextInt(5) * Int256Math.NUM_WORDS;
-			int[] arr = randomArray(tempOff + CurvePointMath.TWICE_TEMP_WORDS);
+			int[] arr = randomArray(tempOff + CurvePointMath.NORMALIZE_TEMP_WORDS);
 			
 			// Copy value
 			System.arraycopy(p, 0, arr, pOff, CurvePointMath.POINT_WORDS);
