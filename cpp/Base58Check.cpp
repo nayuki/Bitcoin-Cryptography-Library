@@ -100,16 +100,13 @@ uint8_t Base58Check::mod58(const uint8_t x[], size_t len) {
 void Base58Check::divide58(const uint8_t x[], uint8_t y[], size_t len) {
 	assert(x != nullptr && y != nullptr);
 	std::memset(y, 0, len);
-	int dividend = 0;
+	unsigned int dividend = 0;
 	for (size_t i = 0; i < len; i++) {  // For each input and output byte
-		for (int j = 7; j >= 0; j--) {  // For each bit within the byte
-			assert(0 <= dividend && dividend < 58);
-			dividend = (dividend << 1) | ((x[i] >> j) & 1);  // Shift next input bit into right side
-			if (dividend >= 58) {
-				dividend -= 58;
-				y[i] |= 1 << j;  // Set current output bit
-			}
-		}
+		assert(dividend < 58);
+		dividend = (dividend << 8) | x[i];  // Shift next byte into right side
+		assert(dividend < 14848);
+		y[i] = static_cast<uint8_t>(dividend / 58);
+		dividend %= 58;
 	}
 }
 
