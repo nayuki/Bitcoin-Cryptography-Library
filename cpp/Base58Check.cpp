@@ -20,19 +20,19 @@ using std::size_t;
 
 /*---- Public and private functions for bytes-to-Base58 conversion ----*/
 
-void Base58Check::pubkeyHashToBase58Check(const uint8_t pubkeyHash[Ripemd160::HASH_LEN], char outStr[35]) {
+void Base58Check::pubkeyHashToBase58Check(uint8_t version, const uint8_t pubkeyHash[Ripemd160::HASH_LEN], char outStr[35]) {
 	assert(pubkeyHash != nullptr && outStr != nullptr);
 	uint8_t toEncode[1 + Ripemd160::HASH_LEN + 4] = {};
-	toEncode[0] = 0x00;  // Version byte
+	toEncode[0] = version;  // Version byte
 	std::memcpy(&toEncode[1], pubkeyHash, Ripemd160::HASH_LEN);
 	bytesToBase58Check(toEncode, sizeof(toEncode) - 4, outStr);
 }
 
 
-void Base58Check::privateKeyToBase58Check(const Uint256 &privKey, char outStr[53]) {
+void Base58Check::privateKeyToBase58Check(uint8_t version, const Uint256 &privKey, char outStr[53]) {
 	assert(outStr != nullptr);
 	uint8_t toEncode[1 + 32 + 1 + 4] = {};
-	toEncode[0] = 0x80;  // Version byte
+	toEncode[0] = version;  // Version byte
 	privKey.getBigEndianBytes(&toEncode[1]);
 	toEncode[33] = 0x01;  // Compressed marker
 	bytesToBase58Check(toEncode, sizeof(toEncode) - 4, outStr);
@@ -137,22 +137,36 @@ bool Base58Check::pubkeyHashFromBase58Check(const char *addrStr, uint8_t outPubk
 	return true;
 }
 
-
 bool Base58Check::privateKeyFromBase58Check(const char wifStr[53], Uint256 &outPrivKey) {
 	// Preliminary checks
 	assert(wifStr != nullptr);
+	// Only accept bitcoin version bytes
 	if (std::strlen(wifStr) != 52 || (wifStr[0] != 'L' && wifStr[0] != 'K'))
 		return false;
+	
+	uint8_t version;
+	bool compressed;
+
+	bool ret = privateKeyFromBase58Check(wifStr, outPrivKey, version, compressed);
+
+	// Check format bytes
+	if (version != 0x80 || !compressed) { return false; }
+
+	return ret;
+}
+
+bool Base58Check::privateKeyFromBase58Check(const char wifStr[53], Uint256 &outPrivKey, uint8_t& version, bool& compressed) {
+	// Preliminary checks
+	assert(wifStr != nullptr);
 	
 	// Perform Base58 decoding
 	uint8_t decoded[1 + 32 + 1 + 4];
 	if (!base58CheckToBytes(wifStr, decoded, sizeof(decoded) / sizeof(decoded[0])))
 		return false;
 	
-	// Check format bytes
-	if (decoded[0] != 0x80 || decoded[33] != 0x01)
-		return false;
-	
+	version = decoded[0];
+	compressed = decoded[33] == 0x01;
+
 	// Successfully set the value
 	outPrivKey = Uint256(&decoded[1]);
 	return true;
