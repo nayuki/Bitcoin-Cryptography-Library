@@ -32,10 +32,10 @@ class Base58Check final {
 	public: static void privateKeyToBase58Check(const Uint256 &privKey, std::uint8_t version, char outStr[53]);
 	
 	
-	// Parses the given public address string. If the syntax and check digits are correct,
-	// then the output array is set to the decoded value and true is returned.
-	// Otherwise the output array is unchanged and false is returned. Not constant-time.
-	public: static bool pubkeyHashFromBase58Check(const char *addrStr, std::uint8_t outPubkeyHash[Ripemd160::HASH_LEN]);
+	// Parses the given public address string. If the syntax and check digits are correct, then the
+	// output array is set to the decoded value, the version byte is set if not null, and true is returned.
+	// Otherwise the output array and version are unchanged and false is returned. Not constant-time.
+	public: static bool pubkeyHashFromBase58Check(const char *addrStr, std::uint8_t outPubkeyHash[Ripemd160::HASH_LEN], std::uint8_t *version);
 	
 	
 	// Parses the given compressed WIF string. If the syntax and check digits are correct,

@@ -114,7 +114,7 @@ void Base58Check::divide58(const uint8_t x[], uint8_t y[], size_t len) {
 
 /*---- Public and private functions for Base58-to-bytes conversion ----*/
 
-bool Base58Check::pubkeyHashFromBase58Check(const char *addrStr, uint8_t outPubkeyHash[Ripemd160::HASH_LEN]) {
+bool Base58Check::pubkeyHashFromBase58Check(const char *addrStr, uint8_t outPubkeyHash[Ripemd160::HASH_LEN], uint8_t *version) {
 	// Preliminary checks
 	assert(addrStr != nullptr && outPubkeyHash != nullptr);
 	if (std::strlen(addrStr) < 1 || std::strlen(addrStr) > 34 || addrStr[0] != '1')
@@ -125,12 +125,10 @@ bool Base58Check::pubkeyHashFromBase58Check(const char *addrStr, uint8_t outPubk
 	if (!base58CheckToBytes(addrStr, decoded, sizeof(decoded) / sizeof(decoded[0])))
 		return false;
 	
-	// Check format byte
-	if (decoded[0] != 0x00)
-		return false;
-	
-	// Successfully set the output
+	// Successfully set the output and version
 	std::memcpy(outPubkeyHash, &decoded[1], Ripemd160::HASH_LEN * sizeof(uint8_t));
+	if (version != nullptr)
+		*version = decoded[0];
 	return true;
 }
 
