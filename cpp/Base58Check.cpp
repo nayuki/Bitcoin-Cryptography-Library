@@ -20,10 +20,10 @@ using std::size_t;
 
 /*---- Public and private functions for bytes-to-Base58 conversion ----*/
 
-void Base58Check::pubkeyHashToBase58Check(const uint8_t pubkeyHash[Ripemd160::HASH_LEN], char outStr[35]) {
+void Base58Check::pubkeyHashToBase58Check(const uint8_t pubkeyHash[Ripemd160::HASH_LEN], uint8_t version, char outStr[36]) {
 	assert(pubkeyHash != nullptr && outStr != nullptr);
 	uint8_t toEncode[1 + Ripemd160::HASH_LEN + 4] = {};
-	toEncode[0] = 0x00;  // Version byte
+	toEncode[0] = version;
 	std::memcpy(&toEncode[1], pubkeyHash, Ripemd160::HASH_LEN);
 	bytesToBase58Check(toEncode, sizeof(toEncode) - 4, outStr);
 }

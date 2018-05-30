@@ -185,8 +185,8 @@ static void testPublicAddressExport() {
 	for (const TestCase &tc : cases) {
 		Bytes pubkeyHash(hexBytes(tc.hexadecimal));
 		assert(pubkeyHash.size() == 20);
-		char actual[35];
-		Base58Check::pubkeyHashToBase58Check(pubkeyHash.data(), actual);
+		char actual[36];
+		Base58Check::pubkeyHashToBase58Check(pubkeyHash.data(), 0x00, actual);
 		assert((std::strcmp(actual, tc.base58) == 0) == tc.success);
 		numTestCases++;
 	}

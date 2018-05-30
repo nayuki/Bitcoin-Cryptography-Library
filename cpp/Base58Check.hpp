@@ -20,10 +20,10 @@
  */
 class Base58Check final {
 	
-	// Exports the given 20-byte public key hash as a public address.
-	// The outStr array must have length >= 35 (including null terminator).
-	// The output text length is between 25 and 34 characters, inclusive. Not constant-time.
-	public: static void pubkeyHashToBase58Check(const std::uint8_t pubkeyHash[Ripemd160::HASH_LEN], char outStr[35]);
+	// Exports the given 20-byte public key hash with the given version prefix byte as a public address.
+	// The outStr array must have length >= 36 (including null terminator).
+	// The output text length is between 25 and 35 characters, inclusive. Not constant-time.
+	public: static void pubkeyHashToBase58Check(const std::uint8_t pubkeyHash[Ripemd160::HASH_LEN], std::uint8_t version, char outStr[36]);
 	
 	
 	// Exports the given private key as compressed WIF.
