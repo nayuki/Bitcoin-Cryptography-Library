@@ -133,7 +133,7 @@ bool Base58Check::pubkeyHashFromBase58Check(const char *addrStr, uint8_t outPubk
 }
 
 
-bool Base58Check::privateKeyFromBase58Check(const char wifStr[53], Uint256 &outPrivKey) {
+bool Base58Check::privateKeyFromBase58Check(const char wifStr[53], Uint256 &outPrivKey, uint8_t *version) {
 	// Preliminary checks
 	assert(wifStr != nullptr);
 	if (std::strlen(wifStr) != 52 || (wifStr[0] != 'L' && wifStr[0] != 'K'))
@@ -144,12 +144,14 @@ bool Base58Check::privateKeyFromBase58Check(const char wifStr[53], Uint256 &outP
 	if (!base58CheckToBytes(wifStr, decoded, sizeof(decoded) / sizeof(decoded[0])))
 		return false;
 	
-	// Check format bytes
-	if (decoded[0] != 0x80 || decoded[33] != 0x01)
+	// Check format byte
+	if (decoded[33] != 0x01)
 		return false;
 	
-	// Successfully set the value
+	// Successfully set the value and version
 	outPrivKey = Uint256(&decoded[1]);
+	if (version != nullptr)
+		*version = decoded[0];
 	return true;
 }
 

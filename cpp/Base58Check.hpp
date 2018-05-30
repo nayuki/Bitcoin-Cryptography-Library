@@ -38,11 +38,11 @@ class Base58Check final {
 	public: static bool pubkeyHashFromBase58Check(const char *addrStr, std::uint8_t outPubkeyHash[Ripemd160::HASH_LEN], std::uint8_t *version);
 	
 	
-	// Parses the given compressed WIF string. If the syntax and check digits are correct,
-	// then the private key Uint256 is set to the decoded value and true is returned.
-	// Otherwise the Uint256 is unchanged and false is returned. Not constant-time.
+	// Parses the given compressed WIF string. If the syntax and check digits are correct, then the private key
+	// Uint256 is set to the decoded value, the version byte is set if not null, and true is returned.
+	// Otherwise the Uint256 and version are unchanged and false is returned. Not constant-time.
 	// Note that the decoded integer may be outside the normal private key range of [1, CurvePoint::ORDER).
-	public: static bool privateKeyFromBase58Check(const char wifStr[53], Uint256 &outPrivKey);
+	public: static bool privateKeyFromBase58Check(const char wifStr[53], Uint256 &outPrivKey, std::uint8_t *version);
 	
 	
 	// Computes the 4-byte hash and converts the concatenated data to Base58Check.

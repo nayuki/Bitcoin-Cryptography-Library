@@ -685,7 +685,7 @@ static void testPrivateKeyImport() {
 	for (const TestCase &tc : cases) {
 		assert(std::strlen(tc.hexadecimal) == 64);
 		Uint256 privKey;
-		bool ok = Base58Check::privateKeyFromBase58Check(tc.base58, privKey);
+		bool ok = Base58Check::privateKeyFromBase58Check(tc.base58, privKey, nullptr);
 		assert(ok == tc.success);
 		if (ok)
 			assert(privKey == Uint256(tc.hexadecimal));
