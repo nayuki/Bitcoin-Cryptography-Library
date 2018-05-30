@@ -29,10 +29,10 @@ void Base58Check::pubkeyHashToBase58Check(const uint8_t pubkeyHash[Ripemd160::HA
 }
 
 
-void Base58Check::privateKeyToBase58Check(const Uint256 &privKey, char outStr[53]) {
+void Base58Check::privateKeyToBase58Check(const Uint256 &privKey, uint8_t version, char outStr[53]) {
 	assert(outStr != nullptr);
 	uint8_t toEncode[1 + 32 + 1 + 4] = {};
-	toEncode[0] = 0x80;  // Version byte
+	toEncode[0] = version;
 	privKey.getBigEndianBytes(&toEncode[1]);
 	toEncode[33] = 0x01;  // Compressed marker
 	bytesToBase58Check(toEncode, sizeof(toEncode) - 4, outStr);

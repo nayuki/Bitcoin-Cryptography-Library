@@ -517,7 +517,7 @@ static void testPrivateKeyExport() {
 	for (const TestCase &tc : cases) {
 		assert(std::strlen(tc.hexadecimal) == 64);
 		char actual[53];
-		Base58Check::privateKeyToBase58Check(Uint256(tc.hexadecimal), actual);
+		Base58Check::privateKeyToBase58Check(Uint256(tc.hexadecimal), 0x80, actual);
 		assert((std::strcmp(actual, tc.base58) == 0) == tc.success);
 		numTestCases++;
 	}
