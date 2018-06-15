@@ -8,6 +8,8 @@
 
 #include <cassert>
 #include <cstring>
+#include <memory>
+
 #include "Base58Check.hpp"
 #include "Sha256.hpp"
 #include "Sha256Hash.hpp"
@@ -29,13 +31,20 @@ void Base58Check::pubkeyHashToBase58Check(const uint8_t pubkeyHash[Ripemd160::HA
 }
 
 
-void Base58Check::privateKeyToBase58Check(const Uint256 &privKey, uint8_t version, char outStr[53]) {
+void Base58Check::privateKeyToBase58Check(const Uint256 &privKey, uint8_t version, bool compressed, char outStr[53]) {
 	assert(outStr != nullptr);
-	uint8_t toEncode[1 + 32 + 1 + 4] = {};
+	auto encode_size = 32u + 1u + 4u;
+	if (compressed) 
+		++encode_size;
+
+	std::unique_ptr<uint8_t[]> toEncode(new uint8_t[encode_size]);
 	toEncode[0] = version;
 	privKey.getBigEndianBytes(&toEncode[1]);
-	toEncode[33] = 0x01;  // Compressed marker
-	bytesToBase58Check(toEncode, sizeof(toEncode) - 4, outStr);
+
+	if (compressed)
+		toEncode[33] = 0x01;  // Compressed marker
+
+	bytesToBase58Check(toEncode.get(), encode_size - 4, outStr);
 }
 
 
@@ -133,21 +142,21 @@ bool Base58Check::pubkeyHashFromBase58Check(const char *addrStr, uint8_t outPubk
 }
 
 
-bool Base58Check::privateKeyFromBase58Check(const char wifStr[53], Uint256 &outPrivKey, uint8_t *version) {
+bool Base58Check::privateKeyFromBase58Check(const char wifStr[53], Uint256 &outPrivKey, uint8_t *version, bool* compressed) {
 	// Preliminary checks
 	assert(wifStr != nullptr);
 	if (std::strlen(wifStr) < 38 || std::strlen(wifStr) > 52)
 		return false;
 	
 	// Perform Base58 decoding
-	uint8_t decoded[1 + 32 + 1 + 4];
+	uint8_t decoded[1 + 32 + 1 + 4] = {};
 	if (!base58CheckToBytes(wifStr, decoded, sizeof(decoded) / sizeof(decoded[0])))
 		return false;
 	
 	// Check format byte
-	if (decoded[33] != 0x01)
-		return false;
-	
+	if (compressed != nullptr)
+		compressed = decoded[33] == 0x01;
+
 	// Successfully set the value and version
 	outPrivKey = Uint256(&decoded[1]);
 	if (version != nullptr)
