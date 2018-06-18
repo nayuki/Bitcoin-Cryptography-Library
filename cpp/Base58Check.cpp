@@ -117,7 +117,7 @@ void Base58Check::divide58(const uint8_t x[], uint8_t y[], size_t len) {
 bool Base58Check::pubkeyHashFromBase58Check(const char *addrStr, uint8_t outPubkeyHash[Ripemd160::HASH_LEN], uint8_t *version) {
 	// Preliminary checks
 	assert(addrStr != nullptr && outPubkeyHash != nullptr);
-	if (std::strlen(addrStr) < 25 || std::strlen(addrStr) > 34)
+	if (std::strlen(addrStr) < 25 || std::strlen(addrStr) > 35)
 		return false;
 	
 	// Perform Base58 decoding
