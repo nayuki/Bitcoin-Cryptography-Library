@@ -191,7 +191,7 @@ int main() {
 	for (const TestCase &tc : cases) {
 		Bytes expectHash = hexBytes(tc.expectedHash);
 		assert(expectHash.size() == Ripemd160::HASH_LEN);
-		std::uint8_t actualHash[Ripemd160::HASH_LEN] = {};
+		std::uint8_t actualHash[Ripemd160::HASH_LEN];
 		Ripemd160::getHash(tc.message.data(), tc.message.size(), actualHash);
 		assert((std::memcmp(actualHash, expectHash.data(), Ripemd160::HASH_LEN) == 0) == tc.matches);
 		numTestCases++;
