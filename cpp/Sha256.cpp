@@ -25,7 +25,7 @@ Sha256Hash Sha256::getHash(const uint8_t msg[], size_t len) {
 
 Sha256Hash Sha256::getDoubleHash(const uint8_t msg[], size_t len) {
 	assert(msg != nullptr || len == 0);
-	const Sha256Hash innerHash(getHash(msg, len));
+	const Sha256Hash innerHash = getHash(msg, len);
 	return getHash(innerHash.value, Sha256Hash::HASH_LEN);
 }
 

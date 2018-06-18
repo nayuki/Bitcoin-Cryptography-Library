@@ -712,7 +712,7 @@ static void testEcdsaSignAndVerify() {
 		assert(ok && actualMatch == tc.matches);
 		
 		if (Uint256::ZERO < privateKey && privateKey < CurvePoint::ORDER) {
-			CurvePoint publicKey(CurvePoint::privateExponentToPublicPoint(privateKey));
+			CurvePoint publicKey = CurvePoint::privateExponentToPublicPoint(privateKey);
 			assert(Ecdsa::verify(publicKey, msgHash, r, s));
 		}
 		

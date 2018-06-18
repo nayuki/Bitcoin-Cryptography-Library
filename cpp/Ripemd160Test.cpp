@@ -189,7 +189,7 @@ int main() {
 	
 	int numTestCases = 0;
 	for (const TestCase &tc : cases) {
-		Bytes expectHash(hexBytes(tc.expectedHash));
+		Bytes expectHash = hexBytes(tc.expectedHash);
 		assert(expectHash.size() == Ripemd160::HASH_LEN);
 		std::uint8_t actualHash[Ripemd160::HASH_LEN] = {};
 		Ripemd160::getHash(tc.message.data(), tc.message.size(), actualHash);

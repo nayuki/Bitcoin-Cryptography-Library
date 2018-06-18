@@ -179,7 +179,7 @@ static void testSingleHash() {
 		{true, "2F04A53A7A557AB8D986BA961EEB417C33D1C411399092AFFA33ED0F13F5C504", asciiBytes("[SX]k-w:t,bsdb$(hvN9CJcCR]ln<tpVi0#]-1D\"2SF~t/Y2ITCYWVm|3DvVpK-q{@KrP*+32ZqcMx=`(=##(#53W%[(Y)on.@<g0JO,ic(A_nCF<@ItmGO)S^45ZWBT")},
 	};
 	for (const TestCase &tc : singleCases) {
-		const Sha256Hash actualHash(Sha256::getHash(tc.message.data(), tc.message.size()));
+		const Sha256Hash actualHash = Sha256::getHash(tc.message.data(), tc.message.size());
 		assert((actualHash == Sha256Hash(tc.expectedHash)) == tc.matches);
 		numTestCases++;
 	}
@@ -196,7 +196,7 @@ static void testDoubleHash() {
 		{false, "AD1500F261FF10B49C7A1796A36103B02322AE5DDE404141EACF018FBF1678BA", asciiBytes("abc")},
 	};
 	for (const TestCase &tc : doubleCases) {
-		const Sha256Hash actualHash(Sha256::getDoubleHash(tc.message.data(), tc.message.size()));
+		const Sha256Hash actualHash = Sha256::getDoubleHash(tc.message.data(), tc.message.size());
 		assert((actualHash == Sha256Hash(tc.expectedHash)) == tc.matches);
 		numTestCases++;
 	}
@@ -224,7 +224,7 @@ static void testHmac() {
 		{false, "F7CF322E6C37E926A73D83C900C21D882BF10BAFCEAFA85C5338DBD8614C34B0", hexBytes("0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B0B"), asciiBytes("HI There")},
 	};
 	for (const HmacCase &tc : hmacCases) {
-		const Sha256Hash actualHash(Sha256::getHmac(tc.key.data(), tc.key.size(), tc.message.data(), tc.message.size()));
+		const Sha256Hash actualHash = Sha256::getHmac(tc.key.data(), tc.key.size(), tc.message.data(), tc.message.size());
 		assert((actualHash == Sha256Hash(tc.expectedHash)) == tc.matches);
 		numTestCases++;
 	}

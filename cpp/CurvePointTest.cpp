@@ -53,8 +53,8 @@ static int numTestCases = 0;
 /*---- Test cases ----*/
 
 static void testReplace() {
-	CurvePoint p(CurvePoint::G);
-	CurvePoint q(CurvePoint::G);
+	CurvePoint p = CurvePoint::G;
+	CurvePoint q = CurvePoint::G;
 	q.twice();
 	assert(p != q);
 	p.replace(q, 0);
@@ -68,7 +68,7 @@ static void testReplace() {
 static void testTwice() {
 	// Double zero
 	{
-		CurvePoint p(CurvePoint::ZERO);
+		CurvePoint p = CurvePoint::ZERO;
 		p.twice();
 		assert(p == CurvePoint::ZERO);
 		numTestCases++;
@@ -88,7 +88,7 @@ static void testTwice() {
 			{"465370B287A79FF3905A857A9CF918D50ADBC968D9E159D0926E2C00EF34A24D", "35E531B38368C082A4AF8BDAFDEEC2C1588E09B215D37A10A2F8FB20B33887F4"},
 			{"241FEBB8E23CBD77D664A18F66AD6240AAEC6ECDC813B088D5B901B2E285131F", "513378D9FF94F8D3D6C420BD13981DF8CD50FD0FBD0CB5AFABB3E66F2750026D"},
 		};
-		CurvePoint p(CurvePoint::G);
+		CurvePoint p = CurvePoint::G;
 		for (const TwoStrings &tc : cases) {
 			p.twice();
 			p.normalize();
@@ -99,7 +99,7 @@ static void testTwice() {
 	
 	// Repeatedly double without normalizing
 	{
-		CurvePoint p(CurvePoint::G);
+		CurvePoint p = CurvePoint::G;
 		for (int i = 0; i < 10; i++)
 			p.twice();
 		p.normalize();
@@ -135,7 +135,7 @@ static void testTwice() {
 static void testAdd() {
 	// Add zero to zero
 	{
-		CurvePoint p(CurvePoint::ZERO);
+		CurvePoint p = CurvePoint::ZERO;
 		p.add(CurvePoint::ZERO);
 		p.normalize();
 		assert(p == CurvePoint::ZERO);
@@ -152,7 +152,7 @@ static void testAdd() {
 		};
 		for (const TwoStrings &tc : cases) {
 			CurvePoint p(tc.a, tc.b);
-			CurvePoint q(p);
+			CurvePoint q = p;
 			p.add(CurvePoint::ZERO);
 			p.normalize();
 			assert(p == q);
@@ -169,7 +169,7 @@ static void testAdd() {
 			{"250C66A625C171A512D500217F3F46092B1F620E4E1EEDF1F2F36794C2F6C40D", "6D8B37BE53BE61836CFA6ECE75B5A6FDD1A4D57FFBD93CD51889AEE899971D5C"},
 		};
 		for (const TwoStrings &tc : cases) {
-			CurvePoint p(CurvePoint::ZERO);
+			CurvePoint p = CurvePoint::ZERO;
 			CurvePoint q(tc.a, tc.b);
 			p.add(q);
 			p.normalize();
@@ -204,7 +204,7 @@ static void testAdd() {
 			{"E60FCE93B59E9EC53011AABC21C23E97B2A31369B87A5AE9C44EE89E2A6DEC0A", "F7E3507399E595929DB99F34F57937101296891E44D23F0BE1F32CCE69616821"},
 			{"D30199D74FB5A22D47B6E054E2F378CEDACFFCB89904A61D75D0DBD407143E65", "95038D9D0AE3D5C3B3D6DEC9E98380651F760CC364ED819605B3FF1F24106AB9"},
 		};
-		CurvePoint p(CurvePoint::G);
+		CurvePoint p = CurvePoint::G;
 		for (const TwoStrings &tc : cases) {
 			p.add(p);
 			p.normalize();
@@ -227,7 +227,7 @@ static void testAdd() {
 			{"A0434D9E47F3C86235477C7B1AE6AE5D3442D49B1943C2B752A68E2A47E247C7", "893ABA425419BC27A3B6C7E693A24C696F794C2ED877A1593CBEE53B037368D7"},
 			{"774AE7F858A9411E5EF4246B70C65AAC5649980BE5C17891BBEC17895DA008CB", "D984A032EB6B5E190243DD56D7B7B365372DB1E2DFF9D6A8301D74C9C953C61B"},
 		};
-		CurvePoint p(CurvePoint::G);
+		CurvePoint p = CurvePoint::G;
 		for (const TwoStrings &tc : cases) {
 			p.add(CurvePoint::G);
 			p.normalize();
@@ -349,7 +349,7 @@ static void testMultiply() {
 		{"59B5E4509B28E1EA788C777C73337E4DC4F465C8772DAD204C8EE5FAFE2D4645", "51471C106EE9BC9E4D46ACF6409FA3C13787835080B2FE921BB2CCF9699636A9", "8272B678EB7E805A0725BC709E2BB2AEA7F10F3A53DAE3512D6DC8EEBF1D137B"},
 	};
 	for (const ThreeStrings &tc : cases) {
-		CurvePoint p(CurvePoint::G);
+		CurvePoint p = CurvePoint::G;
 		p.multiply(Uint256(tc.a));
 		p.normalize();
 		if (tc.b == nullptr && tc.c == nullptr)
@@ -478,18 +478,18 @@ static void testMultiplyModOrder() {
 		Uint256 a(tc.a);
 		Uint256 b(tc.b);
 		
-		CurvePoint p(CurvePoint::G);
+		CurvePoint p = CurvePoint::G;
 		p.multiply(a);
 		p.multiply(b);
 		p.normalize();
 		
-		CurvePoint q(CurvePoint::G);
+		CurvePoint q = CurvePoint::G;
 		q.multiply(a);
 		q.normalize();
 		q.multiply(b);
 		q.normalize();
 		
-		CurvePoint r(CurvePoint::G);
+		CurvePoint r = CurvePoint::G;
 		r.multiply(Uint256(tc.c));
 		r.normalize();
 		
@@ -1112,7 +1112,7 @@ static void testPrivateExponentToPublicPoint() {
 		{"FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEBAAEDCE6AF48A03BBFD25E8CD0364140", "79BE667EF9DCBBAC55A06295CE870B07029BFCDB2DCE28D959F2815B16F81798", "B7C52588D95C3B9AA25B0403F1EEF75702E84BB7597AABE663B82F6F04EF2777"},
 	};
 	for (const ThreeStrings &tc : cases) {
-		CurvePoint p(CurvePoint::privateExponentToPublicPoint(Uint256(tc.a)));
+		CurvePoint p = CurvePoint::privateExponentToPublicPoint(Uint256(tc.a));
 		assert(p.x == FieldInt(tc.b) && p.y == FieldInt(tc.c) && p.z == FieldInt(Uint256::ONE));
 		numTestCases++;
 	}

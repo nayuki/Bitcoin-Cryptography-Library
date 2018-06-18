@@ -214,7 +214,7 @@ static const vector<TestCase> GOOD_PUBLIC_ADDRESS_CASES{
 
 static void testPublicAddressExport() {
 	for (const TestCase &tc : GOOD_PUBLIC_ADDRESS_CASES) {
-		Bytes pubkeyHash(hexBytes(tc.hexadecimal));
+		Bytes pubkeyHash = hexBytes(tc.hexadecimal);
 		assert(pubkeyHash.size() == 20);
 		char actual[36];
 		Base58Check::pubkeyHashToBase58Check(pubkeyHash.data(), tc.version, actual);
@@ -230,7 +230,7 @@ static void testPublicAddressImport() {
 		uint8_t version;
 		assert(Base58Check::pubkeyHashFromBase58Check(tc.base58, pubAddr, &version));
 		assert(version == tc.version);
-		Bytes expected(hexBytes(tc.hexadecimal));
+		Bytes expected = hexBytes(tc.hexadecimal);
 		assert(expected.size() == 20);
 		assert(std::memcmp(pubAddr, expected.data(), sizeof(pubAddr)) == 0);
 		numTestCases++;
