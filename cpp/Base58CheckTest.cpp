@@ -20,13 +20,6 @@
 /*---- Structures ----*/
 
 struct TestCase {
-	bool success;
-	const char *hexadecimal;
-	const char *base58;
-};
-
-
-struct NewTestCase {
 	std::uint8_t version;
 	const char *hexadecimal;
 	const char *base58;
@@ -39,7 +32,7 @@ static int numTestCases = 0;
 
 /*---- Test suite ----*/
 
-static const vector<NewTestCase> GOOD_PUBLIC_ADDRESS_CASES{
+static const vector<TestCase> GOOD_PUBLIC_ADDRESS_CASES{
 	// Bitcoin P2PKH
 	{0x00, "0000000000000000000000000000000000000000", "1111111111111111111114oLvT2"},  // Extreme
 	{0x00, "0000000000000000000000000000000000004000", "1111111111111111111YsWcdci1"},
@@ -218,7 +211,7 @@ static const vector<NewTestCase> GOOD_PUBLIC_ADDRESS_CASES{
 
 
 static void testPublicAddressExport() {
-	for (const NewTestCase &tc : GOOD_PUBLIC_ADDRESS_CASES) {
+	for (const TestCase &tc : GOOD_PUBLIC_ADDRESS_CASES) {
 		Bytes pubkeyHash(hexBytes(tc.hexadecimal));
 		assert(pubkeyHash.size() == 20);
 		char actual[36];
@@ -230,7 +223,7 @@ static void testPublicAddressExport() {
 
 
 static void testPublicAddressImport() {
-	for (const NewTestCase &tc : GOOD_PUBLIC_ADDRESS_CASES) {
+	for (const TestCase &tc : GOOD_PUBLIC_ADDRESS_CASES) {
 		std::uint8_t pubAddr[Ripemd160::HASH_LEN];
 		std::uint8_t version;
 		assert(Base58Check::pubkeyHashFromBase58Check(tc.base58, pubAddr, &version));
@@ -314,7 +307,7 @@ static void testPublicAddressImport() {
 }
 
 
-static const vector<NewTestCase> GOOD_PRIVATE_KEY_CASES{
+static const vector<TestCase> GOOD_PRIVATE_KEY_CASES{
 	// Bitcoin WIF compressed
 	{0x80, "0000000000000000000000000000000000000000000000000000000000000001", "KwDiBf89QgGbjEhKnhXJuH7LrciVrZi3qYjgd9M7rFU73sVHnoWn"},  // Extreme
 	{0x80, "0000000000002000000000000000000000000000000000000000000000000000", "KwDiBf89QgkuBg35uBLQ5VNiRJdBLogCkB4HDGEcAz1LjGnZLZD9"},
@@ -453,7 +446,7 @@ static const vector<NewTestCase> GOOD_PRIVATE_KEY_CASES{
 
 
 static void testPrivateKeyExport() {
-	for (const NewTestCase &tc : GOOD_PRIVATE_KEY_CASES) {
+	for (const TestCase &tc : GOOD_PRIVATE_KEY_CASES) {
 		assert(std::strlen(tc.hexadecimal) == 64);
 		char actual[53];
 		Base58Check::privateKeyToBase58Check(Uint256(tc.hexadecimal), tc.version, actual);
@@ -464,7 +457,7 @@ static void testPrivateKeyExport() {
 
 
 static void testPrivateKeyImport() {
-	for (const NewTestCase &tc : GOOD_PRIVATE_KEY_CASES) {
+	for (const TestCase &tc : GOOD_PRIVATE_KEY_CASES) {
 		assert(std::strlen(tc.hexadecimal) == 64);
 		Uint256 privKey;
 		std::uint8_t version;
