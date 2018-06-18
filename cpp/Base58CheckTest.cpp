@@ -16,11 +16,13 @@
 #include "Base58Check.hpp"
 #include "Uint256.hpp"
 
+using std::uint8_t;
+
 
 /*---- Structures ----*/
 
 struct TestCase {
-	std::uint8_t version;
+	uint8_t version;
 	const char *hexadecimal;
 	const char *base58;
 };
@@ -224,8 +226,8 @@ static void testPublicAddressExport() {
 
 static void testPublicAddressImport() {
 	for (const TestCase &tc : GOOD_PUBLIC_ADDRESS_CASES) {
-		std::uint8_t pubAddr[Ripemd160::HASH_LEN];
-		std::uint8_t version;
+		uint8_t pubAddr[Ripemd160::HASH_LEN];
+		uint8_t version;
 		assert(Base58Check::pubkeyHashFromBase58Check(tc.base58, pubAddr, &version));
 		assert(version == tc.version);
 		Bytes expected(hexBytes(tc.hexadecimal));
@@ -299,8 +301,8 @@ static void testPublicAddressImport() {
 	};
 	
 	for (const char *tc : BAD_CASES) {
-		std::uint8_t pubAddr[Ripemd160::HASH_LEN];
-		std::uint8_t version;
+		uint8_t pubAddr[Ripemd160::HASH_LEN];
+		uint8_t version;
 		assert(!Base58Check::pubkeyHashFromBase58Check(tc, pubAddr, &version));
 		numTestCases++;
 	}
@@ -460,7 +462,7 @@ static void testPrivateKeyImport() {
 	for (const TestCase &tc : GOOD_PRIVATE_KEY_CASES) {
 		assert(std::strlen(tc.hexadecimal) == 64);
 		Uint256 privKey;
-		std::uint8_t version;
+		uint8_t version;
 		assert(Base58Check::privateKeyFromBase58Check(tc.base58, privKey, &version));
 		assert(version == tc.version);
 		assert(privKey == Uint256(tc.hexadecimal));
@@ -534,7 +536,7 @@ static void testPrivateKeyImport() {
 	
 	for (const char *tc : BAD_CASES) {
 		Uint256 privKey;
-		std::uint8_t version;
+		uint8_t version;
 		assert(!Base58Check::privateKeyFromBase58Check(tc, privKey, &version));
 		numTestCases++;
 	}
