@@ -230,6 +230,17 @@ static void testPublicAddressExport() {
 
 
 static void testPublicAddressImport() {
+	for (const NewTestCase &tc : GOOD_PUBLIC_ADDRESS_CASES) {
+		std::uint8_t pubAddr[Ripemd160::HASH_LEN];
+		std::uint8_t version;
+		assert(Base58Check::pubkeyHashFromBase58Check(tc.base58, pubAddr, &version));
+		assert(version == tc.version);
+		Bytes expected(hexBytes(tc.hexadecimal));
+		assert(expected.size() == 20);
+		assert(std::memcmp(pubAddr, expected.data(), sizeof(pubAddr)) == 0);
+		numTestCases++;
+	}
+	
 	const vector<TestCase> cases{
 		// Bad syntax or hash
 		{false, "0000000000000000000000000000000000000000", ""},
