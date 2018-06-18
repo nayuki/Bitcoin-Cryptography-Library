@@ -295,10 +295,14 @@ static void testPublicAddressImport() {
 		"BDCA9YesfN88ygKLwBomALW8H4cVTj1v3H86df24",
 		"78QdzrgQQn6njQjVHzaUe59eKrsXZgnvFZCz22Lj2",
 		// Valid Base58Check, but wrong number of leading zeros
-		"11sViufptRy2BWKL54okFNxr7n83RjZCpq",
-		"3mmURd46YqtraRiFDjWDoXSBWPSWGf64P",
-		"1117yja8pbc2eZZkiwtUXdiG7WV1YnnwmFqd",
-		"11111De3FJ1NEJjRU4ixKrwbrb5krBSjotKMtn",
+		"4oLvT2",
+		"111114oLvT2",
+		"111111111111111111114oLvT2",
+		"11111111111111111111114oLvT2",
+		"154U1hcS2LEpjS1RcimxCqD8b3U1Tq1",
+		"1111154U1hcS2LEpjS1RcimxCqD8b3U1Tq1",
+		"49xPJx8WDFfbwx6noKgUo9hrpAkYVtfh6",
+		"111111111149xPJx8WDFfbwx6noKgUo9hrpAkYVtfh6",
 	};
 	
 	for (const char *tc : BAD_CASES) {
