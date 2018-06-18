@@ -460,6 +460,16 @@ static void testPrivateKeyExport() {
 
 
 static void testPrivateKeyImport() {
+	for (const NewTestCase &tc : GOOD_PRIVATE_KEY_CASES) {
+		assert(std::strlen(tc.hexadecimal) == 64);
+		Uint256 privKey;
+		std::uint8_t version;
+		assert(Base58Check::privateKeyFromBase58Check(tc.base58, privKey, &version));
+		assert(version == tc.version);
+		assert(privKey == Uint256(tc.hexadecimal));
+		numTestCases++;
+	}
+	
 	const vector<TestCase> cases{
 		// Bad syntax or hash
 		{false, "0000000000000000000000000000000000000000000000000000000000000000", "KwDiBf"},
