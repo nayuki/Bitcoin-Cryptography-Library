@@ -64,13 +64,13 @@ void Sha512::getHash(const uint8_t msg[], size_t len, uint8_t hashResult[HASH_LE
 void Sha512::compress(uint64_t state[8], const uint8_t block[BLOCK_LEN]) {
 	// Message schedule
 	uint64_t schedule[NUM_ROUNDS] = {};
-	for (size_t j = 0; j < 128; j++)
-		schedule[j >> 3] |= static_cast<uint64_t>(block[j]) << ((7 - (j & 7)) << 3);
+	for (size_t i = 0; i < 128; i++)
+		schedule[i >> 3] |= static_cast<uint64_t>(block[i]) << ((7 - (i & 7)) << 3);
 	
-	for (int j = 16; j < NUM_ROUNDS; j++) {
-		schedule[j] = 0U + schedule[j - 16] + schedule[j - 7]
-			+ (rotr64(schedule[j - 15],  1) ^ rotr64(schedule[j - 15],  8) ^ (schedule[j - 15] >> 7))
-			+ (rotr64(schedule[j -  2], 19) ^ rotr64(schedule[j -  2], 61) ^ (schedule[j -  2] >> 6));
+	for (int i = 16; i < NUM_ROUNDS; i++) {
+		schedule[i] = 0U + schedule[i - 16] + schedule[i - 7]
+			+ (rotr64(schedule[i - 15],  1) ^ rotr64(schedule[i - 15],  8) ^ (schedule[i - 15] >> 7))
+			+ (rotr64(schedule[i -  2], 19) ^ rotr64(schedule[i -  2], 61) ^ (schedule[i -  2] >> 6));
 	}
 	
 	// The 80 rounds
@@ -82,8 +82,8 @@ void Sha512::compress(uint64_t state[8], const uint8_t block[BLOCK_LEN]) {
 	uint64_t f = state[5];
 	uint64_t g = state[6];
 	uint64_t h = state[7];
-	for (int j = 0; j < NUM_ROUNDS; j++) {
-		uint64_t t1 = 0U + h + (rotr64(e, 14) ^ rotr64(e, 18) ^ rotr64(e, 41)) + (g ^ (e & (f ^ g))) + ROUND_CONSTANTS[j] + schedule[j];
+	for (int i = 0; i < NUM_ROUNDS; i++) {
+		uint64_t t1 = 0U + h + (rotr64(e, 14) ^ rotr64(e, 18) ^ rotr64(e, 41)) + (g ^ (e & (f ^ g))) + ROUND_CONSTANTS[i] + schedule[i];
 		uint64_t t2 = 0U + (rotr64(a, 28) ^ rotr64(a, 34) ^ rotr64(a, 39)) + ((a & (b | c)) | (b & c));
 		h = g;
 		g = f;
