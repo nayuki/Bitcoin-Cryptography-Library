@@ -83,7 +83,7 @@ Sha256Hash Sha256::getHmac(const uint8_t key[], size_t keyLen, const uint8_t msg
 	for (int i = 0; i < BLOCK_LEN; i++)
 		tempKey[i] ^= 0x36;
 	const Sha256Hash innerHash = Sha256()
-		.append(tempKey, sizeof(tempKey) / sizeof(tempKey[0]))
+		.append(tempKey, BLOCK_LEN)
 		.append(msg, msgLen)
 		.getHash();
 	
@@ -91,8 +91,8 @@ Sha256Hash Sha256::getHmac(const uint8_t key[], size_t keyLen, const uint8_t msg
 	for (int i = 0; i < BLOCK_LEN; i++)
 		tempKey[i] ^= 0x36 ^ 0x5C;
 	return Sha256()
-		.append(tempKey, sizeof(tempKey) / sizeof(tempKey[0]))
-		.append(innerHash.value, sizeof(innerHash.value) / sizeof(innerHash.value[0]))
+		.append(tempKey, BLOCK_LEN)
+		.append(innerHash.value, Sha256Hash::HASH_LEN)
 		.getHash();
 }
 
