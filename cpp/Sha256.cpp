@@ -18,9 +18,7 @@ using std::size_t;
 
 
 Sha256Hash Sha256::getHash(const uint8_t msg[], size_t len) {
-	Sha256 hasher;
-	hasher.append(msg, len);
-	return hasher.getHash();
+	return Sha256().append(msg, len).getHash();
 }
 
 
@@ -45,18 +43,18 @@ Sha256Hash Sha256::getHmac(const uint8_t key[], size_t keyLen, const uint8_t msg
 	// Compute inner hash
 	for (int i = 0; i < BLOCK_LEN; i++)
 		tempKey[i] ^= 0x36;
-	Sha256 innerHasher;
-	innerHasher.append(tempKey, sizeof(tempKey) / sizeof(tempKey[0]));
-	innerHasher.append(msg, msgLen);
-	const Sha256Hash innerHash = innerHasher.getHash();
+	const Sha256Hash innerHash = Sha256()
+		.append(tempKey, sizeof(tempKey) / sizeof(tempKey[0]))
+		.append(msg, msgLen)
+		.getHash();
 	
 	// Compute outer hash
 	for (int i = 0; i < BLOCK_LEN; i++)
 		tempKey[i] ^= 0x36 ^ 0x5C;
-	Sha256 outerHasher;
-	outerHasher.append(tempKey, sizeof(tempKey) / sizeof(tempKey[0]));
-	outerHasher.append(innerHash.value, sizeof(innerHash.value) / sizeof(innerHash.value[0]));
-	return outerHasher.getHash();
+	return Sha256()
+		.append(tempKey, sizeof(tempKey) / sizeof(tempKey[0]))
+		.append(innerHash.value, sizeof(innerHash.value) / sizeof(innerHash.value[0]))
+		.getHash();
 }
 
 
@@ -117,7 +115,7 @@ Sha256::Sha256() :
 	bufferLen(0) {}
 
 
-void Sha256::append(const uint8_t bytes[], size_t len) {
+Sha256 &Sha256::append(const uint8_t bytes[], size_t len) {
 	assert(bytes != nullptr || len == 0);
 	for (size_t i = 0; i < len; i++) {
 		buffer[bufferLen] = bytes[i];
@@ -128,6 +126,7 @@ void Sha256::append(const uint8_t bytes[], size_t len) {
 		}
 	}
 	length += len;
+	return *this;
 }
 
 
