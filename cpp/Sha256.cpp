@@ -63,16 +63,12 @@ Sha256Hash Sha256::getHmac(const uint8_t key[], size_t keyLen, const uint8_t msg
 void Sha256::compress(uint32_t state[8], const uint8_t blocks[], size_t len) {
 	assert(state != nullptr && (blocks != nullptr || len == 0));
 	assert(len % BLOCK_LEN == 0);
-	uint32_t schedule[NUM_ROUNDS];
 	for (size_t i = 0; i < len; ) {
 		
 		// Message schedule
-		for (int j = 0; j < 16; j++, i += 4) {
-			schedule[j] = static_cast<uint32_t>(blocks[i + 0]) << 24
-			            | static_cast<uint32_t>(blocks[i + 1]) << 16
-			            | static_cast<uint32_t>(blocks[i + 2]) <<  8
-			            | static_cast<uint32_t>(blocks[i + 3]) <<  0;
-		}
+		uint32_t schedule[NUM_ROUNDS] = {};
+		for (size_t j = 0; j < 64; j++, i++)
+			schedule[j >> 2] |= static_cast<uint32_t>(blocks[i]) << ((3 - (i & 3)) << 3);
 		
 		for (int j = 16; j < NUM_ROUNDS; j++) {
 			schedule[j] = 0U + schedule[j - 16] + schedule[j - 7]
