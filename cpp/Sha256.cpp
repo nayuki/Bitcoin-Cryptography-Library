@@ -121,11 +121,9 @@ uint32_t Sha256::rotr32(uint32_t x, int i) {
 
 
 Sha256::Sha256() :
-		length(0),
-		buffer(),
-		bufferLen(0) {
-	std::memcpy(state, INITIAL_STATE, sizeof(state));
-}
+	length(0),
+	buffer(),
+	bufferLen(0) {}
 
 
 void Sha256::append(const uint8_t bytes[], size_t len) {
@@ -161,10 +159,6 @@ Sha256Hash Sha256::getHash() {
 
 
 // Static initializers
-const uint32_t Sha256::INITIAL_STATE[8] = {
-	UINT32_C(0x6A09E667), UINT32_C(0xBB67AE85), UINT32_C(0x3C6EF372), UINT32_C(0xA54FF53A),
-	UINT32_C(0x510E527F), UINT32_C(0x9B05688C), UINT32_C(0x1F83D9AB), UINT32_C(0x5BE0CD19),
-};
 const uint32_t Sha256::ROUND_CONSTANTS[NUM_ROUNDS] = {
 	UINT32_C(0x428A2F98), UINT32_C(0x71374491), UINT32_C(0xB5C0FBCF), UINT32_C(0xE9B5DBA5),
 	UINT32_C(0x3956C25B), UINT32_C(0x59F111F1), UINT32_C(0x923F82A4), UINT32_C(0xAB1C5ED5),

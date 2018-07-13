@@ -43,7 +43,10 @@ class Sha256 final {
 	
 	/*---- Stateful hasher fields and methods ----*/
 	
-	private: std::uint32_t state[8];
+	private: std::uint32_t state[8] = {
+		UINT32_C(0x6A09E667), UINT32_C(0xBB67AE85), UINT32_C(0x3C6EF372), UINT32_C(0xA54FF53A),
+		UINT32_C(0x510E527F), UINT32_C(0x9B05688C), UINT32_C(0x1F83D9AB), UINT32_C(0x5BE0CD19),
+	};
 	private: std::uint64_t length;
 	private: std::uint8_t buffer[BLOCK_LEN];
 	private: int bufferLen;
@@ -64,7 +67,6 @@ class Sha256 final {
 	
 	/*---- Class constants ----*/
 	
-	public: static const std::uint32_t INITIAL_STATE[8];
 	private: static const std::uint32_t ROUND_CONSTANTS[NUM_ROUNDS];
 	
 };
