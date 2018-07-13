@@ -14,7 +14,7 @@
 
 /* 
  * Computes the SHA-512 hash of a sequence of bytes. The hash value is 64 bytes long.
- * Provides just one static method, and an instantiable stateful hasher.
+ * Provides two static methods, and an instantiable stateful hasher.
  */
 class Sha512 final {
 	

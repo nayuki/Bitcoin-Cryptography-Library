@@ -105,7 +105,7 @@ class CurvePoint final {
 	
 	
 	// Serializes this point in compressed format (header byte, x-coordinate in big-endian).
-	// Constant-time with respect to this value.
+	// This point needs to be normalized before the method is called. Constant-time with respect to this value.
 	public: void toCompressedPoint(std::uint8_t output[33]) const;
 	
 	
