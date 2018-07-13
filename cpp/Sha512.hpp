@@ -14,13 +14,16 @@
 
 /* 
  * Computes the SHA-512 hash of a sequence of bytes. The hash value is 64 bytes long.
- * Provides just one static method.
+ * Provides just one static method, and an instantiable stateful hasher.
  */
 class Sha512 final {
+	
+	/*---- Scalar constants ----*/
 	
 	public: static constexpr int HASH_LEN = 64;
 	private: static constexpr int BLOCK_LEN = 128;
 	private: static constexpr int NUM_ROUNDS = 80;
+	
 	
 	
 	/*---- Instance members ----*/
@@ -46,20 +49,21 @@ class Sha512 final {
 	public: void getHash(std::uint8_t result[HASH_LEN]);
 	
 	
+	private: void compress();
+	
+	
 	
 	/*---- Static functions ----*/
 	
 	public: static void getHash(const std::uint8_t msg[], std::size_t len, std::uint8_t hashResult[HASH_LEN]);
 	
 	
-	private: void compress();
-	
-	
 	// Requires 1 <= i <= 63
 	private: static std::uint64_t rotr64(std::uint64_t x, int i);
 	
 	
-	/*---- Class constants ----*/
+	
+	/*---- Array constants ----*/
 	
 	private: static const std::uint64_t ROUND_CONSTANTS[NUM_ROUNDS];
 	

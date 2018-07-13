@@ -56,11 +56,6 @@ void Sha512::getHash(uint8_t result[HASH_LEN]) {
 }
 
 
-void Sha512::getHash(const uint8_t msg[], size_t len, uint8_t hashResult[HASH_LEN]) {
-	Sha512().append(msg, len).getHash(hashResult);
-}
-
-
 void Sha512::compress() {
 	// Message schedule
 	uint64_t schedule[NUM_ROUNDS] = {};
@@ -105,12 +100,16 @@ void Sha512::compress() {
 }
 
 
+void Sha512::getHash(const uint8_t msg[], size_t len, uint8_t hashResult[HASH_LEN]) {
+	Sha512().append(msg, len).getHash(hashResult);
+}
+
+
 uint64_t Sha512::rotr64(uint64_t x, int i) {
 	return ((0U + x) << (64 - i)) | (x >> i);
 }
 
 
-// Static initializers
 const uint64_t Sha512::ROUND_CONSTANTS[NUM_ROUNDS] = {
 	UINT64_C(0x428A2F98D728AE22), UINT64_C(0x7137449123EF65CD), UINT64_C(0xB5C0FBCFEC4D3B2F), UINT64_C(0xE9B5DBA58189DBBC),
 	UINT64_C(0x3956C25BF348B538), UINT64_C(0x59F111F1B605D019), UINT64_C(0x923F82A4AF194F9B), UINT64_C(0xAB1C5ED5DA6D8118),
