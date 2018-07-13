@@ -57,33 +57,7 @@ void Sha512::getHash(uint8_t result[HASH_LEN]) {
 
 
 void Sha512::getHash(const uint8_t msg[], size_t len, uint8_t hashResult[HASH_LEN]) {
-	// Compress whole message blocks
-	assert((msg != nullptr || len == 0) && hashResult != nullptr);
-	uint64_t state[8] = {
-		UINT64_C(0x6A09E667F3BCC908), UINT64_C(0xBB67AE8584CAA73B), UINT64_C(0x3C6EF372FE94F82B), UINT64_C(0xA54FF53A5F1D36F1),
-		UINT64_C(0x510E527FADE682D1), UINT64_C(0x9B05688C2B3E6C1F), UINT64_C(0x1F83D9ABFB41BD6B), UINT64_C(0x5BE0CD19137E2179)};
-	size_t off = len & ~static_cast<size_t>(BLOCK_LEN - 1);
-	compress(state, msg, off);
-	
-	// Final blocks, padding, and length
-	uint8_t block[BLOCK_LEN] = {};
-	Utils::copyBytes(block, &msg[off], len - off);
-	off = len & (BLOCK_LEN - 1);
-	block[off] = 0x80;
-	off++;
-	if (off + 16 > BLOCK_LEN) {
-		compress(state, block, BLOCK_LEN);
-		std::memset(block, 0, BLOCK_LEN);
-	}
-	block[BLOCK_LEN - 1] = static_cast<uint8_t>((len & 0x1FU) << 3);
-	len >>= 5;
-	for (int i = 1; i < 16; i++, len >>= 8)
-		block[BLOCK_LEN - 1 - i] = static_cast<uint8_t>(len);
-	compress(state, block, BLOCK_LEN);
-	
-	// Uint64 array to bytes in big endian
-	for (int i = 0; i < HASH_LEN; i++)
-		hashResult[i] = static_cast<uint8_t>(state[i >> 3] >> ((7 - (i & 7)) << 3));
+	Sha512().append(msg, len).getHash(hashResult);
 }
 
 
