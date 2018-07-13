@@ -17,6 +17,45 @@ using std::uint64_t;
 using std::size_t;
 
 
+Sha256::Sha256() :
+	length(0),
+	buffer(),
+	bufferLen(0) {}
+
+
+Sha256 &Sha256::append(const uint8_t bytes[], size_t len) {
+	assert(bytes != nullptr || len == 0);
+	for (size_t i = 0; i < len; i++) {
+		buffer[bufferLen] = bytes[i];
+		bufferLen++;
+		if (bufferLen == BLOCK_LEN) {
+			compress(state, buffer);
+			bufferLen = 0;
+		}
+	}
+	length += len;
+	return *this;
+}
+
+
+Sha256Hash Sha256::getHash() {
+	uint64_t bitLength = length << 3;
+	uint8_t temp = 0x80;
+	append(&temp, 1);
+	temp = 0x00;
+	while (bufferLen != 56)
+		append(&temp, 1);
+	for (int i = 0; i < 8; i++) {
+		temp = static_cast<uint8_t>(bitLength >> ((7 - i) << 3));
+		append(&temp, 1);
+	}
+	uint8_t result[Sha256Hash::HASH_LEN];
+	for (int i = 0; i < Sha256Hash::HASH_LEN; i++)
+		result[i] = static_cast<uint8_t>(state[i >> 2] >> ((3 - (i & 3)) << 3));
+	return Sha256Hash(result, Sha256Hash::HASH_LEN);
+}
+
+
 Sha256Hash Sha256::getHash(const uint8_t msg[], size_t len) {
 	return Sha256().append(msg, len).getHash();
 }
@@ -109,46 +148,6 @@ uint32_t Sha256::rotr32(uint32_t x, int i) {
 }
 
 
-Sha256::Sha256() :
-	length(0),
-	buffer(),
-	bufferLen(0) {}
-
-
-Sha256 &Sha256::append(const uint8_t bytes[], size_t len) {
-	assert(bytes != nullptr || len == 0);
-	for (size_t i = 0; i < len; i++) {
-		buffer[bufferLen] = bytes[i];
-		bufferLen++;
-		if (bufferLen == BLOCK_LEN) {
-			compress(state, buffer);
-			bufferLen = 0;
-		}
-	}
-	length += len;
-	return *this;
-}
-
-
-Sha256Hash Sha256::getHash() {
-	uint64_t bitLength = length << 3;
-	uint8_t temp = 0x80;
-	append(&temp, 1);
-	temp = 0x00;
-	while (bufferLen != 56)
-		append(&temp, 1);
-	for (int i = 0; i < 8; i++) {
-		temp = static_cast<uint8_t>(bitLength >> ((7 - i) << 3));
-		append(&temp, 1);
-	}
-	uint8_t result[Sha256Hash::HASH_LEN];
-	for (int i = 0; i < Sha256Hash::HASH_LEN; i++)
-		result[i] = static_cast<uint8_t>(state[i >> 2] >> ((3 - (i & 3)) << 3));
-	return Sha256Hash(result, Sha256Hash::HASH_LEN);
-}
-
-
-// Static initializers
 const uint32_t Sha256::ROUND_CONSTANTS[NUM_ROUNDS] = {
 	UINT32_C(0x428A2F98), UINT32_C(0x71374491), UINT32_C(0xB5C0FBCF), UINT32_C(0xE9B5DBA5),
 	UINT32_C(0x3956C25B), UINT32_C(0x59F111F1), UINT32_C(0x923F82A4), UINT32_C(0xAB1C5ED5),
