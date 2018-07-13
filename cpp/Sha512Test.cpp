@@ -16,13 +16,17 @@
 #include "Sha512.hpp"
 
 
-int main() {
+// Global variables
+static int numTestCases = 0;
+
+
+static void testSingleHash() {
+	// Single SHA-256 hash
 	struct TestCase {
 		bool matches;
 		const char *expectedHash;
 		Bytes message;
 	};
-	// ASCII test vectors
 	const vector<TestCase> cases{
 		// Standard test vectors
 		{true, "CF83E1357EEFB8BDF1542850D66D8007D620E4050B5715DC83F4A921D36CE9CE47D0D13C5D85F2B0FF8318D2877EEC2F63B931BD47417A81A538327AF927DA3E", asciiBytes("")},
@@ -312,8 +316,6 @@ int main() {
 		{true, "4F389F64F0760C008653F394E2DD2BCCDF4C846E44B68D21709790AC663F7C359D60C5203F43822089CAED383FCE1840C9C7E1575B8418AD1239C999C57D48B0", hexBytes("D9DE652C973E96EE61FD033BE79FF0")},
 		{true, "561BD9D50427B770A24929B7393E0F9D716B9D65736D3335D1C0D010C99E75A5A9B92FFC0BD9943ED819BD4A9AD8B6E5FF2B8F34AB585353307D1D21017DC6A0", hexBytes("E65BA5ED8AE6F5E73C97E167F8D99CE5")},
 	};
-	
-	int numTestCases = 0;
 	for (const TestCase &tc : cases) {
 		Bytes expectHash = hexBytes(tc.expectedHash);
 		assert(expectHash.size() == Sha512::HASH_LEN);
@@ -322,6 +324,11 @@ int main() {
 		assert((std::memcmp(actualHash, expectHash.data(), Sha512::HASH_LEN) == 0) == tc.matches);
 		numTestCases++;
 	}
+}
+
+
+int main() {
+	testSingleHash();
 	std::printf("All %d test cases passed\n", numTestCases);
 	return EXIT_SUCCESS;
 }
