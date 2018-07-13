@@ -38,7 +38,7 @@ Sha256Hash Sha256::getHmac(const uint8_t key[], size_t keyLen, const uint8_t msg
 	if (keyLen <= BLOCK_LEN)
 		Utils::copyBytes(tempKey, key, keyLen);
 	else {
-		const Sha256Hash keyHash(getHash(key, keyLen));
+		const Sha256Hash keyHash = getHash(key, keyLen);
 		std::memcpy(tempKey, keyHash.value, Sha256Hash::HASH_LEN);
 	}
 	
@@ -48,7 +48,7 @@ Sha256Hash Sha256::getHmac(const uint8_t key[], size_t keyLen, const uint8_t msg
 	uint32_t state[8];
 	std::memcpy(state, INITIAL_STATE, sizeof(state));
 	compress(state, tempKey, BLOCK_LEN);
-	const Sha256Hash innerHash(getHash(msg, msgLen, state, BLOCK_LEN));
+	const Sha256Hash innerHash = getHash(msg, msgLen, state, BLOCK_LEN);
 	
 	// Compute outer hash
 	for (int i = 0; i < BLOCK_LEN; i++)
