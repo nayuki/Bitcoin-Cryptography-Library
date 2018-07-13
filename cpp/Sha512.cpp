@@ -28,7 +28,7 @@ Sha512 &Sha512::append(const uint8_t bytes[], size_t len) {
 		buffer[bufferLen] = bytes[i];
 		bufferLen++;
 		if (bufferLen == BLOCK_LEN) {
-			compress(state, buffer, BLOCK_LEN);
+			compress(state, buffer);
 			bufferLen = 0;
 		}
 	}
@@ -61,51 +61,47 @@ void Sha512::getHash(const uint8_t msg[], size_t len, uint8_t hashResult[HASH_LE
 }
 
 
-void Sha512::compress(uint64_t state[8], const uint8_t blocks[], size_t len) {
-	assert(len % BLOCK_LEN == 0);
-	for (size_t i = 0; i < len; ) {
-		
-		// Message schedule
-		uint64_t schedule[NUM_ROUNDS] = {};
-		for (size_t j = 0; j < 128; j++, i++)
-			schedule[j >> 3] |= static_cast<uint64_t>(blocks[i]) << ((7 - (i & 7)) << 3);
-		
-		for (int j = 16; j < NUM_ROUNDS; j++) {
-			schedule[j] = 0U + schedule[j - 16] + schedule[j - 7]
-				+ (rotr64(schedule[j - 15],  1) ^ rotr64(schedule[j - 15],  8) ^ (schedule[j - 15] >> 7))
-				+ (rotr64(schedule[j -  2], 19) ^ rotr64(schedule[j -  2], 61) ^ (schedule[j -  2] >> 6));
-		}
-		
-		// The 80 rounds
-		uint64_t a = state[0];
-		uint64_t b = state[1];
-		uint64_t c = state[2];
-		uint64_t d = state[3];
-		uint64_t e = state[4];
-		uint64_t f = state[5];
-		uint64_t g = state[6];
-		uint64_t h = state[7];
-		for (int j = 0; j < NUM_ROUNDS; j++) {
-			uint64_t t1 = 0U + h + (rotr64(e, 14) ^ rotr64(e, 18) ^ rotr64(e, 41)) + (g ^ (e & (f ^ g))) + ROUND_CONSTANTS[j] + schedule[j];
-			uint64_t t2 = 0U + (rotr64(a, 28) ^ rotr64(a, 34) ^ rotr64(a, 39)) + ((a & (b | c)) | (b & c));
-			h = g;
-			g = f;
-			f = e;
-			e = 0U + d + t1;
-			d = c;
-			c = b;
-			b = a;
-			a = 0U + t1 + t2;
-		}
-		state[0] = 0U + state[0] + a;
-		state[1] = 0U + state[1] + b;
-		state[2] = 0U + state[2] + c;
-		state[3] = 0U + state[3] + d;
-		state[4] = 0U + state[4] + e;
-		state[5] = 0U + state[5] + f;
-		state[6] = 0U + state[6] + g;
-		state[7] = 0U + state[7] + h;
+void Sha512::compress(uint64_t state[8], const uint8_t block[BLOCK_LEN]) {
+	// Message schedule
+	uint64_t schedule[NUM_ROUNDS] = {};
+	for (size_t j = 0; j < 128; j++)
+		schedule[j >> 3] |= static_cast<uint64_t>(block[j]) << ((7 - (j & 7)) << 3);
+	
+	for (int j = 16; j < NUM_ROUNDS; j++) {
+		schedule[j] = 0U + schedule[j - 16] + schedule[j - 7]
+			+ (rotr64(schedule[j - 15],  1) ^ rotr64(schedule[j - 15],  8) ^ (schedule[j - 15] >> 7))
+			+ (rotr64(schedule[j -  2], 19) ^ rotr64(schedule[j -  2], 61) ^ (schedule[j -  2] >> 6));
 	}
+	
+	// The 80 rounds
+	uint64_t a = state[0];
+	uint64_t b = state[1];
+	uint64_t c = state[2];
+	uint64_t d = state[3];
+	uint64_t e = state[4];
+	uint64_t f = state[5];
+	uint64_t g = state[6];
+	uint64_t h = state[7];
+	for (int j = 0; j < NUM_ROUNDS; j++) {
+		uint64_t t1 = 0U + h + (rotr64(e, 14) ^ rotr64(e, 18) ^ rotr64(e, 41)) + (g ^ (e & (f ^ g))) + ROUND_CONSTANTS[j] + schedule[j];
+		uint64_t t2 = 0U + (rotr64(a, 28) ^ rotr64(a, 34) ^ rotr64(a, 39)) + ((a & (b | c)) | (b & c));
+		h = g;
+		g = f;
+		f = e;
+		e = 0U + d + t1;
+		d = c;
+		c = b;
+		b = a;
+		a = 0U + t1 + t2;
+	}
+	state[0] = 0U + state[0] + a;
+	state[1] = 0U + state[1] + b;
+	state[2] = 0U + state[2] + c;
+	state[3] = 0U + state[3] + d;
+	state[4] = 0U + state[4] + e;
+	state[5] = 0U + state[5] + f;
+	state[6] = 0U + state[6] + g;
+	state[7] = 0U + state[7] + h;
 }
 
 
