@@ -105,6 +105,35 @@ void Sha512::getHash(const uint8_t msg[], size_t len, uint8_t hashResult[HASH_LE
 }
 
 
+void Sha512::getHmac(const uint8_t key[], size_t keyLen, const uint8_t msg[], size_t msgLen, uint8_t result[HASH_LEN]) {
+	assert(key != nullptr || keyLen == 0);
+	
+	// Preprocess key
+	uint8_t tempKey[BLOCK_LEN] = {};
+	if (keyLen <= BLOCK_LEN)
+		Utils::copyBytes(tempKey, key, keyLen);
+	else
+		getHash(key, keyLen, tempKey);
+	
+	// Compute inner hash
+	for (int i = 0; i < BLOCK_LEN; i++)
+		tempKey[i] ^= 0x36;
+	uint8_t innerHash[HASH_LEN] = {};
+	Sha512()
+		.append(tempKey, BLOCK_LEN)
+		.append(msg, msgLen)
+		.getHash(innerHash);
+	
+	// Compute outer hash
+	for (int i = 0; i < BLOCK_LEN; i++)
+		tempKey[i] ^= 0x36 ^ 0x5C;
+	Sha512()
+		.append(tempKey, BLOCK_LEN)
+		.append(innerHash, HASH_LEN)
+		.getHash(result);
+}
+
+
 uint64_t Sha512::rotr64(uint64_t x, int i) {
 	return ((0U + x) << (64 - i)) | (x >> i);
 }
