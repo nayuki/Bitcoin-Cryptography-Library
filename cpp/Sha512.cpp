@@ -16,6 +16,46 @@ using std::uint64_t;
 using std::size_t;
 
 
+Sha512::Sha512() :
+	length(0),
+	buffer(),
+	bufferLen(0) {}
+
+
+Sha512 &Sha512::append(const uint8_t bytes[], size_t len) {
+	assert(bytes != nullptr || len == 0);
+	for (size_t i = 0; i < len; i++) {
+		buffer[bufferLen] = bytes[i];
+		bufferLen++;
+		if (bufferLen == BLOCK_LEN) {
+			compress(state, buffer, BLOCK_LEN);
+			bufferLen = 0;
+		}
+	}
+	length += len;
+	return *this;
+}
+
+
+void Sha512::getHash(uint8_t result[HASH_LEN]) {
+	assert(result != nullptr);
+	uint64_t bitLength = length << 3;
+	uint8_t temp = 0x80;
+	append(&temp, 1);
+	temp = 0x00;
+	while (bufferLen != 112)
+		append(&temp, 1);
+	for (int i = 0; i < 8; i++)
+		append(&temp, 1);
+	for (int i = 0; i < 8; i++) {
+		temp = static_cast<uint8_t>(bitLength >> ((7 - i) << 3));
+		append(&temp, 1);
+	}
+	for (int i = 0; i < HASH_LEN; i++)
+		result[i] = static_cast<uint8_t>(state[i >> 3] >> ((7 - (i & 7)) << 3));
+}
+
+
 void Sha512::getHash(const uint8_t msg[], size_t len, uint8_t hashResult[HASH_LEN]) {
 	// Compress whole message blocks
 	assert((msg != nullptr || len == 0) && hashResult != nullptr);
@@ -98,9 +138,6 @@ void Sha512::compress(uint64_t state[8], const uint8_t blocks[], size_t len) {
 uint64_t Sha512::rotr64(uint64_t x, int i) {
 	return ((0U + x) << (64 - i)) | (x >> i);
 }
-
-
-Sha512::Sha512() {}
 
 
 // Static initializers
