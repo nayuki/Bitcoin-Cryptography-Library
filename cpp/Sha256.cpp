@@ -19,7 +19,9 @@ using std::size_t;
 
 Sha256Hash Sha256::getHash(const uint8_t msg[], size_t len) {
 	assert(msg != nullptr || len == 0);
-	return getHash(msg, len, INITIAL_STATE, 0);
+	Sha256 hasher;
+	hasher.append(msg, len);
+	return hasher.getHash();
 }
 
 
@@ -45,49 +47,18 @@ Sha256Hash Sha256::getHmac(const uint8_t key[], size_t keyLen, const uint8_t msg
 	// Compute inner hash
 	for (int i = 0; i < BLOCK_LEN; i++)
 		tempKey[i] ^= 0x36;
-	uint32_t state[8];
-	std::memcpy(state, INITIAL_STATE, sizeof(state));
-	compress(state, tempKey, BLOCK_LEN);
-	const Sha256Hash innerHash = getHash(msg, msgLen, state, BLOCK_LEN);
+	Sha256 innerHasher;
+	innerHasher.append(tempKey, sizeof(tempKey) / sizeof(tempKey[0]));
+	innerHasher.append(msg, msgLen);
+	const Sha256Hash innerHash = innerHasher.getHash();
 	
 	// Compute outer hash
 	for (int i = 0; i < BLOCK_LEN; i++)
 		tempKey[i] ^= 0x36 ^ 0x5C;
-	std::memcpy(state, INITIAL_STATE, sizeof(state));
-	compress(state, tempKey, BLOCK_LEN);
-	return getHash(innerHash.value, Sha256Hash::HASH_LEN, state, BLOCK_LEN);
-}
-
-
-Sha256Hash Sha256::getHash(const uint8_t msg[], size_t len, const uint32_t initState[8], size_t prefixLen) {
-	// Compress whole message blocks
-	uint32_t state[8];
-	std::memcpy(state, initState, sizeof(state));
-	size_t off = len & ~static_cast<size_t>(BLOCK_LEN - 1);
-	compress(state, msg, off);
-	
-	// Final blocks, padding, and length
-	uint8_t block[BLOCK_LEN] = {};
-	Utils::copyBytes(block, &msg[off], len - off);
-	off = len & (BLOCK_LEN - 1);
-	block[off] = 0x80;
-	off++;
-	if (off + 8 > BLOCK_LEN) {
-		compress(state, block, BLOCK_LEN);
-		std::memset(block, 0, BLOCK_LEN);
-	}
-	len += prefixLen;
-	block[BLOCK_LEN - 1] = static_cast<uint8_t>((len & 0x1FU) << 3);
-	len >>= 5;
-	for (int i = 1; i < 8; i++, len >>= 8)
-		block[BLOCK_LEN - 1 - i] = static_cast<uint8_t>(len);
-	compress(state, block, BLOCK_LEN);
-	
-	// Uint32 array to bytes in big endian
-	uint8_t result[Sha256Hash::HASH_LEN];
-	for (int i = 0; i < Sha256Hash::HASH_LEN; i++)
-		result[i] = static_cast<uint8_t>(state[i >> 2] >> ((3 - (i & 3)) << 3));
-	return Sha256Hash(result, Sha256Hash::HASH_LEN);
+	Sha256 outerHasher;
+	outerHasher.append(tempKey, sizeof(tempKey) / sizeof(tempKey[0]));
+	outerHasher.append(innerHash.value, sizeof(innerHash.value) / sizeof(innerHash.value[0]));
+	return outerHasher.getHash();
 }
 
 

@@ -34,9 +34,6 @@ class Sha256 final {
 	public: static Sha256Hash getHmac(const std::uint8_t key[], std::size_t keyLen, const std::uint8_t msg[], std::size_t msgLen);
 	
 	
-	private: static Sha256Hash getHash(const std::uint8_t msg[], std::size_t len, const std::uint32_t initState[8], std::size_t prefixLen);
-	
-	
 	public: static void compress(std::uint32_t state[8], const std::uint8_t blocks[], std::size_t len);
 	
 	// Requires 1 <= i <= 31
