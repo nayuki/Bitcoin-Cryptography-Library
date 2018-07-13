@@ -10,6 +10,7 @@
 
 #include <cstddef>
 #include <cstdint>
+#include "ExtendedPrivateKey.hpp"
 #include "Ripemd160.hpp"
 #include "Uint256.hpp"
 
@@ -29,6 +30,9 @@ class Base58Check final {
 	// The outStr array must have length >= 53 (including null terminator).
 	// The output text length is between 38 and 52 characters, inclusive. Not constant-time.
 	public: static void privateKeyToBase58Check(const Uint256 &privKey, std::uint8_t version, char outStr[53]);
+	
+	
+	public: static void extendedPrivateKeyToBase58Check(const ExtendedPrivateKey &key, char outStr[112]);
 	
 	
 	// Parses the given public address string. If the syntax and check digits are correct, then the
