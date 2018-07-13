@@ -52,7 +52,8 @@ class Sha512 final {
 	public: static void getHash(const std::uint8_t msg[], std::size_t len, std::uint8_t hashResult[HASH_LEN]);
 	
 	
-	private: static void compress(std::uint64_t state[8], const std::uint8_t block[BLOCK_LEN]);
+	private: void compress();
+	
 	
 	// Requires 1 <= i <= 63
 	private: static std::uint64_t rotr64(std::uint64_t x, int i);

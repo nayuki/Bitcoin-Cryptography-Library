@@ -28,7 +28,7 @@ Sha512 &Sha512::append(const uint8_t bytes[], size_t len) {
 		buffer[bufferLen] = bytes[i];
 		bufferLen++;
 		if (bufferLen == BLOCK_LEN) {
-			compress(state, buffer);
+			compress();
 			bufferLen = 0;
 		}
 	}
@@ -61,11 +61,11 @@ void Sha512::getHash(const uint8_t msg[], size_t len, uint8_t hashResult[HASH_LE
 }
 
 
-void Sha512::compress(uint64_t state[8], const uint8_t block[BLOCK_LEN]) {
+void Sha512::compress() {
 	// Message schedule
 	uint64_t schedule[NUM_ROUNDS] = {};
 	for (size_t i = 0; i < 128; i++)
-		schedule[i >> 3] |= static_cast<uint64_t>(block[i]) << ((7 - (i & 7)) << 3);
+		schedule[i >> 3] |= static_cast<uint64_t>(buffer[i]) << ((7 - (i & 7)) << 3);
 	
 	for (int i = 16; i < NUM_ROUNDS; i++) {
 		schedule[i] = 0U + schedule[i - 16] + schedule[i - 7]
