@@ -18,7 +18,6 @@ using std::size_t;
 
 
 Sha256Hash Sha256::getHash(const uint8_t msg[], size_t len) {
-	assert(msg != nullptr || len == 0);
 	Sha256 hasher;
 	hasher.append(msg, len);
 	return hasher.getHash();
@@ -26,14 +25,13 @@ Sha256Hash Sha256::getHash(const uint8_t msg[], size_t len) {
 
 
 Sha256Hash Sha256::getDoubleHash(const uint8_t msg[], size_t len) {
-	assert(msg != nullptr || len == 0);
 	const Sha256Hash innerHash = getHash(msg, len);
 	return getHash(innerHash.value, Sha256Hash::HASH_LEN);
 }
 
 
 Sha256Hash Sha256::getHmac(const uint8_t key[], size_t keyLen, const uint8_t msg[], size_t msgLen) {
-	assert((key != nullptr || keyLen == 0) && (msg != nullptr || msgLen == 0));
+	assert(key != nullptr || keyLen == 0);
 	
 	// Preprocess key
 	uint8_t tempKey[BLOCK_LEN] = {};
