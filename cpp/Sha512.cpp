@@ -59,7 +59,7 @@ void Sha512::getHash(uint8_t result[HASH_LEN]) {
 void Sha512::compress() {
 	// Message schedule
 	uint64_t schedule[NUM_ROUNDS] = {};
-	for (size_t i = 0; i < 128; i++)
+	for (int i = 0; i < 128; i++)
 		schedule[i >> 3] |= static_cast<uint64_t>(buffer[i]) << ((7 - (i & 7)) << 3);
 	
 	for (int i = 16; i < NUM_ROUNDS; i++) {

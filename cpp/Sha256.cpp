@@ -102,7 +102,7 @@ void Sha256::compress(uint32_t state[8], const uint8_t block[BLOCK_LEN]) {
 	
 	// Message schedule
 	uint32_t schedule[NUM_ROUNDS] = {};
-	for (size_t i = 0; i < 64; i++)
+	for (int i = 0; i < 64; i++)
 		schedule[i >> 2] |= static_cast<uint32_t>(block[i]) << ((3 - (i & 3)) << 3);
 	
 	for (int i = 16; i < NUM_ROUNDS; i++) {
