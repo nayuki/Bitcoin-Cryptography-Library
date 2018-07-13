@@ -60,52 +60,49 @@ Sha256Hash Sha256::getHmac(const uint8_t key[], size_t keyLen, const uint8_t msg
 }
 
 
-void Sha256::compress(uint32_t state[8], const uint8_t blocks[], size_t len) {
-	assert(state != nullptr && (blocks != nullptr || len == 0));
-	assert(len % BLOCK_LEN == 0);
-	for (size_t i = 0; i < len; ) {
-		
-		// Message schedule
-		uint32_t schedule[NUM_ROUNDS] = {};
-		for (size_t j = 0; j < 64; j++, i++)
-			schedule[j >> 2] |= static_cast<uint32_t>(blocks[i]) << ((3 - (i & 3)) << 3);
-		
-		for (int j = 16; j < NUM_ROUNDS; j++) {
-			schedule[j] = 0U + schedule[j - 16] + schedule[j - 7]
-				+ (rotr32(schedule[j - 15],  7) ^ rotr32(schedule[j - 15], 18) ^ (schedule[j - 15] >>  3))
-				+ (rotr32(schedule[j -  2], 17) ^ rotr32(schedule[j -  2], 19) ^ (schedule[j -  2] >> 10));
-		}
-		
-		// The 64 rounds
-		uint32_t a = state[0];
-		uint32_t b = state[1];
-		uint32_t c = state[2];
-		uint32_t d = state[3];
-		uint32_t e = state[4];
-		uint32_t f = state[5];
-		uint32_t g = state[6];
-		uint32_t h = state[7];
-		for (int j = 0; j < NUM_ROUNDS; j++) {
-			uint32_t t1 = 0U + h + (rotr32(e, 6) ^ rotr32(e, 11) ^ rotr32(e, 25)) + (g ^ (e & (f ^ g))) + ROUND_CONSTANTS[j] + schedule[j];
-			uint32_t t2 = 0U + (rotr32(a, 2) ^ rotr32(a, 13) ^ rotr32(a, 22)) + ((a & (b | c)) | (b & c));
-			h = g;
-			g = f;
-			f = e;
-			e = 0U + d + t1;
-			d = c;
-			c = b;
-			b = a;
-			a = 0U + t1 + t2;
-		}
-		state[0] = 0U + state[0] + a;
-		state[1] = 0U + state[1] + b;
-		state[2] = 0U + state[2] + c;
-		state[3] = 0U + state[3] + d;
-		state[4] = 0U + state[4] + e;
-		state[5] = 0U + state[5] + f;
-		state[6] = 0U + state[6] + g;
-		state[7] = 0U + state[7] + h;
+void Sha256::compress(uint32_t state[8], const uint8_t block[BLOCK_LEN]) {
+	assert(state != nullptr && block != nullptr);
+	
+	// Message schedule
+	uint32_t schedule[NUM_ROUNDS] = {};
+	for (size_t j = 0; j < 64; j++)
+		schedule[j >> 2] |= static_cast<uint32_t>(block[j]) << ((3 - (j & 3)) << 3);
+	
+	for (int j = 16; j < NUM_ROUNDS; j++) {
+		schedule[j] = 0U + schedule[j - 16] + schedule[j - 7]
+			+ (rotr32(schedule[j - 15],  7) ^ rotr32(schedule[j - 15], 18) ^ (schedule[j - 15] >>  3))
+			+ (rotr32(schedule[j -  2], 17) ^ rotr32(schedule[j -  2], 19) ^ (schedule[j -  2] >> 10));
 	}
+	
+	// The 64 rounds
+	uint32_t a = state[0];
+	uint32_t b = state[1];
+	uint32_t c = state[2];
+	uint32_t d = state[3];
+	uint32_t e = state[4];
+	uint32_t f = state[5];
+	uint32_t g = state[6];
+	uint32_t h = state[7];
+	for (int j = 0; j < NUM_ROUNDS; j++) {
+		uint32_t t1 = 0U + h + (rotr32(e, 6) ^ rotr32(e, 11) ^ rotr32(e, 25)) + (g ^ (e & (f ^ g))) + ROUND_CONSTANTS[j] + schedule[j];
+		uint32_t t2 = 0U + (rotr32(a, 2) ^ rotr32(a, 13) ^ rotr32(a, 22)) + ((a & (b | c)) | (b & c));
+		h = g;
+		g = f;
+		f = e;
+		e = 0U + d + t1;
+		d = c;
+		c = b;
+		b = a;
+		a = 0U + t1 + t2;
+	}
+	state[0] = 0U + state[0] + a;
+	state[1] = 0U + state[1] + b;
+	state[2] = 0U + state[2] + c;
+	state[3] = 0U + state[3] + d;
+	state[4] = 0U + state[4] + e;
+	state[5] = 0U + state[5] + f;
+	state[6] = 0U + state[6] + g;
+	state[7] = 0U + state[7] + h;
 }
 
 
@@ -126,7 +123,7 @@ void Sha256::append(const uint8_t bytes[], size_t len) {
 		buffer[bufferLen] = bytes[i];
 		bufferLen++;
 		if (bufferLen == BLOCK_LEN) {
-			compress(state, buffer, BLOCK_LEN);
+			compress(state, buffer);
 			bufferLen = 0;
 		}
 	}
