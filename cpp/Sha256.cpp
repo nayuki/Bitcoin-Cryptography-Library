@@ -65,13 +65,13 @@ void Sha256::compress(uint32_t state[8], const uint8_t block[BLOCK_LEN]) {
 	
 	// Message schedule
 	uint32_t schedule[NUM_ROUNDS] = {};
-	for (size_t j = 0; j < 64; j++)
-		schedule[j >> 2] |= static_cast<uint32_t>(block[j]) << ((3 - (j & 3)) << 3);
+	for (size_t i = 0; i < 64; i++)
+		schedule[i >> 2] |= static_cast<uint32_t>(block[i]) << ((3 - (i & 3)) << 3);
 	
-	for (int j = 16; j < NUM_ROUNDS; j++) {
-		schedule[j] = 0U + schedule[j - 16] + schedule[j - 7]
-			+ (rotr32(schedule[j - 15],  7) ^ rotr32(schedule[j - 15], 18) ^ (schedule[j - 15] >>  3))
-			+ (rotr32(schedule[j -  2], 17) ^ rotr32(schedule[j -  2], 19) ^ (schedule[j -  2] >> 10));
+	for (int i = 16; i < NUM_ROUNDS; i++) {
+		schedule[i] = 0U + schedule[i - 16] + schedule[i - 7]
+			+ (rotr32(schedule[i - 15],  7) ^ rotr32(schedule[i - 15], 18) ^ (schedule[i - 15] >>  3))
+			+ (rotr32(schedule[i -  2], 17) ^ rotr32(schedule[i -  2], 19) ^ (schedule[i -  2] >> 10));
 	}
 	
 	// The 64 rounds
@@ -83,8 +83,8 @@ void Sha256::compress(uint32_t state[8], const uint8_t block[BLOCK_LEN]) {
 	uint32_t f = state[5];
 	uint32_t g = state[6];
 	uint32_t h = state[7];
-	for (int j = 0; j < NUM_ROUNDS; j++) {
-		uint32_t t1 = 0U + h + (rotr32(e, 6) ^ rotr32(e, 11) ^ rotr32(e, 25)) + (g ^ (e & (f ^ g))) + ROUND_CONSTANTS[j] + schedule[j];
+	for (int i = 0; i < NUM_ROUNDS; i++) {
+		uint32_t t1 = 0U + h + (rotr32(e, 6) ^ rotr32(e, 11) ^ rotr32(e, 25)) + (g ^ (e & (f ^ g))) + ROUND_CONSTANTS[i] + schedule[i];
 		uint32_t t2 = 0U + (rotr32(a, 2) ^ rotr32(a, 13) ^ rotr32(a, 22)) + ((a & (b | c)) | (b & c));
 		h = g;
 		g = f;
