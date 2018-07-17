@@ -32,6 +32,9 @@ class Base58Check final {
 	public: static void privateKeyToBase58Check(const Uint256 &privKey, std::uint8_t version, char outStr[53]);
 	
 	
+	// Exports the given extended private key with the Bitcoin header and version prefix byte.
+	// The outStr array must have length >= 112 (including null terminator).
+	// The output text length is always 111 characters. Not constant-time.
 	public: static void extendedPrivateKeyToBase58Check(const ExtendedPrivateKey &key, char outStr[112]);
 	
 	
@@ -48,6 +51,9 @@ class Base58Check final {
 	public: static bool privateKeyFromBase58Check(const char wifStr[53], Uint256 &outPrivKey, std::uint8_t *version);
 	
 	
+	// Parses the given extended private key string. If the syntax and check digits are correct,
+	// then the extended private key object is set to the decoded value, and true is returned.
+	// Otherwise the object is unchanged, and false is returned. Not constant-time.
 	public: static bool extendedPrivateKeyFromBase58Check(const char xprvStr[112], ExtendedPrivateKey &outKey);
 	
 	
