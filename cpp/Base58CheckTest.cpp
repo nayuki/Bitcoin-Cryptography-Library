@@ -583,12 +583,29 @@ static void testExtendedPrivateKeyExport() {
 }
 
 
+static void testExtendedPrivateKeyImport() {
+	for (const ExtendedCase &tc : EXTENDED_PRIVATE_KEY_CASES) {
+		ExtendedPrivateKey actual;
+		assert(Base58Check::extendedPrivateKeyFromBase58Check(tc.base58, actual));
+		ExtendedPrivateKey expect(Uint256(tc.privateKey), hexBytes(tc.chainCode).data(),
+			tc.depth, tc.index, hexBytes(tc.parentPubkeyHash).data());
+		assert(actual.privateKey == expect.privateKey);
+		assert(std::memcmp(actual.chainCode, expect.chainCode, sizeof(actual.chainCode)) == 0);
+		assert(actual.depth == expect.depth);
+		assert(actual.index == expect.index);
+		assert(std::memcmp(actual.parentPubkeyHash, expect.parentPubkeyHash, sizeof(actual.parentPubkeyHash)) == 0);
+		numTestCases++;
+	}
+}
+
+
 int main() {
 	testPublicAddressExport();
 	testPublicAddressImport();
 	testPrivateKeyExport();
 	testPrivateKeyImport();
 	testExtendedPrivateKeyExport();
+	testExtendedPrivateKeyImport();
 	std::printf("All %d test cases passed\n", numTestCases);
 	return EXIT_SUCCESS;
 }

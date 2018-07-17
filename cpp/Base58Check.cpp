@@ -14,6 +14,7 @@
 #include "Utils.hpp"
 
 using std::uint8_t;
+using std::uint32_t;
 using std::size_t;
 
 
@@ -173,6 +174,41 @@ bool Base58Check::privateKeyFromBase58Check(const char wifStr[53], Uint256 &outP
 	outPrivKey = Uint256(&decoded[1]);
 	if (version != nullptr)
 		*version = decoded[0];
+	return true;
+}
+
+
+bool Base58Check::extendedPrivateKeyFromBase58Check(const char xprvStr[112], ExtendedPrivateKey &outKey) {
+	// Preliminary checks
+	assert(xprvStr != nullptr);
+	if (std::strlen(xprvStr) != 111)
+		return false;
+	
+	// Perform Base58 decoding
+	uint8_t decoded[4 + 1 + 4 + 4 + 32 + 1 + 32 + 4];
+	if (!base58CheckToBytes(xprvStr, decoded, sizeof(decoded) / sizeof(decoded[0])))
+		return false;
+	
+	// Load fields
+	uint8_t depth = decoded[4];
+	const uint8_t *parentPubkeyHash = &decoded[5];
+	uint32_t index = static_cast<uint32_t>(decoded[ 9]) << 24
+	               | static_cast<uint32_t>(decoded[10]) << 16
+	               | static_cast<uint32_t>(decoded[11]) <<  8
+	               | static_cast<uint32_t>(decoded[12]) <<  0;
+	const uint8_t *chainCode = &decoded[13];
+	Uint256 privateKey(&decoded[46]);
+	
+	// Check format
+	if (decoded[0] != 0x04 || decoded[1] != 0x88 || decoded[2] != 0xAD || decoded[3] != 0xE4)  // Header for Bitcoin
+		return false;
+	if (decoded[45] != 0)  // Version byte for Bitcoin
+		return false;
+	if (privateKey == Uint256::ZERO || privateKey >= CurvePoint::ORDER)
+		return false;
+	
+	// Successfully set the value
+	outKey = ExtendedPrivateKey(privateKey, chainCode, depth, index, parentPubkeyHash);
 	return true;
 }
 
