@@ -16,9 +16,11 @@
 
 
 /* 
- * Converts a pubkey hash or a private key to and from a Base58Check ASCII string.
+ * Converts a pubkey hash, private key, or extended private key to and from a Base58Check ASCII string.
  */
 class Base58Check final {
+	
+	/*---- Public export-to-string functions ----*/
 	
 	// Exports the given 20-byte public key hash with the given version prefix byte as a public address.
 	// The outStr array must have length >= 36 (including null terminator).
@@ -37,6 +39,8 @@ class Base58Check final {
 	// The output text length is always 111 characters. Not constant-time.
 	public: static void extendedPrivateKeyToBase58Check(const ExtendedPrivateKey &key, char outStr[112]);
 	
+	
+	/*---- Public import-from-string functions ----*/
 	
 	// Parses the given public address string. If the syntax and check digits are correct, then the
 	// output array is set to the decoded value, the version byte is set if not null, and true is returned.
@@ -57,6 +61,9 @@ class Base58Check final {
 	public: static bool extendedPrivateKeyFromBase58Check(const char xprvStr[112], ExtendedPrivateKey &outKey);
 	
 	
+	
+	/*---- Private high-level Base58Check functions ----*/
+	
 	// Computes the 4-byte hash of the given byte array, concatenates it, and converts it to Base58Check.
 	// This overwrites data and temp for indices 0 <= i < len+4. The caller is responsible for leaving 4 free bytes
 	// starting at data[len], allocating len+4 bytes for temp, and allocating enough space in outStr. Not constant-time.
@@ -70,7 +77,10 @@ class Base58Check final {
 	private: static bool base58CheckToBytes(const char *inStr, std::uint8_t outData[], std::size_t outDataLen);
 	
 	
-	/*-- Unsigned big-endian arbitrary-precision arithmetic functions --*/
+	
+	/*---- Private low-level arithmetic functions ----*/
+	
+	// These functions perform unsigned big-endian arbitrary-precision arithmetic on byte arrays that represent numbers.
 	// These algorithms differ from Uint256 because Uint256 is fixed-width, little-endian, and 32-bit-word-oriented.
 	
 	// Tests whether the given bigint is zero. Not constant-time.
@@ -95,11 +105,11 @@ class Base58Check final {
 	private: static bool multiply58(std::uint8_t x[], std::size_t len);
 	
 	
+	
+	/*---- Miscellaneous ----*/
+	
 	private: Base58Check();  // Not instantiable
 	
-	
-	
-	/*---- Class constants ----*/
 	
 	public: static const char *ALPHABET;
 	
