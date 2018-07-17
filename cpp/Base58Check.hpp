@@ -48,10 +48,10 @@ class Base58Check final {
 	public: static bool privateKeyFromBase58Check(const char wifStr[53], Uint256 &outPrivKey, std::uint8_t *version);
 	
 	
-	// Computes the 4-byte hash of the given byte array and converts the concatenated data to Base58Check.
-	// This overwrites data[0 <= i < len + 4]. The caller is responsible for the prefix byte, leaving
-	// 4 free bytes starting at data[len], and allocating enough space in outStr. Not constant-time.
-	private: static void bytesToBase58Check(std::uint8_t data[], std::size_t dataLen, char *outStr);
+	// Computes the 4-byte hash of the given byte array, concatenates it, and converts it to Base58Check.
+	// This overwrites data and temp for indices 0 <= i < len+4. The caller is responsible for leaving 4 free bytes
+	// starting at data[len], allocating len+4 bytes for temp, and allocating enough space in outStr. Not constant-time.
+	private: static void bytesToBase58Check(std::uint8_t data[], std::uint8_t temp[], std::size_t dataLen, char *outStr);
 	
 	
 	// Converts the given Base58Check string to an array of bytes. Returns true if the conversion succeeded;

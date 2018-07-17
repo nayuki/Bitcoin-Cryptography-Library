@@ -25,7 +25,8 @@ void Base58Check::pubkeyHashToBase58Check(const uint8_t pubkeyHash[Ripemd160::HA
 	uint8_t toEncode[1 + Ripemd160::HASH_LEN + 4] = {};
 	toEncode[0] = version;
 	std::memcpy(&toEncode[1], pubkeyHash, Ripemd160::HASH_LEN);
-	bytesToBase58Check(toEncode, sizeof(toEncode) - 4, outStr);
+	uint8_t temp[sizeof(toEncode) / sizeof(toEncode[0])] = {};
+	bytesToBase58Check(toEncode, temp, sizeof(toEncode) - 4, outStr);
 }
 
 
@@ -35,7 +36,8 @@ void Base58Check::privateKeyToBase58Check(const Uint256 &privKey, uint8_t versio
 	toEncode[0] = version;
 	privKey.getBigEndianBytes(&toEncode[1]);
 	toEncode[33] = 0x01;  // Compressed marker
-	bytesToBase58Check(toEncode, sizeof(toEncode) - 4, outStr);
+	uint8_t temp[sizeof(toEncode) / sizeof(toEncode[0])] = {};
+	bytesToBase58Check(toEncode, temp, sizeof(toEncode) - 4, outStr);
 }
 
 
@@ -55,14 +57,14 @@ void Base58Check::extendedPrivateKeyToBase58Check(const ExtendedPrivateKey &key,
 	std::memcpy(&toEncode[13], key.chainCode, sizeof(key.chainCode));
 	toEncode[45] = 0x00;
 	key.privateKey.getBigEndianBytes(&toEncode[46]);
-	bytesToBase58Check(toEncode, sizeof(toEncode) - 4, outStr);
+	uint8_t temp[sizeof(toEncode) / sizeof(toEncode[0])] = {};
+	bytesToBase58Check(toEncode, temp, sizeof(toEncode) - 4, outStr);
 }
 
 
-void Base58Check::bytesToBase58Check(uint8_t data[], size_t dataLen, char *outStr) {
+void Base58Check::bytesToBase58Check(uint8_t data[], uint8_t temp[], size_t dataLen, char *outStr) {
 	// Append 4-byte hash
-	constexpr int MAX_TOTAL_BYTES = 82;  // Including the 4-byte hash
-	assert(data != nullptr && dataLen <= MAX_TOTAL_BYTES - 4 && outStr != nullptr);
+	assert(data != nullptr && temp != nullptr && outStr != nullptr);
 	const Sha256Hash sha256Hash = Sha256::getDoubleHash(data, dataLen);
 	for (int i = 0; i < 4; i++, dataLen++)
 		data[dataLen] = sha256Hash.value[i];
@@ -77,9 +79,8 @@ void Base58Check::bytesToBase58Check(uint8_t data[], size_t dataLen, char *outSt
 	while (!isZero(data, dataLen)) {  // Extract digits in little-endian
 		outStr[outLen] = ALPHABET[mod58(data, dataLen)];
 		outLen++;
-		uint8_t quotient[MAX_TOTAL_BYTES] = {};
-		divide58(data, quotient, dataLen);  // quotient = floor(data / 58)
-		Utils::copyBytes(data, quotient, dataLen);  // data = quotient
+		divide58(data, temp, dataLen);  // temp = floor(data / 58)
+		Utils::copyBytes(data, temp, dataLen);  // data = temp
 	}
 	for (size_t i = 0; i < leadingZeros; i++) {  // Append leading zeros
 		outStr[outLen] = ALPHABET[0];
