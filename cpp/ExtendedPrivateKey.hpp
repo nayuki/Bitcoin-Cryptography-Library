@@ -43,6 +43,6 @@ class ExtendedPrivateKey final {
 	
 	/*---- Methods ----*/
 	
-	public: ExtendedPrivateKey getChildKey(std::uint32_t index);
+	public: ExtendedPrivateKey getChildKey(std::uint32_t index) const;
 	
 };

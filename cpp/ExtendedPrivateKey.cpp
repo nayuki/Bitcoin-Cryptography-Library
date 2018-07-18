@@ -37,7 +37,7 @@ ExtendedPrivateKey::ExtendedPrivateKey(
 }
 
 
-ExtendedPrivateKey ExtendedPrivateKey::getChildKey(uint32_t index) {
+ExtendedPrivateKey ExtendedPrivateKey::getChildKey(uint32_t index) const {
 	uint8_t msg[37] = {};
 	if (index < HARDEN)  // Normal child key
 		publicKey.toCompressedPoint(msg);
