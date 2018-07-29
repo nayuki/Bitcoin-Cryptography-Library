@@ -18,7 +18,6 @@ using std::size_t;
 
 Sha512::Sha512() :
 	length(0),
-	buffer(),
 	bufferLen(0) {}
 
 

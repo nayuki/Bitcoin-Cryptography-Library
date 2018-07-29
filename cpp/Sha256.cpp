@@ -19,7 +19,6 @@ using std::size_t;
 
 Sha256::Sha256() :
 	length(0),
-	buffer(),
 	bufferLen(0) {}
 
 

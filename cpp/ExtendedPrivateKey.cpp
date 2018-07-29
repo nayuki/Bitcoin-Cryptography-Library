@@ -38,7 +38,7 @@ ExtendedPrivateKey::ExtendedPrivateKey(
 
 
 ExtendedPrivateKey ExtendedPrivateKey::getChildKey(uint32_t index) const {
-	uint8_t msg[37] = {};
+	uint8_t msg[37];
 	if (index < HARDEN)  // Normal child key
 		publicKey.toCompressedPoint(msg);
 	else {  // Hardened child key
@@ -47,7 +47,7 @@ ExtendedPrivateKey ExtendedPrivateKey::getChildKey(uint32_t index) const {
 	}
 	for (int i = 0; i < 4; i++)
 		msg[33 + i] = static_cast<uint8_t>(index >> (24 - i * 8));
-	uint8_t hash[Sha512::HASH_LEN] = {};
+	uint8_t hash[Sha512::HASH_LEN];
 	Sha512::getHmac(chainCode, sizeof(chainCode) / sizeof(chainCode[0]), msg, sizeof(msg) / sizeof(msg[0]), hash);
 	
 	Uint256 num(hash);
@@ -58,10 +58,10 @@ ExtendedPrivateKey ExtendedPrivateKey::getChildKey(uint32_t index) const {
 	if (num == Uint256::ZERO)
 		return ExtendedPrivateKey();
 	
-	uint8_t pubKeyBytes[33] = {};
+	uint8_t pubKeyBytes[33];
 	publicKey.toCompressedPoint(pubKeyBytes);
 	Sha256Hash innerHash = Sha256::getHash(pubKeyBytes, sizeof(pubKeyBytes) / sizeof(pubKeyBytes[0]));
-	uint8_t pubKeyHash[Ripemd160::HASH_LEN] = {};
+	uint8_t pubKeyHash[Ripemd160::HASH_LEN];
 	Ripemd160::getHash(innerHash.value, Sha256Hash::HASH_LEN, pubKeyHash);
 	return ExtendedPrivateKey(num, &hash[32], depth + 1, index, pubKeyHash);
 }

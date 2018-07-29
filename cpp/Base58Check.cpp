@@ -23,28 +23,28 @@ using std::size_t;
 
 void Base58Check::pubkeyHashToBase58Check(const uint8_t pubkeyHash[Ripemd160::HASH_LEN], uint8_t version, char outStr[36]) {
 	assert(pubkeyHash != nullptr && outStr != nullptr);
-	uint8_t toEncode[1 + Ripemd160::HASH_LEN + 4] = {};
+	uint8_t toEncode[1 + Ripemd160::HASH_LEN + 4];
 	toEncode[0] = version;
 	std::memcpy(&toEncode[1], pubkeyHash, Ripemd160::HASH_LEN);
-	uint8_t temp[sizeof(toEncode) / sizeof(toEncode[0])] = {};
+	uint8_t temp[sizeof(toEncode) / sizeof(toEncode[0])];
 	bytesToBase58Check(toEncode, temp, sizeof(toEncode) - 4, outStr);
 }
 
 
 void Base58Check::privateKeyToBase58Check(const Uint256 &privKey, uint8_t version, char outStr[53]) {
 	assert(outStr != nullptr);
-	uint8_t toEncode[1 + 32 + 1 + 4] = {};
+	uint8_t toEncode[1 + 32 + 1 + 4];
 	toEncode[0] = version;
 	privKey.getBigEndianBytes(&toEncode[1]);
 	toEncode[33] = 0x01;  // Compressed marker
-	uint8_t temp[sizeof(toEncode) / sizeof(toEncode[0])] = {};
+	uint8_t temp[sizeof(toEncode) / sizeof(toEncode[0])];
 	bytesToBase58Check(toEncode, temp, sizeof(toEncode) - 4, outStr);
 }
 
 
 void Base58Check::extendedPrivateKeyToBase58Check(const ExtendedPrivateKey &key, char outStr[112]) {
 	assert(outStr != nullptr);
-	uint8_t toEncode[4 + 1 + 4 + 4 + 32 + 1 + 32 + 4] = {};
+	uint8_t toEncode[4 + 1 + 4 + 4 + 32 + 1 + 32 + 4];
 	toEncode[ 0] = 0x04;
 	toEncode[ 1] = 0x88;
 	toEncode[ 2] = 0xAD;
@@ -58,7 +58,7 @@ void Base58Check::extendedPrivateKeyToBase58Check(const ExtendedPrivateKey &key,
 	std::memcpy(&toEncode[13], key.chainCode, sizeof(key.chainCode));
 	toEncode[45] = 0x00;
 	key.privateKey.getBigEndianBytes(&toEncode[46]);
-	uint8_t temp[sizeof(toEncode) / sizeof(toEncode[0])] = {};
+	uint8_t temp[sizeof(toEncode) / sizeof(toEncode[0])];
 	bytesToBase58Check(toEncode, temp, sizeof(toEncode) - 4, outStr);
 }
 
