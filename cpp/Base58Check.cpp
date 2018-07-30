@@ -45,16 +45,10 @@ void Base58Check::privateKeyToBase58Check(const Uint256 &privKey, uint8_t versio
 void Base58Check::extendedPrivateKeyToBase58Check(const ExtendedPrivateKey &key, char outStr[112]) {
 	assert(outStr != nullptr);
 	uint8_t toEncode[4 + 1 + 4 + 4 + 32 + 1 + 32 + 4];
-	toEncode[ 0] = 0x04;
-	toEncode[ 1] = 0x88;
-	toEncode[ 2] = 0xAD;
-	toEncode[ 3] = 0xE4;
+	Utils::storeBigUint32(0x0488ADE4, &toEncode[0]);
 	toEncode[ 4] = key.depth;
 	std::memcpy(&toEncode[5], key.parentPubkeyHash, sizeof(key.parentPubkeyHash));
-	toEncode[ 9] = static_cast<uint8_t>(key.index >> 24);
-	toEncode[10] = static_cast<uint8_t>(key.index >> 16);
-	toEncode[11] = static_cast<uint8_t>(key.index >>  8);
-	toEncode[12] = static_cast<uint8_t>(key.index >>  0);
+	Utils::storeBigUint32(key.index, &toEncode[9]);
 	std::memcpy(&toEncode[13], key.chainCode, sizeof(key.chainCode));
 	toEncode[45] = 0x00;
 	key.privateKey.getBigEndianBytes(&toEncode[46]);

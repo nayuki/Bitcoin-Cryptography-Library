@@ -9,6 +9,7 @@
 #pragma once
 
 #include <cstddef>
+#include <cstdint>
 
 
 /* 
@@ -31,6 +32,9 @@ class Utils final {
 	// it would be undefined behavior if src or dest is null, or if either one is pointing to the end of an array.
 	// The function is not helpful for code that calls memcpy/memmove with a known positive constant count value.
 	public: static void copyBytes(void *dest, const void *src, std::size_t count);
+	
+	
+	public: static void storeBigUint32(std::uint32_t x, std::uint8_t arr[4]);
 	
 	
 	private: Utils();

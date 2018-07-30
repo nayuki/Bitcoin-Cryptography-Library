@@ -12,6 +12,7 @@
 #include "Sha256.hpp"
 #include "Sha256Hash.hpp"
 #include "Sha512.hpp"
+#include "Utils.hpp"
 
 using std::uint8_t;
 using std::uint32_t;
@@ -45,8 +46,7 @@ ExtendedPrivateKey ExtendedPrivateKey::getChildKey(uint32_t index) const {
 		msg[0] = 0;
 		privateKey.getBigEndianBytes(&msg[1]);
 	}
-	for (int i = 0; i < 4; i++)
-		msg[33 + i] = static_cast<uint8_t>(index >> (24 - i * 8));
+	Utils::storeBigUint32(index, &msg[33]);
 	uint8_t hash[Sha512::HASH_LEN];
 	Sha512::getHmac(chainCode, sizeof(chainCode) / sizeof(chainCode[0]), msg, sizeof(msg) / sizeof(msg[0]), hash);
 	

@@ -49,8 +49,8 @@ Sha256Hash Sha256::getHash() {
 		append(&temp, 1);
 	}
 	uint8_t result[Sha256Hash::HASH_LEN];
-	for (int i = 0; i < Sha256Hash::HASH_LEN; i++)
-		result[i] = static_cast<uint8_t>(state[i >> 2] >> ((3 - (i & 3)) << 3));
+	for (size_t i = 0; i < sizeof(state) / sizeof(state[0]); i++)
+		Utils::storeBigUint32(state[i], &result[i * 4]);
 	return Sha256Hash(result, Sha256Hash::HASH_LEN);
 }
 
