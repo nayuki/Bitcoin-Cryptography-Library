@@ -133,7 +133,7 @@ void Base58Check::divide58(const uint8_t x[], uint8_t y[], size_t len) {
 
 /*---- Public and private functions for Base58-to-bytes conversion ----*/
 
-bool Base58Check::pubkeyHashFromBase58Check(const char *addrStr, uint8_t outPubkeyHash[Ripemd160::HASH_LEN], uint8_t *version) {
+bool Base58Check::pubkeyHashFromBase58Check(const char *addrStr, uint8_t outPubkeyHash[Ripemd160::HASH_LEN], uint8_t *outVersion) {
 	// Preliminary checks
 	assert(addrStr != nullptr && outPubkeyHash != nullptr);
 	if (std::strlen(addrStr) < 25 || std::strlen(addrStr) > 35)
@@ -146,13 +146,13 @@ bool Base58Check::pubkeyHashFromBase58Check(const char *addrStr, uint8_t outPubk
 	
 	// Successfully set the output and version
 	std::memcpy(outPubkeyHash, &decoded[1], Ripemd160::HASH_LEN * sizeof(uint8_t));
-	if (version != nullptr)
-		*version = decoded[0];
+	if (outVersion != nullptr)
+		*outVersion = decoded[0];
 	return true;
 }
 
 
-bool Base58Check::privateKeyFromBase58Check(const char wifStr[53], Uint256 &outPrivKey, uint8_t *version) {
+bool Base58Check::privateKeyFromBase58Check(const char wifStr[53], Uint256 &outPrivKey, uint8_t *outVersion) {
 	// Preliminary checks
 	assert(wifStr != nullptr);
 	if (std::strlen(wifStr) < 38 || std::strlen(wifStr) > 52)
@@ -169,8 +169,8 @@ bool Base58Check::privateKeyFromBase58Check(const char wifStr[53], Uint256 &outP
 	
 	// Successfully set the value and version
 	outPrivKey = Uint256(&decoded[1]);
-	if (version != nullptr)
-		*version = decoded[0];
+	if (outVersion != nullptr)
+		*outVersion = decoded[0];
 	return true;
 }
 
