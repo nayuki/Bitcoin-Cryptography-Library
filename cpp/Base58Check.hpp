@@ -28,10 +28,12 @@ class Base58Check final {
 	public: static void pubkeyHashToBase58Check(const std::uint8_t pubkeyHash[Ripemd160::HASH_LEN], std::uint8_t version, char outStr[36]);
 	
 	
-	// Exports the given private key with the given version prefix byte as compressed WIF.
+	// Exports the given private key with the given version prefix byte as WIF.
+	// The isCompressed parameter controls whether the private key should generate a compressed
+	// public curve point, and should almost always be set to true (except for legacy applications).
 	// The outStr array must have length >= 53 (including null terminator).
 	// The output text length is between 38 and 52 characters, inclusive. Not constant-time.
-	public: static void privateKeyToBase58Check(const Uint256 &privKey, std::uint8_t version, char outStr[53]);
+	public: static void privateKeyToBase58Check(const Uint256 &privKey, std::uint8_t version, bool isCompressed, char outStr[53]);
 	
 	
 	// Exports the given extended private key with the Bitcoin header and version prefix byte.
@@ -48,11 +50,12 @@ class Base58Check final {
 	public: static bool pubkeyHashFromBase58Check(const char *addrStr, std::uint8_t outPubkeyHash[Ripemd160::HASH_LEN], std::uint8_t *outVersion);
 	
 	
-	// Parses the given compressed WIF string. If the syntax and check digits are correct, then the private key
-	// Uint256 is set to the decoded value, the version byte is set if not null, and true is returned.
-	// Otherwise the Uint256 and version are unchanged, and false is returned. Not constant-time.
+	// Parses the given WIF string. If the syntax, optional compressed marker, and check digits are correct,
+	// then the private key Uint256 is set to the decoded value, the version byte is set if not null,
+	// the compressed status is set if not null, and true is returned. Otherwise the Uint256,
+	// version, and compressed status are unchanged, and false is returned. Not constant-time.
 	// Note that the decoded integer may be outside the normal private key range of [1, CurvePoint::ORDER).
-	public: static bool privateKeyFromBase58Check(const char wifStr[53], Uint256 &outPrivKey, std::uint8_t *outVersion);
+	public: static bool privateKeyFromBase58Check(const char wifStr[53], Uint256 &outPrivKey, std::uint8_t *outVersion, bool *outIsCompressed);
 	
 	
 	// Parses the given extended private key string. If the syntax and check digits are correct,

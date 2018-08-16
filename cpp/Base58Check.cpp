@@ -32,7 +32,7 @@ void Base58Check::pubkeyHashToBase58Check(const uint8_t pubkeyHash[Ripemd160::HA
 }
 
 
-void Base58Check::privateKeyToBase58Check(const Uint256 &privKey, uint8_t version, char outStr[53]) {
+void Base58Check::privateKeyToBase58Check(const Uint256 &privKey, uint8_t version, bool isCompressed, char outStr[53]) {
 	assert(outStr != nullptr);
 	constexpr size_t arrayLen = 1 + 32 + 1 + 4;
 	uint8_t toEncode[arrayLen];
@@ -40,7 +40,7 @@ void Base58Check::privateKeyToBase58Check(const Uint256 &privKey, uint8_t versio
 	privKey.getBigEndianBytes(&toEncode[1]);
 	toEncode[33] = 0x01;  // Compressed marker
 	uint8_t temp[arrayLen];
-	bytesToBase58Check(toEncode, temp, arrayLen - 4, outStr);
+	bytesToBase58Check(toEncode, temp, arrayLen - (isCompressed ? 4 : 5), outStr);
 }
 
 
@@ -152,19 +152,24 @@ bool Base58Check::pubkeyHashFromBase58Check(const char *addrStr, uint8_t outPubk
 }
 
 
-bool Base58Check::privateKeyFromBase58Check(const char wifStr[53], Uint256 &outPrivKey, uint8_t *outVersion) {
+bool Base58Check::privateKeyFromBase58Check(const char wifStr[53], Uint256 &outPrivKey, uint8_t *outVersion, bool *outIsCompressed) {
 	// Preliminary checks
 	assert(wifStr != nullptr);
 	if (std::strlen(wifStr) < 38 || std::strlen(wifStr) > 52)
 		return false;
 	
 	// Perform Base58 decoding
-	uint8_t decoded[1 + 32 + 1 + 4];
-	if (!base58CheckToBytes(wifStr, decoded, sizeof(decoded) / sizeof(decoded[0])))
-		return false;
-	
-	// Check format byte
-	if (decoded[33] != 0x01)
+	constexpr size_t arrayLen = 1 + 32 + 1 + 4;
+	uint8_t decoded[arrayLen];
+	if (base58CheckToBytes(wifStr, decoded, arrayLen - 1)) {  // Try decoding uncompressed
+		if (outIsCompressed != nullptr)
+			*outIsCompressed = false;
+	} else if (base58CheckToBytes(wifStr, decoded, arrayLen)) {  // Try decoding compressed
+		if (decoded[33] != 0x01)  // Check compressed marker byte
+			return false;
+		if (outIsCompressed != nullptr)
+			*outIsCompressed = true;
+	} else
 		return false;
 	
 	// Successfully set the value and version

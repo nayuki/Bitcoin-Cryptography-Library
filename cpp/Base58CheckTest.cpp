@@ -453,7 +453,7 @@ static void testPrivateKeyExport() {
 	for (const TestCase &tc : GOOD_PRIVATE_KEY_CASES) {
 		assert(std::strlen(tc.hexadecimal) == 64);
 		char actual[53];
-		Base58Check::privateKeyToBase58Check(Uint256(tc.hexadecimal), tc.version, actual);
+		Base58Check::privateKeyToBase58Check(Uint256(tc.hexadecimal), tc.version, true, actual);
 		assert(std::strcmp(actual, tc.base58) == 0);
 		numTestCases++;
 	}
@@ -465,8 +465,10 @@ static void testPrivateKeyImport() {
 		assert(std::strlen(tc.hexadecimal) == 64);
 		Uint256 privKey;
 		uint8_t version;
-		assert(Base58Check::privateKeyFromBase58Check(tc.base58, privKey, &version));
+		bool isCompressed;
+		assert(Base58Check::privateKeyFromBase58Check(tc.base58, privKey, &version, &isCompressed));
 		assert(version == tc.version);
+		assert(isCompressed);
 		assert(privKey == Uint256(tc.hexadecimal));
 		numTestCases++;
 	}
@@ -518,7 +520,6 @@ static void testPrivateKeyImport() {
 		"3boav5ooCSpb4pvs7VNJwnb6R6ewLzHcLkMWZPD5MCSi1xw",
 		"KoP5Y3mqN8dCPgywk9TiHyZUvTu3xHQh2ZTv8a4yhv4aRuZj",
 		"2rrSrQ6mZZt3ifaKd8CpeKDmvGN6fQrBQr6dpYgdw9XgDpxGqW",
-		"3umgh6iAfXkyyY33fRrs8kgXejTwSaFmeoqnXWJbSY66i38FRg5",
 		"w9oz6GsjUdVWzK5YmFBa338jwuFmh1bAQCuWx1toNrSgzKp78P8ST",
 		"64vpm9cz4JVvmAb2d3c4jbHHgUA4kaJMNpRansfmTVu7DNmh8THK43Y",
 		"Jgt1vDnrKk7MDQqGwC1UjzKmqsxE7B5MjTVdFissk88k8GfSpP4MyXTg",
@@ -527,7 +528,6 @@ static void testPrivateKeyImport() {
 		// Valid Base58Check, but wrong number of leading zeros
 		"W3xrUjb",
 		"111W3xrUjb",
-		"1111111111111111111111111111111W3xrUjb",
 		"111111111111111111111111111111111W3xrUjb",
 		"13VAggVbNaqWBmrAvPPmcGFQeriCc7KrURB4jhNoRb3pDDrJnj",
 		"1113VAggVbNaqWBmrAvPPmcGFQeriCc7KrURB4jhNoRb3pDDrJnj",
@@ -539,7 +539,7 @@ static void testPrivateKeyImport() {
 	for (const char *tc : BAD_CASES) {
 		Uint256 privKey;
 		uint8_t version;
-		assert(!Base58Check::privateKeyFromBase58Check(tc, privKey, &version));
+		assert(!Base58Check::privateKeyFromBase58Check(tc, privKey, &version, nullptr));
 		numTestCases++;
 	}
 }
