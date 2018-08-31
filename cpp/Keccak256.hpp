@@ -37,5 +37,7 @@ class Keccak256 final {
 	
 	
 	private: static const std::uint64_t ROUND_CONSTANTS[NUM_ROUNDS];
+	private: static const unsigned char PERMUTATION[25];
+	private: static const unsigned char ROTATION[25];
 	
 };
