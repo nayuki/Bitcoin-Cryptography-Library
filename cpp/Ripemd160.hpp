@@ -42,9 +42,9 @@ class Ripemd160 final {
 	
 	private: static const std::uint32_t KL[5];       // Round constants for left line
 	private: static const std::uint32_t KR[5];       // Round constants for right line
-	private: static const int RL[NUM_ROUNDS];  // Message schedule for left line
-	private: static const int RR[NUM_ROUNDS];  // Message schedule for right line
-	private: static const int SL[NUM_ROUNDS];  // Left-rotation for left line
-	private: static const int SR[NUM_ROUNDS];  // Left-rotation for right line
+	private: static const unsigned char RL[NUM_ROUNDS];  // Message schedule for left line
+	private: static const unsigned char RR[NUM_ROUNDS];  // Message schedule for right line
+	private: static const unsigned char SL[NUM_ROUNDS];  // Left-rotation for left line
+	private: static const unsigned char SR[NUM_ROUNDS];  // Left-rotation for right line
 	
 };
