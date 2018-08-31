@@ -29,7 +29,7 @@ class Keccak256 final {
 	private: static void absorb(std::uint64_t state[25]);
 	
 	
-	// Requires 1 <= i <= 63
+	// Requires 0 <= i <= 63
 	private: static std::uint64_t rotl64(std::uint64_t x, int i);
 	
 	

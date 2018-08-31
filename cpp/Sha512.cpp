@@ -7,7 +7,6 @@
  */
 
 #include <cassert>
-#include <cstring>
 #include "Sha512.hpp"
 #include "Utils.hpp"
 
