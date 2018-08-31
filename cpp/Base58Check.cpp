@@ -286,8 +286,5 @@ bool Base58Check::multiply58(uint8_t x[], size_t len) {
 
 /*---- Miscellaneous definitions ----*/
 
-Base58Check::Base58Check() {}
-
-
 // Static initializers
 const char *Base58Check::ALPHABET = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz";

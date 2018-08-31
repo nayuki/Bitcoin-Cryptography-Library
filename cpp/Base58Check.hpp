@@ -111,7 +111,7 @@ class Base58Check final {
 	
 	/*---- Miscellaneous ----*/
 	
-	private: Base58Check();  // Not instantiable
+	Base58Check() = delete;  // Not instantiable
 	
 	
 	public: static const char *ALPHABET;

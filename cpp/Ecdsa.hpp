@@ -43,6 +43,6 @@ class Ecdsa final {
 	private: static void multiplyModOrder(Uint256 &x, const Uint256 &y);
 	
 	
-	private: Ecdsa();  // Not instantiable
+	Ecdsa() = delete;  // Not instantiable
 	
 };

@@ -34,7 +34,7 @@ class Ripemd160 final {
 	// Requires 1 <= i <= 31
 	private: static std::uint32_t rotl32(std::uint32_t x, int i);
 	
-	private: Ripemd160();  // Not instantiable
+	Ripemd160() = delete;  // Not instantiable
 	
 	
 	

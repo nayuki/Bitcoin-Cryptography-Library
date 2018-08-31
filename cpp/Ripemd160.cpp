@@ -106,9 +106,6 @@ uint32_t Ripemd160::rotl32(uint32_t x, int i) {
 }
 
 
-Ripemd160::Ripemd160() {}
-
-
 // Static initializers
 const uint32_t Ripemd160::KL[5] = {
 	UINT32_C(0x00000000), UINT32_C(0x5A827999), UINT32_C(0x6ED9EBA1), UINT32_C(0x8F1BBCDC), UINT32_C(0xA953FD4E)};

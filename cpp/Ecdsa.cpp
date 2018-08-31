@@ -144,6 +144,3 @@ void Ecdsa::multiplyModOrder(Uint256 &x, const Uint256 &y) {
 	}
 	x = z;
 }
-	
-	
-Ecdsa::Ecdsa() {}
