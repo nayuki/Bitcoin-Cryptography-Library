@@ -26,7 +26,7 @@ class Keccak256 final {
 	public: static void getHash(const std::uint8_t msg[], std::size_t len, std::uint8_t hashResult[HASH_LEN]);
 	
 	
-	private: static void absorb(std::uint64_t state[25]);
+	private: static void absorb(std::uint64_t state[5][5]);
 	
 	
 	// Requires 0 <= i <= 63
@@ -36,7 +36,6 @@ class Keccak256 final {
 	Keccak256() = delete;  // Not instantiable
 	
 	
-	private: static const unsigned char PERMUTATION[25];
-	private: static const unsigned char ROTATION[25];
+	private: static const unsigned char ROTATION[5][5];
 	
 };
