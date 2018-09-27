@@ -46,25 +46,25 @@ void Keccak256::absorb(uint64_t state[25]) {
 	for (int i = 0; i < NUM_ROUNDS; i++) {
 		// Theta step
 		uint64_t c[5] = {};
-		for (int i = 0; i < 5; i++) {
-			for (int j = 0; j < 25; j += 5)
-				c[i] ^= a[i + j];
+		for (int j = 0; j < 5; j++) {
+			for (int k = 0; k < 25; k += 5)
+				c[j] ^= a[j + k];
 		}
-		for (int i = 0; i < 5; i++) {
-			uint64_t d = c[(i + 4) % 5] ^ rotl64(c[(i + 1) % 5], 1);
-			for (int j = 0; j < 25; j += 5)
-				a[i + j] ^= d;
+		for (int j = 0; j < 5; j++) {
+			uint64_t d = c[(j + 4) % 5] ^ rotl64(c[(j + 1) % 5], 1);
+			for (int k = 0; k < 25; k += 5)
+				a[j + k] ^= d;
 		}
 		
 		// Rho and pi steps
 		uint64_t b[25];
-		for (int i = 0; i < 25; i++)
-			b[i] = rotl64(a[PERMUTATION[i]], ROTATION[i]);
+		for (int j = 0; j < 25; j++)
+			b[j] = rotl64(a[PERMUTATION[j]], ROTATION[j]);
 		
 		// Chi step
-		for (int i = 0; i < 5; i++) {
-			for (int j = 0; j < 25; j += 5)
-				a[i + j] = b[i + j] ^ (~b[(i + 1) % 5 + j] & b[(i + 2) % 5 + j]);
+		for (int j = 0; j < 5; j++) {
+			for (int k = 0; k < 25; k += 5)
+				a[j + k] = b[j + k] ^ (~b[(j + 1) % 5 + k] & b[(j + 2) % 5 + k]);
 		}
 		
 		a[0] ^= ROUND_CONSTANTS[i];  // Iota step
