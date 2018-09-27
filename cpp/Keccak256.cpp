@@ -43,6 +43,7 @@ void Keccak256::getHash(const uint8_t msg[], size_t len, uint8_t hashResult[HASH
 
 void Keccak256::absorb(uint64_t state[25]) {
 	uint64_t *a = state;
+	uint8_t r = 1;
 	for (int i = 0; i < NUM_ROUNDS; i++) {
 		// Theta step
 		uint64_t c[5] = {};
@@ -67,7 +68,11 @@ void Keccak256::absorb(uint64_t state[25]) {
 				a[j + k] = b[j + k] ^ (~b[(j + 1) % 5 + k] & b[(j + 2) % 5 + k]);
 		}
 		
-		a[0] ^= ROUND_CONSTANTS[i];  // Iota step
+		// Iota step
+		for (int j = 0; j < 7; j++) {
+			a[0] ^= static_cast<uint64_t>(r & 1) << ((1 << j) - 1);
+			r = (r << 1) ^ ((r >> 7) * 0x171);
+		}
 	}
 }
 
@@ -78,14 +83,6 @@ uint64_t Keccak256::rotl64(uint64_t x, int i) {
 
 
 // Static initializers
-const uint64_t Keccak256::ROUND_CONSTANTS[NUM_ROUNDS] = {
-	UINT64_C(0x0000000000000001), UINT64_C(0x0000000000008082), UINT64_C(0x800000000000808A), UINT64_C(0x8000000080008000),
-	UINT64_C(0x000000000000808B), UINT64_C(0x0000000080000001), UINT64_C(0x8000000080008081), UINT64_C(0x8000000000008009),
-	UINT64_C(0x000000000000008A), UINT64_C(0x0000000000000088), UINT64_C(0x0000000080008009), UINT64_C(0x000000008000000A),
-	UINT64_C(0x000000008000808B), UINT64_C(0x800000000000008B), UINT64_C(0x8000000000008089), UINT64_C(0x8000000000008003),
-	UINT64_C(0x8000000000008002), UINT64_C(0x8000000000000080), UINT64_C(0x000000000000800A), UINT64_C(0x800000008000000A),
-	UINT64_C(0x8000000080008081), UINT64_C(0x8000000000008080), UINT64_C(0x0000000080000001), UINT64_C(0x8000000080008008),
-};
 const unsigned char Keccak256::PERMUTATION[25] = {
 	 0,  6, 12, 18, 24,
 	 3,  9, 10, 16, 22,
