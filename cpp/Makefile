@@ -49,7 +49,7 @@ LIBOBJ = Base58Check.o CurvePoint.o Ecdsa.o ExtendedPrivateKey.o FieldInt.o Kecc
 TESTS = Base58CheckTest CurvePointTest EcdsaTest ExtendedPrivateKeyTest FieldIntTest Keccak256Test Ripemd160Test Sha256HashTest Sha256Test Sha512Test Uint256Test
 
 # Build all binaries
-all: $(LIBFILE) $(TESTS)
+all: $(LIBFILE) $(TESTS) EcdsaOpCount
 
 # Run tests
 check: $(TESTS)
@@ -57,12 +57,16 @@ check: $(TESTS)
 
 # Delete build output
 clean:
-	rm -f -- $(LIBOBJ) $(LIBFILE) $(TESTS:=.o) $(TESTS)
+	rm -f -- $(LIBOBJ) $(LIBFILE) $(TESTS:=.o) $(TESTS) EcdsaOpCount
 	rm -rf .deps
 
 # Executable files
 %: %.o $(LIBFILE)
 	$(CXX) $(CXXFLAGS) -o $@ $< -L . -l $(LIB)
+
+# Special executable
+EcdsaOpCount: EcdsaOpCount.cpp $(LIBOBJ:%.o=%.cpp)
+	$(CXX) $(CXXFLAGS) -DCOUNT_OPS -DNDEBUG -o $@ $^
 
 # The library
 $(LIBFILE): $(LIBOBJ)

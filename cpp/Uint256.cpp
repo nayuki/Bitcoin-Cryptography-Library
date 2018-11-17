@@ -8,6 +8,7 @@
 
 #include <cassert>
 #include <cstring>
+#include "CountOps.hpp"
 #include "Uint256.hpp"
 #include "Utils.hpp"
 
@@ -46,13 +47,17 @@ Uint256::Uint256(const FieldInt &val) {
 
 uint32_t Uint256::add(const Uint256 &other, uint32_t enable) {
 	assert(&other != this && (enable >> 1) == 0);
+	countOps(functionOps);
 	uint32_t mask = -enable;
 	uint32_t carry = 0;
+	countOps(3 * arithmeticOps);
 	for (int i = 0; i < NUM_WORDS; i++) {
+		countOps(2 * arithmeticOps);
 		uint64_t sum = static_cast<uint64_t>(value[i]) + (other.value[i] & mask) + carry;
 		value[i] = static_cast<uint32_t>(sum);
 		carry = static_cast<uint32_t>(sum >> 32);
 		assert((carry >> 1) == 0);
+		countOps(7 * arithmeticOps);
 	}
 	return carry;
 }
@@ -60,55 +65,71 @@ uint32_t Uint256::add(const Uint256 &other, uint32_t enable) {
 
 uint32_t Uint256::subtract(const Uint256 &other, uint32_t enable) {
 	assert(&other != this && (enable >> 1) == 0);
+	countOps(functionOps);
 	uint32_t mask = -enable;
 	uint32_t borrow = 0;
+	countOps(3 * arithmeticOps);
 	for (int i = 0; i < NUM_WORDS; i++) {
+		countOps(2 * arithmeticOps);
 		uint64_t diff = static_cast<uint64_t>(value[i]) - (other.value[i] & mask) - borrow;
 		value[i] = static_cast<uint32_t>(diff);
 		borrow = -static_cast<uint32_t>(diff >> 32);
 		assert((borrow >> 1) == 0);
+		countOps(7 * arithmeticOps);
 	}
 	return borrow;
 }
 
 
 uint32_t Uint256::shiftLeft1() {
+	countOps(functionOps);
 	uint32_t prev = 0;
+	countOps(1 * arithmeticOps);
 	for (int i = 0; i < NUM_WORDS; i++) {
 		uint32_t cur = value[i];
 		value[i] = (0U + cur) << 1 | prev >> 31;
 		prev = cur;
+		countOps(4 * arithmeticOps);
 	}
+	countOps(1 * arithmeticOps);
 	return prev >> 31;
 }
 
 
 void Uint256::shiftRight1(uint32_t enable) {
 	assert((enable >> 1) == 0);
+	countOps(functionOps);
 	uint32_t mask = -enable;
 	uint32_t cur = value[0];
+	countOps(2 * arithmeticOps);
 	for (int i = 0; i < NUM_WORDS - 1; i++) {
 		uint32_t next = value[i + 1];
 		value[i] = ((cur >> 1 | (0U + next) << 31) & mask) | (cur & ~mask);
 		cur = next;
+		countOps(8 * arithmeticOps);
 	}
 	value[NUM_WORDS - 1] = ((cur >> 1) & mask) | (cur & ~mask);
+	countOps(4 * arithmeticOps);
 }
 
 
 void Uint256::reciprocal(const Uint256 &modulus) {
 	// Extended binary GCD algorithm
 	assert(&modulus != this && (modulus.value[0] & 1) == 1 && modulus > ONE && *this < modulus);
+	countOps(functionOps);
 	Uint256 x = modulus;
 	Uint256 y = *this;
 	Uint256 a = ZERO;
 	Uint256 b = ONE;
+	countOps(4 * uint256CopyOps);
 	Uint256 halfModulus = modulus;
 	halfModulus.add(ONE);
 	halfModulus.shiftRight1();
 	
 	// Loop invariant: x = a*this mod modulus, and y = b*this mod modulus
 	for (int i = 0; i < NUM_WORDS * 32 * 2; i++) {
+		countOps(2 * arithmeticOps);
+		
 		// Try to reduce a trailing zero of y. Pseudocode:
 		// if (y % 2 == 0) {
 		//     y /= 2
@@ -120,6 +141,7 @@ void Uint256::reciprocal(const Uint256 &modulus) {
 		y.shiftRight1(yEven);
 		b.shiftRight1(yEven);
 		b.add(halfModulus, yEven & bOdd);
+		countOps(5 * arithmeticOps);
 		
 		// If allowed, try to swap so that y >= x and then do y -= x. Pseudocode:
 		// if (y % 2 == 1) {
@@ -138,6 +160,7 @@ void Uint256::reciprocal(const Uint256 &modulus) {
 		a.swap(b, doswap);
 		uint32_t borrow = b.subtract(a, enable);
 		b.add(modulus, borrow);
+		countOps(4 * arithmeticOps);
 	}
 	assert((x == ONE) | (x == modulus));  // Either gcd(this, modulus) = 1 or this = 0
 	this->replace(a, static_cast<uint32_t>(*this != ZERO));
@@ -146,20 +169,25 @@ void Uint256::reciprocal(const Uint256 &modulus) {
 
 void Uint256::replace(const Uint256 &other, uint32_t enable) {
 	assert((enable >> 1) == 0);
+	countOps(functionOps);
 	uint32_t mask = -enable;
-	for (int i = 0; i < NUM_WORDS; i++)
+	for (int i = 0; i < NUM_WORDS; i++) {
 		value[i] = (other.value[i] & mask) | (value[i] & ~mask);
+		countOps(4 * arithmeticOps);
+	}
 }
 
 
 void Uint256::swap(Uint256 &other, uint32_t enable) {
 	assert((enable >> 1) == 0);
+	countOps(functionOps);
 	uint32_t mask = -enable;
 	for (int i = 0; i < NUM_WORDS; i++) {
 		uint32_t x = this->value[i];
 		uint32_t y = other.value[i];
 		this->value[i] = (y & mask) | (x & ~mask);
 		other.value[i] = (x & mask) | (y & ~mask);
+		countOps(7 * arithmeticOps);
 	}
 }
 
@@ -172,9 +200,14 @@ void Uint256::getBigEndianBytes(uint8_t b[NUM_WORDS * 4]) const {
 
 
 bool Uint256::operator==(const Uint256 &other) const {
+	countOps(functionOps);
 	uint32_t diff = 0;
-	for (int i = 0; i < NUM_WORDS; i++)
+	countOps(2 * arithmeticOps);
+	for (int i = 0; i < NUM_WORDS; i++) {
 		diff |= value[i] ^ other.value[i];
+		countOps(2 * arithmeticOps);
+	}
+	countOps(1 * arithmeticOps);
 	return diff == 0;
 }
 
@@ -185,10 +218,13 @@ bool Uint256::operator!=(const Uint256 &other) const {
 
 
 bool Uint256::operator<(const Uint256 &other) const {
+	countOps(functionOps);
 	bool result = false;
+	countOps(2 * arithmeticOps);
 	for (int i = 0; i < NUM_WORDS; i++) {
 		bool eq = value[i] == other.value[i];
 		result = (eq & result) | (!eq & (value[i] < other.value[i]));
+		countOps(6 * arithmeticOps);
 	}
 	return result;
 }

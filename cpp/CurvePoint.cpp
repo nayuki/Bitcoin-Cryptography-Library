@@ -7,6 +7,7 @@
  */
 
 #include <cassert>
+#include "CountOps.hpp"
 #include "CurvePoint.hpp"
 
 using std::uint8_t;
@@ -26,6 +27,8 @@ CurvePoint::CurvePoint() :
 
 
 void CurvePoint::add(const CurvePoint &other) {
+	countOps(functionOps);
+	
 	/* 
 	 * (See https://www.nayuki.io/page/elliptic-curve-point-addition-in-projective-coordinates)
 	 * Algorithm pseudocode:
@@ -109,10 +112,15 @@ void CurvePoint::add(const CurvePoint &other) {
 	v.multiply(u3);  // Assigns to z
 	
 	this->replace(temp, static_cast<uint32_t>(thisZero | otherZero | sameX));
+	countOps(10 * arithmeticOps);
+	countOps(10 * fieldintCopyOps);
+	countOps(1 * curvepointCopyOps);
 }
 
 
 void CurvePoint::twice() {
+	countOps(functionOps);
+	
 	/* 
 	 * (See https://www.nayuki.io/page/elliptic-curve-point-addition-in-projective-coordinates)
 	 * Algorithm pseudocode:
@@ -129,7 +137,9 @@ void CurvePoint::twice() {
 	 *   z' = u^3
 	 * }
 	 */
+	
 	bool zeroResult = isZero() | (y == FI_ZERO);
+	countOps(1 * arithmeticOps);
 	
 	FieldInt u = y;
 	u.multiply(z);
@@ -169,20 +179,24 @@ void CurvePoint::twice() {
 	z.multiply(u);
 	
 	this->replace(ZERO, static_cast<uint32_t>(zeroResult));
+	countOps(10 * fieldintCopyOps);
 }
 
 
 void CurvePoint::multiply(const Uint256 &n) {
 	// Precompute [this*0, this*1, ..., this*15]
+	countOps(functionOps);
 	constexpr int tableBits = 4;  // Do not modify
 	constexpr int tableLen = 1 << tableBits;
 	CurvePoint table[tableLen];  // Default-initialized with ZERO
 	table[1] = *this;
 	table[2] = *this;
+	countOps(18 * curvepointCopyOps);
 	table[2].twice();
 	for (int i = 3; i < tableLen; i++) {
 		table[i] = table[i - 1];
 		table[i].add(*this);
+		countOps(1 * curvepointCopyOps);
 	}
 	
 	// Process tableBits per iteration (windowed method)
@@ -190,6 +204,7 @@ void CurvePoint::multiply(const Uint256 &n) {
 	for (int i = Uint256::NUM_WORDS * 32 - tableBits; i >= 0; i -= tableBits) {
 		unsigned int inc = (n.value[i >> 5] >> (i & 31)) & (tableLen - 1);
 		CurvePoint q = ZERO;  // Dummy initial value
+		countOps(1 * curvepointCopyOps);
 		for (unsigned int j = 0; j < tableLen; j++)
 			q.replace(table[j], static_cast<uint32_t>(j == inc));
 		this->add(q);
@@ -197,6 +212,7 @@ void CurvePoint::multiply(const Uint256 &n) {
 			for (int j = 0; j < tableBits; j++)
 				this->twice();
 		}
+		countOps(36 * arithmeticOps);
 	}
 }
 
@@ -214,6 +230,7 @@ void CurvePoint::normalize() {
 	 *   z = 0
 	 * }
 	 */
+	countOps(functionOps);
 	CurvePoint norm = *this;
 	norm.z.reciprocal();
 	norm.x.multiply(norm.z);
@@ -222,11 +239,15 @@ void CurvePoint::normalize() {
 	x.replace(FI_ONE, static_cast<uint32_t>(x != FI_ZERO));
 	y.replace(FI_ONE, static_cast<uint32_t>(y != FI_ZERO));
 	this->replace(norm, static_cast<uint32_t>(z != FI_ZERO));
+	countOps(1 * arithmeticOps);
+	countOps(1 * fieldintCopyOps);
+	countOps(1 * curvepointCopyOps);
 }
 
 
 void CurvePoint::replace(const CurvePoint &other, uint32_t enable) {
 	assert((enable >> 1) == 0);
+	countOps(functionOps);
 	this->x.replace(other.x, enable);
 	this->y.replace(other.y, enable);
 	this->z.replace(other.z, enable);
@@ -234,6 +255,7 @@ void CurvePoint::replace(const CurvePoint &other, uint32_t enable) {
 
 
 bool CurvePoint::isOnCurve() const {
+	countOps(functionOps);
 	FieldInt left = y;
 	left.square();
 	FieldInt right = x;
@@ -241,16 +263,22 @@ bool CurvePoint::isOnCurve() const {
 	right.add(A);
 	right.multiply(x);
 	right.add(B);
+	countOps(2 * arithmeticOps);
+	countOps(2 * fieldintCopyOps);
 	return (left == right) & !isZero();
 }
 
 
 bool CurvePoint::isZero() const {
+	countOps(functionOps);
+	countOps(2 * arithmeticOps);
 	return (x == FI_ZERO) & (y != FI_ZERO) & (z == FI_ZERO);
 }
 
 
 bool CurvePoint::operator==(const CurvePoint &other) const {
+	countOps(functionOps);
+	countOps(1 * arithmeticOps);
 	return (x == other.x) & (y == other.y) & (z == other.z);
 }
 

@@ -9,6 +9,7 @@
 #include <cassert>
 #include <cstdint>
 #include <cstring>
+#include "CountOps.hpp"
 #include "Ecdsa.hpp"
 #include "FieldInt.hpp"
 #include "Sha256.hpp"
@@ -28,6 +29,8 @@ bool Ecdsa::sign(const Uint256 &privateKey, const Sha256Hash &msgHash, const Uin
 	 * if (s == 0) return false
 	 * s = min(s, order - s)
 	 */
+	countOps(functionOps);
+	countOps(4 * arithmeticOps);
 	
 	const Uint256 &order = CurvePoint::ORDER;
 	const Uint256 &zero = Uint256::ZERO;
@@ -58,6 +61,8 @@ bool Ecdsa::sign(const Uint256 &privateKey, const Sha256Hash &msgHash, const Uin
 	s.replace(negS, static_cast<uint32_t>(negS < s));  // To ensure low S values for BIP 62
 	outR = r;
 	outS = s;
+	countOps(7 * uint256CopyOps);
+	countOps(1 * curvepointCopyOps);
 	return true;
 }
 
@@ -85,6 +90,8 @@ bool Ecdsa::verify(const CurvePoint &publicKey, const Sha256Hash &msgHash, const
 	 * p = u1 * G + u2 * pubKey
 	 * return r == p.x % order
 	 */
+	countOps(functionOps);
+	countOps(11 * arithmeticOps);
 	
 	const Uint256 &order = CurvePoint::ORDER;
 	const Uint256 &zero = Uint256::ZERO;
@@ -112,6 +119,8 @@ bool Ecdsa::verify(const CurvePoint &publicKey, const Sha256Hash &msgHash, const
 	
 	Uint256 px(p.x);
 	px.subtract(order, static_cast<uint32_t>(px >= order));
+	countOps(5 * uint256CopyOps);
+	countOps(3 * curvepointCopyOps);
 	return r == px;
 }
 
@@ -127,9 +136,12 @@ void Ecdsa::multiplyModOrder(Uint256 &x, const Uint256 &y) {
 	 * }
 	 * x = z
 	 */
+	countOps(functionOps);
 	const Uint256 &mod = CurvePoint::ORDER;
 	assert(&x != &y && x < mod);
 	Uint256 z = Uint256::ZERO;
+	countOps(1 * uint256CopyOps);
+	countOps(1 * arithmeticOps);
 	
 	for (int i = Uint256::NUM_WORDS * 32 - 1; i >= 0; i--) {
 		// Multiply by 2
@@ -140,6 +152,8 @@ void Ecdsa::multiplyModOrder(Uint256 &x, const Uint256 &y) {
 		c = z.add(x, enable);
 		z.subtract(mod, c | static_cast<uint32_t>(z >= mod));
 		assert(z < mod);
+		countOps(8 * arithmeticOps);
 	}
 	x = z;
+	countOps(1 * uint256CopyOps);
 }

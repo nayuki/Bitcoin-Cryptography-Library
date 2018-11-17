@@ -8,6 +8,7 @@
 
 #include <cassert>
 #include <cstring>
+#include "CountOps.hpp"
 #include "FieldInt.hpp"
 
 using std::uint32_t;
@@ -33,32 +34,41 @@ FieldInt::FieldInt(const Uint256 &val) :
 
 
 void FieldInt::add(const FieldInt &other) {
+	countOps(functionOps);
 	uint32_t c = Uint256::add(other, 1);  // Perform addition
 	assert((c >> 1) == 0);
 	Uint256::subtract(MODULUS, c | static_cast<uint32_t>(*this >= MODULUS));  // Conditionally subtract modulus
+	countOps(3 * arithmeticOps);
 }
 
 
 void FieldInt::subtract(const FieldInt &other) {
+	countOps(functionOps);
 	uint32_t b = Uint256::subtract(other, 1);  // Perform subtraction
 	assert((b >> 1) == 0);
 	Uint256::add(MODULUS, b);  // Conditionally add modulus
+	countOps(1 * arithmeticOps);
 }
 
 
 void FieldInt::multiply2() {
+	countOps(functionOps);
 	uint32_t c = shiftLeft1();
 	assert((c >> 1) == 0);
 	Uint256::subtract(MODULUS, c | static_cast<uint32_t>(*this >= MODULUS));  // Conditionally subtract modulus
+	countOps(3 * arithmeticOps);
 }
 
 
 void FieldInt::square() {
+	countOps(functionOps);
 	multiply(*this);
 }
 
 
 void FieldInt::multiply(const FieldInt &other) {
+	countOps(functionOps);
+	
 	// Compute raw product of (uint256 this->value) * (uint256 other.value) = (uint512 product0), via long multiplication
 	uint32_t product0[NUM_WORDS * 2] = {};
 	for (int i = 0; i < NUM_WORDS; i++) {
@@ -71,12 +81,14 @@ void FieldInt::multiply(const FieldInt &other) {
 		}
 		product0[i + NUM_WORDS] = carry;
 	}
+	countOps(754 * arithmeticOps);
 	
 	// Barrett reduction algorithm begins here (see https://www.nayuki.io/page/barrett-reduction-algorithm).
 	// Multiply by floor(2^512 / MODULUS), which is 2^256 + 2^32 + 0x3D1. Guaranteed to fit in a uint768.
 	uint32_t product1[NUM_WORDS * 3];
 	{
 		uint32_t carry = 0;
+		countOps(1 * arithmeticOps);
 		for (int i = 0; i < NUM_WORDS * 3; i++) {
 			uint64_t sum = carry;
 			if (i < NUM_WORDS * 2)
@@ -88,6 +100,7 @@ void FieldInt::multiply(const FieldInt &other) {
 			product1[i] = static_cast<uint32_t>(sum);
 			carry = static_cast<uint32_t>(sum >> 32);
 			assert(carry <= 0x3D3);
+			countOps(28 * arithmeticOps);
 		}
 		assert(carry == 0);
 	}
@@ -98,6 +111,7 @@ void FieldInt::multiply(const FieldInt &other) {
 	uint32_t product2[NUM_WORDS * 2];
 	{
 		uint32_t borrow = 0;
+		countOps(1 * arithmeticOps);
 		for (int i = 0; i < NUM_WORDS * 2; i++) {
 			uint64_t diff = -static_cast<uint64_t>(borrow);
 			if (i < NUM_WORDS)
@@ -109,6 +123,7 @@ void FieldInt::multiply(const FieldInt &other) {
 			product2[i] = static_cast<uint32_t>(diff);
 			borrow = -static_cast<uint32_t>(diff >> 32);
 			assert(borrow <= 0x3D3);
+			countOps(26 * arithmeticOps);
 		}
 		assert(borrow == 0);
 	}
@@ -117,52 +132,64 @@ void FieldInt::multiply(const FieldInt &other) {
 	uint32_t difference[NUM_WORDS + 1];
 	{
 		uint32_t borrow = 0;
+		countOps(1 * arithmeticOps);
 		for (int i = 0; i < NUM_WORDS + 1; i++) {
 			uint64_t diff = static_cast<uint64_t>(product0[i]) - product2[i] - borrow;
 			difference[i] = static_cast<uint32_t>(diff);
 			borrow = -static_cast<uint32_t>(diff >> 32);
 			assert((borrow >> 1) == 0);
+			countOps(8 * arithmeticOps);
 		}
 	}
 	
 	// Final conditional subtraction to yield a FieldInt value
 	std::memcpy(this->value, difference, sizeof(value));
+	countOps(10 * arithmeticOps);
 	uint32_t dosub = static_cast<uint32_t>((difference[NUM_WORDS] != 0) | (*this >= MODULUS));
 	Uint256::subtract(MODULUS, dosub);
+	countOps(3 * arithmeticOps);
 }
 
 
 void FieldInt::reciprocal() {
+	countOps(functionOps);
 	Uint256::reciprocal(MODULUS);
 }
 
 
 void FieldInt::replace(const FieldInt &other, uint32_t enable) {
+	countOps(functionOps);
 	Uint256::replace(other, enable);
 }
 
 
 bool FieldInt::operator==(const FieldInt &other) const {
+	countOps(functionOps);
 	return Uint256::operator==(other);
 }
 
 bool FieldInt::operator!=(const FieldInt &other) const {
+	countOps(functionOps);
 	return Uint256::operator!=(other);
 }
 
 bool FieldInt::operator<(const FieldInt &other) const {
+	countOps(functionOps);
 	return Uint256::operator<(other);
 }
 
 bool FieldInt::operator<=(const FieldInt &other) const {
+	countOps(functionOps);
 	return Uint256::operator<=(other);
 }
 
 bool FieldInt::operator>(const FieldInt &other) const {
+	countOps(functionOps);
 	return Uint256::operator>(other);
 }
 
 bool FieldInt::operator>=(const FieldInt &other) const {
+	countOps(functionOps);
 	return Uint256::operator>=(other);
 }
 
