@@ -52,6 +52,7 @@ uint32_t Uint256::add(const Uint256 &other, uint32_t enable) {
 	uint32_t carry = 0;
 	countOps(3 * arithmeticOps);
 	for (int i = 0; i < NUM_WORDS; i++) {
+		countOps(loopBodyOps);
 		countOps(2 * arithmeticOps);
 		uint64_t sum = static_cast<uint64_t>(value[i]) + (other.value[i] & mask) + carry;
 		value[i] = static_cast<uint32_t>(sum);
@@ -70,6 +71,7 @@ uint32_t Uint256::subtract(const Uint256 &other, uint32_t enable) {
 	uint32_t borrow = 0;
 	countOps(3 * arithmeticOps);
 	for (int i = 0; i < NUM_WORDS; i++) {
+		countOps(loopBodyOps);
 		countOps(2 * arithmeticOps);
 		uint64_t diff = static_cast<uint64_t>(value[i]) - (other.value[i] & mask) - borrow;
 		value[i] = static_cast<uint32_t>(diff);
@@ -86,6 +88,7 @@ uint32_t Uint256::shiftLeft1() {
 	uint32_t prev = 0;
 	countOps(1 * arithmeticOps);
 	for (int i = 0; i < NUM_WORDS; i++) {
+		countOps(loopBodyOps);
 		uint32_t cur = value[i];
 		value[i] = (0U + cur) << 1 | prev >> 31;
 		prev = cur;
@@ -103,6 +106,7 @@ void Uint256::shiftRight1(uint32_t enable) {
 	uint32_t cur = value[0];
 	countOps(2 * arithmeticOps);
 	for (int i = 0; i < NUM_WORDS - 1; i++) {
+		countOps(loopBodyOps);
 		uint32_t next = value[i + 1];
 		value[i] = ((cur >> 1 | (0U + next) << 31) & mask) | (cur & ~mask);
 		cur = next;
@@ -128,6 +132,7 @@ void Uint256::reciprocal(const Uint256 &modulus) {
 	
 	// Loop invariant: x = a*this mod modulus, and y = b*this mod modulus
 	for (int i = 0; i < NUM_WORDS * 32 * 2; i++) {
+		countOps(loopBodyOps);
 		countOps(2 * arithmeticOps);
 		
 		// Try to reduce a trailing zero of y. Pseudocode:
@@ -172,6 +177,7 @@ void Uint256::replace(const Uint256 &other, uint32_t enable) {
 	countOps(functionOps);
 	uint32_t mask = -enable;
 	for (int i = 0; i < NUM_WORDS; i++) {
+		countOps(loopBodyOps);
 		value[i] = (other.value[i] & mask) | (value[i] & ~mask);
 		countOps(4 * arithmeticOps);
 	}
@@ -183,6 +189,7 @@ void Uint256::swap(Uint256 &other, uint32_t enable) {
 	countOps(functionOps);
 	uint32_t mask = -enable;
 	for (int i = 0; i < NUM_WORDS; i++) {
+		countOps(loopBodyOps);
 		uint32_t x = this->value[i];
 		uint32_t y = other.value[i];
 		this->value[i] = (y & mask) | (x & ~mask);
@@ -204,6 +211,7 @@ bool Uint256::operator==(const Uint256 &other) const {
 	uint32_t diff = 0;
 	countOps(2 * arithmeticOps);
 	for (int i = 0; i < NUM_WORDS; i++) {
+		countOps(loopBodyOps);
 		diff |= value[i] ^ other.value[i];
 		countOps(2 * arithmeticOps);
 	}
@@ -222,6 +230,7 @@ bool Uint256::operator<(const Uint256 &other) const {
 	bool result = false;
 	countOps(2 * arithmeticOps);
 	for (int i = 0; i < NUM_WORDS; i++) {
+		countOps(loopBodyOps);
 		bool eq = value[i] == other.value[i];
 		result = (eq & result) | (!eq & (value[i] < other.value[i]));
 		countOps(6 * arithmeticOps);

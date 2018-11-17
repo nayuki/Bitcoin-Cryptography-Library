@@ -16,6 +16,7 @@
 	enum {
 		functionOps = 1,
 		arithmeticOps = 1,
+		loopBodyOps = 3,  // Increment, compare, jump
 		uint256CopyOps = 17,
 		fieldintCopyOps = 18,  // 1 + uint256CopyOps
 		curvepointCopyOps = 55,  // 1 + 3 * fieldintCopyOps

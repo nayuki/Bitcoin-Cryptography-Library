@@ -72,8 +72,10 @@ void FieldInt::multiply(const FieldInt &other) {
 	// Compute raw product of (uint256 this->value) * (uint256 other.value) = (uint512 product0), via long multiplication
 	uint32_t product0[NUM_WORDS * 2] = {};
 	for (int i = 0; i < NUM_WORDS; i++) {
+		countOps(loopBodyOps);
 		uint32_t carry = 0;
 		for (int j = 0; j < NUM_WORDS; j++) {
+			countOps(loopBodyOps);
 			uint64_t sum = static_cast<uint64_t>(this->value[i]) * other.value[j];
 			sum += static_cast<uint64_t>(product0[i + j]) + carry;  // Does not overflow
 			product0[i + j] = static_cast<uint32_t>(sum);
@@ -90,6 +92,7 @@ void FieldInt::multiply(const FieldInt &other) {
 		uint32_t carry = 0;
 		countOps(1 * arithmeticOps);
 		for (int i = 0; i < NUM_WORDS * 3; i++) {
+			countOps(loopBodyOps);
 			uint64_t sum = carry;
 			if (i < NUM_WORDS * 2)
 				sum += static_cast<uint64_t>(product0[i]) * 0x3D1;
@@ -113,6 +116,7 @@ void FieldInt::multiply(const FieldInt &other) {
 		uint32_t borrow = 0;
 		countOps(1 * arithmeticOps);
 		for (int i = 0; i < NUM_WORDS * 2; i++) {
+			countOps(loopBodyOps);
 			uint64_t diff = -static_cast<uint64_t>(borrow);
 			if (i < NUM_WORDS)
 				diff -= static_cast<uint64_t>(product1Shifted[i]) * 0x3D1;
@@ -134,6 +138,7 @@ void FieldInt::multiply(const FieldInt &other) {
 		uint32_t borrow = 0;
 		countOps(1 * arithmeticOps);
 		for (int i = 0; i < NUM_WORDS + 1; i++) {
+			countOps(loopBodyOps);
 			uint64_t diff = static_cast<uint64_t>(product0[i]) - product2[i] - borrow;
 			difference[i] = static_cast<uint32_t>(diff);
 			borrow = -static_cast<uint32_t>(diff >> 32);

@@ -144,6 +144,7 @@ void Ecdsa::multiplyModOrder(Uint256 &x, const Uint256 &y) {
 	countOps(1 * arithmeticOps);
 	
 	for (int i = Uint256::NUM_WORDS * 32 - 1; i >= 0; i--) {
+		countOps(loopBodyOps);
 		// Multiply by 2
 		uint32_t c = z.shiftLeft1();
 		z.subtract(mod, c | static_cast<uint32_t>(z >= mod));

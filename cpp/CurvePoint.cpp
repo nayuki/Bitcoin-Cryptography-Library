@@ -194,6 +194,7 @@ void CurvePoint::multiply(const Uint256 &n) {
 	countOps(18 * curvepointCopyOps);
 	table[2].twice();
 	for (int i = 3; i < tableLen; i++) {
+		countOps(loopBodyOps);
 		table[i] = table[i - 1];
 		table[i].add(*this);
 		countOps(1 * curvepointCopyOps);
@@ -202,15 +203,20 @@ void CurvePoint::multiply(const Uint256 &n) {
 	// Process tableBits per iteration (windowed method)
 	*this = ZERO;
 	for (int i = Uint256::NUM_WORDS * 32 - tableBits; i >= 0; i -= tableBits) {
+		countOps(loopBodyOps);
 		unsigned int inc = (n.value[i >> 5] >> (i & 31)) & (tableLen - 1);
 		CurvePoint q = ZERO;  // Dummy initial value
 		countOps(1 * curvepointCopyOps);
-		for (unsigned int j = 0; j < tableLen; j++)
+		for (unsigned int j = 0; j < tableLen; j++) {
+			countOps(loopBodyOps);
 			q.replace(table[j], static_cast<uint32_t>(j == inc));
+		}
 		this->add(q);
 		if (i != 0) {
-			for (int j = 0; j < tableBits; j++)
+			for (int j = 0; j < tableBits; j++) {
+				countOps(loopBodyOps);
 				this->twice();
+			}
 		}
 		countOps(36 * arithmeticOps);
 	}
