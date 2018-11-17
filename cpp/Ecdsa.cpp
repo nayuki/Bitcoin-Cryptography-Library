@@ -111,8 +111,7 @@ bool Ecdsa::verify(const CurvePoint &publicKey, const Sha256Hash &msgHash, const
 	p.normalize();
 	
 	Uint256 px(p.x);
-	if (px >= order)
-		px.subtract(order);
+	px.subtract(order, static_cast<uint32_t>(px >= order));
 	return r == px;
 }
 
