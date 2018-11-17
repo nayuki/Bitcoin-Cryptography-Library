@@ -50,7 +50,7 @@ bool Ecdsa::sign(const Uint256 &privateKey, const Sha256Hash &msgHash, const Uin
 	Uint256 s = r;
 	const Uint256 z(msgHash.value);
 	multiplyModOrder(s, privateKey);
-	uint32_t carry = s.add(z, 1);
+	uint32_t carry = s.add(z);
 	s.subtract(order, carry | static_cast<uint32_t>(s >= order));
 	countOps(1 * arithmeticOps);
 	countOps(2 * uint256CopyOps);

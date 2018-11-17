@@ -53,7 +53,7 @@ ExtendedPrivateKey ExtendedPrivateKey::getChildKey(uint32_t index) const {
 	Uint256 num(hash);
 	if (num >= CurvePoint::ORDER)
 		return ExtendedPrivateKey();
-	uint32_t carry = num.add(privateKey, 1);
+	uint32_t carry = num.add(privateKey);
 	num.subtract(CurvePoint::ORDER, carry | static_cast<uint32_t>(num >= CurvePoint::ORDER));
 	if (num == Uint256::ZERO)
 		return ExtendedPrivateKey();
