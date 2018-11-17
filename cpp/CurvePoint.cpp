@@ -112,7 +112,7 @@ void CurvePoint::add(const CurvePoint &other) {
 	v.multiply(u3);  // Assigns to z
 	
 	this->replace(temp, static_cast<uint32_t>(thisZero | otherZero | sameX));
-	countOps(10 * arithmeticOps);
+	countOps(8 * arithmeticOps);
 	countOps(10 * fieldintCopyOps);
 	countOps(1 * curvepointCopyOps);
 }
@@ -197,19 +197,23 @@ void CurvePoint::multiply(const Uint256 &n) {
 		countOps(loopBodyOps);
 		table[i] = table[i - 1];
 		table[i].add(*this);
+		countOps(2 * arithmeticOps);
 		countOps(1 * curvepointCopyOps);
 	}
 	
 	// Process tableBits per iteration (windowed method)
 	*this = ZERO;
+	countOps(1 * curvepointCopyOps);
 	for (int i = Uint256::NUM_WORDS * 32 - tableBits; i >= 0; i -= tableBits) {
 		countOps(loopBodyOps);
 		unsigned int inc = (n.value[i >> 5] >> (i & 31)) & (tableLen - 1);
 		CurvePoint q = ZERO;  // Dummy initial value
+		countOps(5 * arithmeticOps);
 		countOps(1 * curvepointCopyOps);
 		for (unsigned int j = 0; j < tableLen; j++) {
 			countOps(loopBodyOps);
 			q.replace(table[j], static_cast<uint32_t>(j == inc));
+			countOps(1 * arithmeticOps);
 		}
 		this->add(q);
 		if (i != 0) {
@@ -218,7 +222,6 @@ void CurvePoint::multiply(const Uint256 &n) {
 				this->twice();
 			}
 		}
-		countOps(36 * arithmeticOps);
 	}
 }
 
@@ -245,7 +248,6 @@ void CurvePoint::normalize() {
 	x.replace(FI_ONE, static_cast<uint32_t>(x != FI_ZERO));
 	y.replace(FI_ONE, static_cast<uint32_t>(y != FI_ZERO));
 	this->replace(norm, static_cast<uint32_t>(z != FI_ZERO));
-	countOps(1 * arithmeticOps);
 	countOps(1 * fieldintCopyOps);
 	countOps(1 * curvepointCopyOps);
 }
@@ -284,11 +286,13 @@ bool CurvePoint::isZero() const {
 
 bool CurvePoint::operator==(const CurvePoint &other) const {
 	countOps(functionOps);
-	countOps(1 * arithmeticOps);
+	countOps(2 * arithmeticOps);
 	return (x == other.x) & (y == other.y) & (z == other.z);
 }
 
 bool CurvePoint::operator!=(const CurvePoint &other) const {
+	countOps(functionOps);
+	countOps(1 * arithmeticOps);
 	return !(*this == other);
 }
 
