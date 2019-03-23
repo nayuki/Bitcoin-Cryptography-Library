@@ -8,6 +8,8 @@
 
 #include <cassert>
 #include <cstring>
+#include <string>
+#include <sstream>
 #include "Sha256Hash.hpp"
 #include "Utils.hpp"
 
@@ -42,4 +44,23 @@ bool Sha256Hash::operator==(const Sha256Hash &other) const {
 
 bool Sha256Hash::operator!=(const Sha256Hash &other) const {
 	return !(*this == other);
+}
+
+/**
+  * Thanks for https://www.reddit.com/r/cpp_questions/comments/b4lvgl/convert_unit8_t_32_to_string/
+  * @author https://github.com/vincenzopalazzo
+*/
+std::string Sha256Hash::ToString()
+{
+	std::string hashResult;
+	std::stringstream stream;
+	for(int i = 0; i < HASH_LEN - 1; i++)
+	{
+
+		stream << std::hex << static_cast<int>(value[i]);
+
+	}
+
+	hashResult = stream.str();
+	return hashResult;
 }

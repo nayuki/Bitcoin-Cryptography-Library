@@ -52,5 +52,11 @@ class Sha256Hash final {
 	
 	// Tests whether the given hash is unequal to this one. Constant-time with respect to both values.
 	public: bool operator!=(const Sha256Hash &other) const;
+
+	  /**
+      *Convert the hash calculate in to string
+      * @author https://github.com/vincenzopalazzo
+      **/
+	public: std::string ToString();
 	
 };
