@@ -1,7 +1,7 @@
-/* 
+/*
  * Bitcoin cryptography library
  * Copyright (c) Project Nayuki
- * 
+ *
  * https://www.nayuki.io/page/bitcoin-cryptography-library
  * https://github.com/nayuki/Bitcoin-Cryptography-Library
  */
@@ -52,15 +52,15 @@ bool Sha256Hash::operator!=(const Sha256Hash &other) const {
 */
 std::string Sha256Hash::ToString()
 {
-	std::string hashResult;
-	std::stringstream stream;
-	for(int i = 0; i < HASH_LEN - 1; i++)
-	{
+  std::string hashResult;
+  std::stringstream stream;
+  for(int i = 0; i < HASH_LEN; i++)
+  {
+      int valueInt = static_cast<int>(value[i]);
+      stream << std::hex << std::setprecision(2) << std::setw(2) << std::setfill('0') << valueInt;
 
-		stream << std::hex << static_cast<int>(value[i]);
+  }
 
-	}
-
-	hashResult = stream.str();
-	return hashResult;
+  hashResult = stream.str();
+  return hashResult;
 }
