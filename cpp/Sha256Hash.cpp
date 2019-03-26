@@ -64,3 +64,34 @@ std::string Sha256Hash::ToString()
   hashResult = stream.str();
   return hashResult;
 }
+
+/**
+  * This methods convertion hash into string for regule bitcoin protocol
+  * @author https://github.com/vincenzopalazzo
+*/
+std::string Sha256Hash::ToStringForProtocol()
+{
+
+  //reverse array hash calculate
+  uint8_t clone_has_raw[HASH_LEN];
+
+  int position = 0;
+  for(int i = HASH_LEN - 1; i >= 0; i--)
+  {
+    clone_has_raw[position] = value[i];
+    position++;
+  }
+
+  std::string hashResult;
+  std::stringstream stream;
+  for(int i = 0; i < HASH_LEN; i++)
+  {
+
+      unsigned int valueInt = static_cast<unsigned int>(clone_has_raw[i]);
+      stream << std::hex << std::setfill('0')  << std::setprecision(2) << std::setw(2) << valueInt;
+
+  }
+
+  hashResult = stream.str();
+  return hashResult;
+}
