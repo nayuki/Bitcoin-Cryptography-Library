@@ -45,11 +45,14 @@ CXXFLAGS += -O1
 
 LIB = bitcoincrypto
 LIBFILE = lib$(LIB).a
-LIBOBJ = AsmX8664.o Base58Check.o CurvePoint.o Ecdsa.o ExtendedPrivateKey.o FieldInt.o Keccak256.o Ripemd160.o Sha256.o Sha256Hash.o Sha512.o Uint256.o Utils.o
+LIBSRC = Base58Check.cpp CurvePoint.cpp Ecdsa.cpp ExtendedPrivateKey.cpp FieldInt.cpp Keccak256.cpp Ripemd160.cpp Sha256.cpp Sha256Hash.cpp Sha512.cpp Uint256.cpp Utils.cpp
+LIBOBJ := $(LIBSRC:%.cpp=%.o)
+LIBSRC += AsmX8664.s
+LIBOBJ += AsmX8664.o
 TESTS = Base58CheckTest CurvePointTest EcdsaTest ExtendedPrivateKeyTest FieldIntTest Keccak256Test Ripemd160Test Sha256HashTest Sha256Test Sha512Test Uint256Test
 
 # Build all binaries
-all: $(LIBFILE) $(TESTS)
+all: $(LIBFILE) $(TESTS) EcdsaOpCount
 
 # Run tests
 check: $(TESTS)
@@ -57,12 +60,16 @@ check: $(TESTS)
 
 # Delete build output
 clean:
-	rm -f -- $(LIBOBJ) $(LIBFILE) $(TESTS:=.o) $(TESTS)
+	rm -f -- $(LIBOBJ) $(LIBFILE) $(TESTS:=.o) $(TESTS) EcdsaOpCount
 	rm -rf .deps
 
 # Executable files
 %: %.o $(LIBFILE)
 	$(CXX) $(CXXFLAGS) -o $@ $< -L . -l $(LIB)
+
+# Special executable
+EcdsaOpCount: EcdsaOpCount.cpp $(LIBSRC)
+	$(CXX) $(CXXFLAGS) -DCOUNT_OPS -DNDEBUG -o $@ $^
 
 # The library
 $(LIBFILE): $(LIBOBJ)
