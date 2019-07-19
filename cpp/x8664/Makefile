@@ -45,8 +45,8 @@ CXXFLAGS += -O1
 
 LIB = bitcoincrypto
 LIBFILE = lib$(LIB).a
-LIBOBJ = AsmX8664.o Base58Check.o CurvePoint.o Ecdsa.o FieldInt.o Ripemd160.o Sha256.o Sha256Hash.o Sha512.o Uint256.o Utils.o
-TESTS = Base58CheckTest CurvePointTest EcdsaTest FieldIntTest Ripemd160Test Sha256HashTest Sha256Test Sha512Test Uint256Test
+LIBOBJ = AsmX8664.o Base58Check.o CurvePoint.o Ecdsa.o ExtendedPrivateKey.o FieldInt.o Keccak256.o Ripemd160.o Sha256.o Sha256Hash.o Sha512.o Uint256.o Utils.o
+TESTS = Base58CheckTest CurvePointTest EcdsaTest ExtendedPrivateKeyTest FieldIntTest Keccak256Test Ripemd160Test Sha256HashTest Sha256Test Sha512Test Uint256Test
 
 # Build all binaries
 all: $(LIBFILE) $(TESTS)
