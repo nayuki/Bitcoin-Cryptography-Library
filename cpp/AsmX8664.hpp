@@ -10,6 +10,10 @@
 
 #include <cstdint>
 
+#ifndef USE_X8664_ASM_IMPL
+	#define USE_X8664_ASM_IMPL 0
+#endif
+
 
 extern "C" {
 	
