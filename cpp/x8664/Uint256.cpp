@@ -9,6 +9,7 @@
 #include <cassert>
 #include <cstring>
 #include "AsmX8664.hpp"
+#include "CountOps.hpp"
 #include "Uint256.hpp"
 #include "Utils.hpp"
 
@@ -47,40 +48,52 @@ Uint256::Uint256(const FieldInt &val) {
 
 uint32_t Uint256::add(const Uint256 &other, uint32_t enable) {
 	assert(&other != this && (enable >> 1) == 0);
+	countOps(functionOps);
+	countOps(15 * arithmeticOps);
 	return asm_Uint256_add(&this->value[0], &other.value[0], enable);
 }
 
 
 uint32_t Uint256::subtract(const Uint256 &other, uint32_t enable) {
 	assert(&other != this && (enable >> 1) == 0);
+	countOps(functionOps);
+	countOps(15 * arithmeticOps);
 	return asm_Uint256_subtract(&this->value[0], &other.value[0], enable);
 }
 
 
 uint32_t Uint256::shiftLeft1() {
+	countOps(functionOps);
+	countOps(6 * arithmeticOps);
 	return asm_Uint256_shiftLeft1(&this->value[0]);
 }
 
 
 void Uint256::shiftRight1(uint32_t enable) {
 	assert((enable >> 1) == 0);
+	countOps(functionOps);
 	asm_Uint256_shiftRight1(&this->value[0], enable);
+	countOps(21 * arithmeticOps);
 }
 
 
 void Uint256::reciprocal(const Uint256 &modulus) {
 	// Extended binary GCD algorithm
 	assert(&modulus != this && (modulus.value[0] & 1) == 1 && modulus > ONE && *this < modulus);
+	countOps(functionOps);
 	Uint256 x = modulus;
 	Uint256 y = *this;
 	Uint256 a = ZERO;
 	Uint256 b = ONE;
 	Uint256 halfModulus = modulus;
+	countOps(5 * uint256CopyOps);
 	halfModulus.add(ONE);
 	halfModulus.shiftRight1();
 	
 	// Loop invariant: x = a*this mod modulus, and y = b*this mod modulus
 	for (int i = 0; i < NUM_WORDS * 32 * 2; i++) {
+		countOps(loopBodyOps);
+		
 		// Try to reduce a trailing zero of y. Pseudocode:
 		// if (y % 2 == 0) {
 		//     y /= 2
@@ -92,6 +105,7 @@ void Uint256::reciprocal(const Uint256 &modulus) {
 		y.shiftRight1(yEven);
 		b.shiftRight1(yEven);
 		b.add(halfModulus, yEven & bOdd);
+		countOps(4 * arithmeticOps);
 		
 		// If allowed, try to swap so that y >= x and then do y -= x. Pseudocode:
 		// if (y % 2 == 1) {
@@ -110,6 +124,7 @@ void Uint256::reciprocal(const Uint256 &modulus) {
 		a.swap(b, doswap);
 		uint32_t borrow = b.subtract(a, enable);
 		b.add(modulus, borrow);
+		countOps(2 * arithmeticOps);
 	}
 	assert((x == ONE) | (x == modulus));  // Either gcd(this, modulus) = 1 or this = 0
 	this->replace(a, static_cast<uint32_t>(*this != ZERO));
@@ -118,13 +133,17 @@ void Uint256::reciprocal(const Uint256 &modulus) {
 
 void Uint256::replace(const Uint256 &other, uint32_t enable) {
 	assert((enable >> 1) == 0);
+	countOps(functionOps);
 	asm_Uint256_replace(&this->value[0], &other.value[0], enable);
+	countOps(9 * arithmeticOps);
 }
 
 
 void Uint256::swap(Uint256 &other, uint32_t enable) {
 	assert((enable >> 1) == 0);
+	countOps(functionOps);
 	asm_Uint256_swap(&this->value[0], &other.value[0], enable);
+	countOps(17 * arithmeticOps);
 }
 
 
@@ -136,31 +155,42 @@ void Uint256::getBigEndianBytes(uint8_t b[NUM_WORDS * 4]) const {
 
 
 bool Uint256::operator==(const Uint256 &other) const {
+	countOps(functionOps);
+	countOps(9 * arithmeticOps);
 	return asm_Uint256_equalTo(&this->value[0], &other.value[0]);
 }
 
 
 bool Uint256::operator!=(const Uint256 &other) const {
+	countOps(functionOps);
+	countOps(1 * arithmeticOps);
 	return !(*this == other);
 }
 
 
 bool Uint256::operator<(const Uint256 &other) const {
+	countOps(functionOps);
+	countOps(18 * arithmeticOps);
 	return asm_Uint256_lessThan(&this->value[0], &other.value[0]);
 }
 
 
 bool Uint256::operator<=(const Uint256 &other) const {
+	countOps(functionOps);
+	countOps(1 * arithmeticOps);
 	return !(other < *this);
 }
 
 
 bool Uint256::operator>(const Uint256 &other) const {
+	countOps(functionOps);
 	return other < *this;
 }
 
 
 bool Uint256::operator>=(const Uint256 &other) const {
+	countOps(functionOps);
+	countOps(1 * arithmeticOps);
 	return !(*this < other);
 }
 
