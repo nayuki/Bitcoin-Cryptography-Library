@@ -149,8 +149,8 @@ void Uint256::swap(Uint256 &other, uint32_t enable) {
 
 void Uint256::getBigEndianBytes(uint8_t b[NUM_WORDS * 4]) const {
 	assert(b != nullptr);
-	for (int i = 0; i < NUM_WORDS * 4; i++)
-		b[NUM_WORDS * 4 - 1 - i] = static_cast<uint8_t>(value[i >> 2] >> ((i & 3) << 3));
+	for (int i = 0; i < NUM_WORDS; i++)
+		Utils::storeBigUint32(value[i], &b[(NUM_WORDS - 1 - i) * 4]);
 }
 
 

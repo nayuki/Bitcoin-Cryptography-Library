@@ -36,7 +36,7 @@ FieldInt::FieldInt(const Uint256 &val) :
 
 void FieldInt::add(const FieldInt &other) {
 	countOps(functionOps);
-	uint32_t c = Uint256::add(other, 1);  // Perform addition
+	uint32_t c = Uint256::add(other);  // Perform addition
 	assert((c >> 1) == 0);
 	Uint256::subtract(MODULUS, c | static_cast<uint32_t>(*this >= MODULUS));  // Conditionally subtract modulus
 	countOps(1 * arithmeticOps);
@@ -45,7 +45,7 @@ void FieldInt::add(const FieldInt &other) {
 
 void FieldInt::subtract(const FieldInt &other) {
 	countOps(functionOps);
-	uint32_t b = Uint256::subtract(other, 1);  // Perform subtraction
+	uint32_t b = Uint256::subtract(other);  // Perform subtraction
 	assert((b >> 1) == 0);
 	Uint256::add(MODULUS, b);  // Conditionally add modulus
 }
