@@ -78,7 +78,7 @@ void Keccak256::absorb(uint64_t state[5][5]) {
 		// Iota step
 		for (int j = 0; j < 7; j++) {
 			a[0][0] ^= static_cast<uint64_t>(r & 1) << ((1 << j) - 1);
-			r = (r << 1) ^ ((r >> 7) * 0x171);
+			r = static_cast<uint8_t>((r << 1) ^ ((r >> 7) * 0x171));
 		}
 	}
 }

@@ -63,5 +63,5 @@ ExtendedPrivateKey ExtendedPrivateKey::getChildKey(uint32_t index) const {
 	Sha256Hash innerHash = Sha256::getHash(pubKeyBytes, sizeof(pubKeyBytes) / sizeof(pubKeyBytes[0]));
 	uint8_t pubKeyHash[Ripemd160::HASH_LEN];
 	Ripemd160::getHash(innerHash.value, Sha256Hash::HASH_LEN, pubKeyHash);
-	return ExtendedPrivateKey(num, &hash[32], depth + 1, index, pubKeyHash);
+	return ExtendedPrivateKey(num, &hash[32], static_cast<uint8_t>(depth + 1), index, pubKeyHash);
 }

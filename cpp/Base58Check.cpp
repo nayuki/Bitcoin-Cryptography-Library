@@ -226,7 +226,7 @@ bool Base58Check::base58CheckToBytes(const char *inStr, uint8_t outData[], size_
 		const char *p = std::strchr(ALPHABET, inStr[i]);
 		if (p == nullptr)
 			return false;
-		if (addUint8(outData, p - &ALPHABET[0], outDataLen))
+		if (addUint8(outData, static_cast<uint8_t>(p - &ALPHABET[0]), outDataLen))
 			return false;
 	}
 	

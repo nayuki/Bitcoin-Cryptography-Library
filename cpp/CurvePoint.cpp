@@ -299,7 +299,7 @@ bool CurvePoint::operator!=(const CurvePoint &other) const {
 
 void CurvePoint::toCompressedPoint(uint8_t output[33]) const {
 	assert(output != nullptr);
-	output[0] = (y.value[0] & 1) + 0x02;
+	output[0] = static_cast<uint8_t>((y.value[0] & 1) + 0x02);
 	x.getBigEndianBytes(&output[1]);
 }
 
