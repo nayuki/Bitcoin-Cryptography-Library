@@ -21,7 +21,7 @@ void Keccak256::getHash(const uint8_t msg[], size_t len, uint8_t hashResult[HASH
 	// XOR each message byte into the state, and absorb full blocks
 	int blockOff = 0;
 	for (size_t i = 0; i < len; i++) {
-		size_t j = blockOff >> 3;
+		int j = blockOff >> 3;
 		state[j % 5][j / 5] ^= static_cast<uint64_t>(msg[i]) << ((blockOff & 7) << 3);
 		blockOff++;
 		if (blockOff == BLOCK_SIZE) {
@@ -31,10 +31,10 @@ void Keccak256::getHash(const uint8_t msg[], size_t len, uint8_t hashResult[HASH
 	}
 	
 	// Final block and padding
-	size_t i = blockOff >> 3;
+	int i = blockOff >> 3;
 	state[i % 5][i / 5] ^= UINT64_C(0x01) << ((blockOff & 7) << 3);
 	blockOff = BLOCK_SIZE - 1;
-	size_t j = blockOff >> 3;
+	int j = blockOff >> 3;
 	state[j % 5][j / 5] ^= UINT64_C(0x80) << ((blockOff & 7) << 3);
 	absorb(state);
 	

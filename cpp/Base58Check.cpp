@@ -242,7 +242,7 @@ bool Base58Check::base58CheckToBytes(const char *inStr, uint8_t outData[], size_
 	
 	// Compute and check hash
 	const Sha256Hash sha256Hash = Sha256::getDoubleHash(outData, outDataLen - 4);
-	for (int i = 0; i < 4; i++) {
+	for (unsigned int i = 0; i < 4; i++) {
 		if (outData[outDataLen - 4 + i] != sha256Hash.value[i])
 			return false;
 	}

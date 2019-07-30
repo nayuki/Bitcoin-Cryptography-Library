@@ -187,13 +187,13 @@ void CurvePoint::multiply(const Uint256 &n) {
 	// Precompute [this*0, this*1, ..., this*15]
 	countOps(functionOps);
 	constexpr int tableBits = 4;  // Do not modify
-	constexpr int tableLen = 1 << tableBits;
+	constexpr unsigned int tableLen = 1U << tableBits;
 	CurvePoint table[tableLen];  // Default-initialized with ZERO
 	table[1] = *this;
 	table[2] = *this;
 	countOps(18 * curvepointCopyOps);
 	table[2].twice();
-	for (int i = 3; i < tableLen; i++) {
+	for (unsigned int i = 3; i < tableLen; i++) {
 		countOps(loopBodyOps);
 		table[i] = table[i - 1];
 		table[i].add(*this);
