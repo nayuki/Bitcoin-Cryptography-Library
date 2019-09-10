@@ -31,12 +31,14 @@ void Keccak256::getHash(const uint8_t msg[], size_t len, uint8_t hashResult[HASH
 	}
 	
 	// Final block and padding
-	int i = blockOff >> 3;
-	state[i % 5][i / 5] ^= UINT64_C(0x01) << ((blockOff & 7) << 3);
-	blockOff = BLOCK_SIZE - 1;
-	int j = blockOff >> 3;
-	state[j % 5][j / 5] ^= UINT64_C(0x80) << ((blockOff & 7) << 3);
-	absorb(state);
+	{
+		int i = blockOff >> 3;
+		state[i % 5][i / 5] ^= UINT64_C(0x01) << ((blockOff & 7) << 3);
+		blockOff = BLOCK_SIZE - 1;
+		int j = blockOff >> 3;
+		state[j % 5][j / 5] ^= UINT64_C(0x80) << ((blockOff & 7) << 3);
+		absorb(state);
+	}
 	
 	// Uint64 array to bytes in little endian
 	for (int i = 0; i < HASH_LEN; i++) {

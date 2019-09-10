@@ -90,9 +90,9 @@ void Base58Check::bytesToBase58Check(uint8_t data[], uint8_t temp[], size_t data
 	if (outLen == 0)
 		return;  // Exit early to ensure that j does not overflow
 	for (size_t i = 0, j = outLen - 1; i < j; i++, j--) {
-		char temp = outStr[i];
+		char tp = outStr[i];
 		outStr[i] = outStr[j];
-		outStr[j] = temp;
+		outStr[j] = tp;
 	}
 }
 
