@@ -108,6 +108,7 @@ class CurvePoint final {
 	// This point needs to be normalized before the method is called. Constant-time with respect to this value.
 	public: void toCompressedPoint(std::uint8_t output[33]) const;
 	
+	public: void toAddress(char output[36], bool is_compressed, bool is_main_net) const;
 	
 	/*---- Static functions ----*/
 	
