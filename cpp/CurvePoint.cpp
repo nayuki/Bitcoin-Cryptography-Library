@@ -303,6 +303,24 @@ void CurvePoint::toCompressedPoint(uint8_t output[33]) const {
 	x.getBigEndianBytes(&output[1]);
 }
 
+void CurvePoint::toAddress(char output[36], bool is_compressed, bool is_main_net) const {
+	assert(output != nullptr);
+	if (!is_compressed) {
+		std::uint8_t b[65];
+		b[0] = 0x04;
+		x.getBigEndianBytes(&b[1]);
+		y.getBigEndianBytes(&b[33]);
+		std::uint8_t actualHash[Ripemd160::HASH_LEN];
+		Ripemd160::getHash(Sha256::getHash(b, 65).value, 32, actualHash);
+		Base58Check::pubkeyHashToBase58Check(actualHash, is_main_net ? 0x00 : 0x6F, output); //testnet  0x6F
+	} else {
+		std::uint8_t b[33];
+		toCompressedPoint(b);
+		std::uint8_t actualHash[Ripemd160::HASH_LEN];
+		Ripemd160::getHash(Sha256::getHash(b, 33).value, 32, actualHash);
+		Base58Check::pubkeyHashToBase58Check(actualHash, is_main_net ? 0x00 : 0x6F, output); //testnet  0x6F
+	}
+}
 
 CurvePoint CurvePoint::privateExponentToPublicPoint(const Uint256 &privExp) {
 	assert((Uint256::ZERO < privExp) & (privExp < CurvePoint::ORDER));
