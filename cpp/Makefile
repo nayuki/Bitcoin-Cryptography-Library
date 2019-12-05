@@ -23,7 +23,8 @@
 # Mandatory compiler flags
 CXXFLAGS += -std=c++11
 # Diagnostics. Adding '-fsanitize=address' is helpful for most versions of Clang and newer versions of GCC.
-CXXFLAGS += -Wall -fsanitize=undefined
+# add  -fsanitize-undefined-trap-on-error to use UBSan without its library
+CXXFLAGS += -Wall -fsanitize=undefined  -fsanitize-undefined-trap-on-error
 # Optimization level
 CXXFLAGS += -O1
 # Choose "pure-cpp" or "x8664"
