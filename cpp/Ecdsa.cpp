@@ -101,11 +101,12 @@ bool Ecdsa::verify(const CurvePoint &publicKey, const Sha256Hash &msgHash, const
 	
 	const Uint256 &order = CurvePoint::ORDER;
 	const Uint256 &zero = Uint256::ZERO;
-	CurvePoint q = publicKey;
-	q.multiply(CurvePoint::ORDER);
 	if (!(zero < r && r < order && zero < s && s < order))
 		return false;
 	countOps(5 * arithmeticOps);
+	
+	CurvePoint q = publicKey;
+	q.multiply(CurvePoint::ORDER);
 	if (publicKey.isZero() || publicKey.z != CurvePoint::FI_ONE || !publicKey.isOnCurve() || !q.isZero())
 		return false;
 	countOps(4 * arithmeticOps);
