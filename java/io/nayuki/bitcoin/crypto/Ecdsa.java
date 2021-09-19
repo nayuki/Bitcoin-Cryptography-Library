@@ -57,7 +57,7 @@ public final class Ecdsa {
 			return false;
 		
 		int pOff = 2 * NUM_WORDS;  // CurvePoint
-		System.arraycopy(CurvePointMath.BASE_POINT, 0, val, pOff, CurvePointMath.POINT_WORDS);
+		CurvePointMath.copy(CurvePointMath.BASE_POINT, 0, val, pOff);
 		CurvePointMath.multiply(val, pOff, nonceOff, tempOff);
 		CurvePointMath.normalize(val, pOff, tempOff);
 		
@@ -153,7 +153,7 @@ public final class Ecdsa {
 		
 		int qOff   = 3 * NUM_WORDS;  // CurvePoint
 		int oneOff = 6 * NUM_WORDS;  // Uint256
-		System.arraycopy(publicKey, 0, val, qOff, CurvePointMath.POINT_WORDS);
+		CurvePointMath.copy(publicKey, 0, val, qOff);
 		Int256Math.copy(Int256Math.ONE, 0, val, oneOff);
 		if (CurvePointMath.isZero(publicKey, 0) == 1 || Int256Math.equalTo(val, qOff + CurvePointMath.ZCOORD, oneOff) == 0
 				|| CurvePointMath.isOnCurve(val, qOff, tempOff) == 0)
@@ -174,9 +174,9 @@ public final class Ecdsa {
 		multiplyModOrder(val, u2Off, r, 0, tempOff);
 		
 		int pOff = 6 * NUM_WORDS;  // CurvePoint, reuses space
-		System.arraycopy(CurvePointMath.BASE_POINT, 0, val, pOff, CurvePointMath.POINT_WORDS);
+		CurvePointMath.copy(CurvePointMath.BASE_POINT, 0, val, pOff);
 		CurvePointMath.multiply(val, pOff, u1Off, tempOff);
-		System.arraycopy(publicKey, 0, val, qOff, CurvePointMath.POINT_WORDS);
+		CurvePointMath.copy(publicKey, 0, val, qOff);
 		CurvePointMath.multiply(val, qOff, u2Off, tempOff);
 		CurvePointMath.add(val, pOff, qOff, tempOff);
 		CurvePointMath.normalize(val, pOff, tempOff);

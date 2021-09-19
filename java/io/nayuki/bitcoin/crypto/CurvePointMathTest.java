@@ -42,12 +42,12 @@ public final class CurvePointMathTest {
 			int[] arr = randomArray(tempOff + CurvePointMath.NORMALIZE_TEMP_WORDS);
 			
 			// Copy value
-			System.arraycopy(p, 0, arr, pOff, CurvePointMath.POINT_WORDS);
+			CurvePointMath.copy(p, 0, arr, pOff);
 			
 			// Do computation
 			CurvePointMath.twice(arr, pOff, tempOff);
 			CurvePointMath.normalize(arr, pOff, tempOff);
-			System.arraycopy(arr, pOff, p, 0, CurvePointMath.POINT_WORDS);
+			CurvePointMath.copy(arr, pOff, p, 0);
 			
 			// Check answer
 			int[] expect = new int[CurvePointMath.POINT_WORDS];
@@ -198,7 +198,7 @@ public final class CurvePointMathTest {
 			int[] arr = randomArray(tempOff + CurvePointMath.MULTIPLY_TEMP_WORDS);
 			
 			// Copy values
-			System.arraycopy(CurvePointMath.BASE_POINT, 0, arr, pOff, CurvePointMath.POINT_WORDS);
+			CurvePointMath.copy(CurvePointMath.BASE_POINT, 0, arr, pOff);
 			Int256Math.hexToUint(cs[0], arr, nOff);
 			
 			// Do computation

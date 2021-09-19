@@ -565,7 +565,7 @@ public final class EcdsaTest {
 			int publicKeyOff = 0 * Int256Math.NUM_WORDS;
 			int exponentOff  = 3 * Int256Math.NUM_WORDS;
 			int tempOff      = 4 * Int256Math.NUM_WORDS;
-			System.arraycopy(CurvePointMath.BASE_POINT, 0, arr, publicKeyOff, CurvePointMath.POINT_WORDS);
+			CurvePointMath.copy(CurvePointMath.BASE_POINT, 0, arr, publicKeyOff);
 			Int256Math.copy(privateKey, 0, arr, exponentOff);
 			CurvePointMath.multiply(arr, publicKeyOff, exponentOff, tempOff);
 			CurvePointMath.normalize(arr, publicKeyOff, tempOff);
@@ -625,7 +625,7 @@ public final class EcdsaTest {
 			int publicKeyOff = 0 * Int256Math.NUM_WORDS;
 			int exponentOff  = 3 * Int256Math.NUM_WORDS;
 			int tempOff      = 4 * Int256Math.NUM_WORDS;
-			System.arraycopy(CurvePointMath.BASE_POINT, 0, arr, publicKeyOff, CurvePointMath.POINT_WORDS);
+			CurvePointMath.copy(CurvePointMath.BASE_POINT, 0, arr, publicKeyOff);
 			Int256Math.copy(privateKey, 0, arr, exponentOff);
 			CurvePointMath.multiply(arr, publicKeyOff, exponentOff, tempOff);
 			CurvePointMath.normalize(arr, publicKeyOff, tempOff);

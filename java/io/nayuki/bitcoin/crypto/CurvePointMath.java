@@ -84,7 +84,7 @@ public final class CurvePointMath {
 		Int256Math.fieldSquare(val, uOff, pOff + ZCOORD, newTempOff);
 		Int256Math.fieldMultiply(val, uOff, pOff + ZCOORD, pOff + ZCOORD, newTempOff);
 		
-		System.arraycopy(ZERO_POINT, 0, val, tempOff, POINT_WORDS);  // Reuses space
+		copy(ZERO_POINT, 0, val, tempOff);  // Reuses space
 		CurvePointMath.replace(val, pOff, tempOff, zeroResult);
 	}
 	
@@ -133,7 +133,7 @@ public final class CurvePointMath {
 		int pIsZero = CurvePointMath.isZero(val, pOff);
 		int qIsZero = CurvePointMath.isZero(val, qOff);
 		int rOff = tempOff + 0 * NUM_WORDS;
-		System.arraycopy(val, pOff, val, rOff, POINT_WORDS);
+		copy(val, pOff, val, rOff);
 		CurvePointMath.twice(val, rOff, tempOff + POINT_WORDS);
 		CurvePointMath.replace(val, rOff, pOff, qIsZero);
 		CurvePointMath.replace(val, rOff, qOff, pIsZero);
@@ -149,7 +149,7 @@ public final class CurvePointMath {
 		Int256Math.fieldMultiply(val, qOff + YCOORD, pOff + ZCOORD, t1Off, newTempOff);
 		int sameX = Int256Math.equalTo(val, u0Off, u1Off);
 		int sameY = Int256Math.equalTo(val, t0Off, t1Off);
-		System.arraycopy(ZERO_POINT, 0, val, tempOff + 6 * NUM_WORDS, POINT_WORDS);
+		copy(ZERO_POINT, 0, val, tempOff + 6 * NUM_WORDS);
 		CurvePointMath.replace(val, rOff, tempOff + 6 * NUM_WORDS, (pIsZero ^ 1) & (qIsZero ^ 1) & sameX & (sameY ^ 1));
 		
 		int tOff = pOff + YCOORD;  // Reuses space
@@ -200,17 +200,17 @@ public final class CurvePointMath {
 		final int tableLen = 1 << tableBits;
 		int newTempOff = tempOff + (tableLen + 1) * POINT_WORDS;
 		int tableOff = tempOff;  // Uses tableLen * POINT_WORDS elements
-		System.arraycopy(ZERO_POINT, 0, val, tableOff, POINT_WORDS);
-		System.arraycopy(val, pOff, val, tableOff + 1 * POINT_WORDS, POINT_WORDS);
-		System.arraycopy(val, pOff, val, tableOff + 2 * POINT_WORDS, POINT_WORDS);
+		copy(ZERO_POINT, 0, val, tableOff);
+		copy(val, pOff, val, tableOff + 1 * POINT_WORDS);
+		copy(val, pOff, val, tableOff + 2 * POINT_WORDS);
 		CurvePointMath.twice(val, tableOff + 2 * POINT_WORDS, newTempOff);
 		for (int i = 3; i < tableLen; i++) {
-			System.arraycopy(val, tableOff + (i - 1) * POINT_WORDS, val, tableOff + i * POINT_WORDS, POINT_WORDS);
+			copy(val, tableOff + (i - 1) * POINT_WORDS, val, tableOff + i * POINT_WORDS);
 			CurvePointMath.add(val, tableOff + i * POINT_WORDS, pOff, newTempOff);
 		}
 		
 		// Process tableBits bits per iteration (windowed method)
-		System.arraycopy(ZERO_POINT, 0, val, pOff, POINT_WORDS);
+		copy(ZERO_POINT, 0, val, pOff);
 		int qOff = tempOff + tableLen * POINT_WORDS;
 		for (int i = Int256Math.NUM_WORDS * 32 - tableBits; i >= 0; i -= tableBits) {
 			int inc = (val[nOff + (i >>> 5)] >>> (i & 31)) & (tableLen - 1);
@@ -266,6 +266,12 @@ public final class CurvePointMath {
 	
 	
 	/*---- Miscellaneous functions ----*/
+	
+	// Copies the point from src to dst.
+	public static void copy(int[] src, int srcOff, int[] dst, int dstOff) {
+		System.arraycopy(src, srcOff, dst, dstOff, POINT_WORDS);
+	}
+	
 	
 	// Copies the point q into point p if enable is 1, or does nothing if enable is 0.
 	// Constant-time with respect to both values and the enable.
