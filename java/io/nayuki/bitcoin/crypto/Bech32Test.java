@@ -31,7 +31,7 @@ public final class Bech32Test {
 			assertEquals(cs[0], Bech32.segwitToBech32(cs[1], Integer.parseInt(cs[2]), Utils.hexToBytes(cs[3])));
 			Object[] temp = Bech32.bech32ToSegwit(cs[0]);
 			assertEquals(cs[1], temp[0]);
-			assertEquals(new Integer(cs[2]), temp[1]);
+			assertEquals(Integer.valueOf(cs[2]), temp[1]);
 			assertArrayEquals((byte[])temp[2], Utils.hexToBytes(cs[3]));
 		}
 	}
