@@ -133,6 +133,8 @@ public final class Ecdsa {
 		 * u1 = (msgHash * w) % order
 		 * u2 = (r * w) % order
 		 * p = u1 * G + u2 * pubKey
+		 * if (p == zero)
+		 *   return false
 		 * return r == p.x % order
 		 */
 		
@@ -178,6 +180,9 @@ public final class Ecdsa {
 		CurvePointMath.multiply(val, qOff, u2Off, tempOff);
 		CurvePointMath.add(val, pOff, qOff, tempOff);
 		CurvePointMath.normalize(val, pOff, tempOff);
+		if (CurvePointMath.isZero(val, pOff) == 1)
+			return false;
+		
 		int reduce = Int256Math.lessThan(val, pOff + CurvePointMath.XCOORD, orderOff) ^ 1;
 		Int256Math.uintSubtract(val, pOff + CurvePointMath.XCOORD, orderOff, reduce, pOff + CurvePointMath.XCOORD);
 		return Int256Math.equalTo(val, rOff, pOff + CurvePointMath.XCOORD) == 1;

@@ -94,6 +94,8 @@ bool Ecdsa::verify(const CurvePoint &publicKey, const Sha256Hash &msgHash, const
 	 * u1 = (msgHash * w) % order
 	 * u2 = (r * w) % order
 	 * p = u1 * G + u2 * pubKey
+	 * if (p == zero)
+	 *   return false
 	 * return r == p.x % order
 	 */
 	countOps(functionOps);
@@ -128,6 +130,8 @@ bool Ecdsa::verify(const CurvePoint &publicKey, const Sha256Hash &msgHash, const
 	p.add(q);
 	p.normalize();
 	countOps(2 * curvepointCopyOps);
+	if (p.isZero())
+		return false;
 	
 	Uint256 px(p.x);
 	px.subtract(order, static_cast<uint32_t>(px >= order));
