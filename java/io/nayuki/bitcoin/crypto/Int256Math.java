@@ -172,11 +172,11 @@ public final class Int256Math {
 		int dOff = tempOff + 3 * NUM_WORDS;
 		int halfModOff = tempOff + 4 * NUM_WORDS;
 		int oneOff = tempOff + 5 * NUM_WORDS;
-		System.arraycopy(val, yOff, val, aOff, NUM_WORDS);
-		System.arraycopy(val, xOff, val, bOff, NUM_WORDS);
-		System.arraycopy(ZERO, 0,   val, cOff, NUM_WORDS);
-		System.arraycopy(ONE , 0,   val, dOff, NUM_WORDS);
-		System.arraycopy(ONE, 0, val, oneOff, NUM_WORDS);
+		copy(val, yOff, val, aOff);
+		copy(val, xOff, val, bOff);
+		copy(ZERO, 0,   val, cOff);
+		copy(ONE , 0,   val, dOff);
+		copy(ONE, 0, val, oneOff);
 		uintAdd(val, yOff, oneOff, 1, halfModOff);
 		uintShiftRight1(val, halfModOff, 1, halfModOff);
 		
@@ -213,9 +213,9 @@ public final class Int256Math {
 		}
 		if ((equalTo(val, aOff, oneOff) | equalTo(val, aOff, yOff)) == 0)  // gcd(x, y) != 1 and x != 0
 			throw new IllegalArgumentException("Value not zero or coprime with modulus");
-		System.arraycopy(ZERO, 0, val, tempOff, NUM_WORDS);  // Reuses space
+		copy(ZERO, 0, val, tempOff);  // Reuses space
 		replace(val, cOff, tempOff, isZero(val, xOff));
-		System.arraycopy(val, cOff, val, zOff, NUM_WORDS);
+		copy(val, cOff, val, zOff);
 	}
 	
 	public static final int RECIPROCAL_TEMP_WORDS = 6 * NUM_WORDS;
@@ -233,7 +233,7 @@ public final class Int256Math {
 		
 		int c = uintAdd(val, xOff, yOff, 1, zOff);  // Perform addition
 		assert (c >>> 1) == 0;
-		System.arraycopy(FIELD_MODULUS, 0, val, tempOff, NUM_WORDS);
+		copy(FIELD_MODULUS, 0, val, tempOff);
 		int enable = c | (lessThan(val, zOff, tempOff) ^ 1);
 		uintSubtract(val, zOff, tempOff, enable, zOff);  // Conditionally subtract modulus
 	}
@@ -251,7 +251,7 @@ public final class Int256Math {
 		
 		int b = uintSubtract(val, xOff, yOff, 1, zOff);  // Perform subtraction
 		assert (b >>> 1) == 0;
-		System.arraycopy(FIELD_MODULUS, 0, val, tempOff, NUM_WORDS);
+		copy(FIELD_MODULUS, 0, val, tempOff);
 		uintAdd(val, zOff, tempOff, b, zOff);  // Conditionally add modulus
 	}
 	
@@ -267,7 +267,7 @@ public final class Int256Math {
 		
 		int c = uintShiftLeft1(val, xOff, zOff);
 		assert (c >>> 1) == 0;
-		System.arraycopy(FIELD_MODULUS, 0, val, tempOff, NUM_WORDS);
+		copy(FIELD_MODULUS, 0, val, tempOff);
 		int enable = c | (lessThan(val, zOff, tempOff) ^ 1);
 		uintSubtract(val, zOff, tempOff, enable, zOff);  // Conditionally subtract modulus
 	}
@@ -359,8 +359,8 @@ public final class Int256Math {
 		}
 		
 		// Final conditional subtraction to yield a FieldInt value
-		System.arraycopy(val, differenceOff, val, zOff, NUM_WORDS);
-		System.arraycopy(FIELD_MODULUS, 0, val, tempOff + 2 * NUM_WORDS, NUM_WORDS);  // Reuses space at offset 16
+		copy(val, differenceOff, val, zOff);
+		copy(FIELD_MODULUS, 0, val, tempOff + 2 * NUM_WORDS);  // Reuses space at offset 16
 		int enable = (equalTo(val[differenceOff + NUM_WORDS], 0) & lessThan(val, zOff, tempOff + 2 * NUM_WORDS)) ^ 1;
 		uintSubtract(val, zOff, tempOff + 2 * NUM_WORDS, enable, zOff);
 	}
@@ -370,6 +370,12 @@ public final class Int256Math {
 	
 	
 	/*---- Miscellaneous functions ----*/
+	
+	// Copies the value from src to dst.
+	public static void copy(int[] src, int srcOff, int[] dst, int dstOff) {
+		System.arraycopy(src, srcOff, dst, dstOff, NUM_WORDS);
+	}
+	
 	
 	// Copies the value y into x iff enable is 1. Offsets must be multiples of 8 and can overlap.
 	// Constant-time with respect to both values and the enable.

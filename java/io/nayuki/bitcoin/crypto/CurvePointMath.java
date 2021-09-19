@@ -250,7 +250,7 @@ public final class CurvePointMath {
 		int nonzero = Int256Math.isZero(val, pOff + ZCOORD) ^ 1;
 		int newTempOff = tempOff + POINT_WORDS;
 		int normOff = tempOff;
-		System.arraycopy(Int256Math.FIELD_MODULUS, 0, val, tempOff, NUM_WORDS);  // Reuses space
+		Int256Math.copy(Int256Math.FIELD_MODULUS, 0, val, tempOff);  // Reuses space
 		Int256Math.reciprocal(val, pOff + ZCOORD, tempOff, normOff + ZCOORD, newTempOff);
 		Int256Math.fieldMultiply(val, pOff + XCOORD, normOff + ZCOORD, normOff + XCOORD, newTempOff);
 		Int256Math.fieldMultiply(val, pOff + YCOORD, normOff + ZCOORD, normOff + YCOORD, newTempOff);
@@ -292,10 +292,10 @@ public final class CurvePointMath {
 		int constOff   = tempOff + 1 * NUM_WORDS;
 		int newTempOff = tempOff + 2 * NUM_WORDS;
 		Int256Math.fieldSquare(val, pOff + XCOORD, rightOff, newTempOff);
-		System.arraycopy(A, 0, val, constOff, NUM_WORDS);
+		Int256Math.copy(A, 0, val, constOff);
 		Int256Math.fieldAdd(val, rightOff, constOff, rightOff, newTempOff);
 		Int256Math.fieldMultiply(val, rightOff, pOff + XCOORD, rightOff, newTempOff);
-		System.arraycopy(B, 0, val, constOff, NUM_WORDS);
+		Int256Math.copy(B, 0, val, constOff);
 		Int256Math.fieldAdd(val, rightOff, constOff, rightOff, newTempOff);
 		
 		int leftOff = tempOff + 1 * NUM_WORDS;  // Reuses space

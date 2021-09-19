@@ -51,9 +51,9 @@ public final class CurvePointMathTest {
 			
 			// Check answer
 			int[] expect = new int[CurvePointMath.POINT_WORDS];
-			System.arraycopy(toInt256(cs[0]), 0, expect, CurvePointMath.XCOORD, Int256Math.NUM_WORDS);
-			System.arraycopy(toInt256(cs[1]), 0, expect, CurvePointMath.YCOORD, Int256Math.NUM_WORDS);
-			System.arraycopy(Int256Math.ONE , 0, expect, CurvePointMath.ZCOORD, Int256Math.NUM_WORDS);
+			Int256Math.copy(toInt256(cs[0]), 0, expect, CurvePointMath.XCOORD);
+			Int256Math.copy(toInt256(cs[1]), 0, expect, CurvePointMath.YCOORD);
+			Int256Math.copy(Int256Math.ONE , 0, expect, CurvePointMath.ZCOORD);
 			assertArrayEquals(expect, Arrays.copyOfRange(arr, pOff, pOff + CurvePointMath.POINT_WORDS));
 		}
 	}
@@ -83,10 +83,10 @@ public final class CurvePointMathTest {
 			// Copy values
 			Int256Math.hexToUint(cs[0], arr, pOff + CurvePointMath.XCOORD);
 			Int256Math.hexToUint(cs[1], arr, pOff + CurvePointMath.YCOORD);
-			System.arraycopy(Int256Math.ONE, 0, arr, pOff + CurvePointMath.ZCOORD, Int256Math.NUM_WORDS);
+			Int256Math.copy(Int256Math.ONE, 0, arr, pOff + CurvePointMath.ZCOORD);
 			Int256Math.hexToUint(cs[2], arr, qOff + CurvePointMath.XCOORD);
 			Int256Math.hexToUint(cs[3], arr, qOff + CurvePointMath.YCOORD);
-			System.arraycopy(Int256Math.ONE, 0, arr, qOff + CurvePointMath.ZCOORD, Int256Math.NUM_WORDS);
+			Int256Math.copy(Int256Math.ONE, 0, arr, qOff + CurvePointMath.ZCOORD);
 			
 			// Do computation
 			CurvePointMath.add(arr, pOff, qOff, tempOff);
@@ -94,9 +94,9 @@ public final class CurvePointMathTest {
 			
 			// Check answer
 			int[] expect = new int[CurvePointMath.POINT_WORDS];
-			System.arraycopy(toInt256(cs[4]), 0, expect, CurvePointMath.XCOORD, Int256Math.NUM_WORDS);
-			System.arraycopy(toInt256(cs[5]), 0, expect, CurvePointMath.YCOORD, Int256Math.NUM_WORDS);
-			System.arraycopy(Int256Math.ONE , 0, expect, CurvePointMath.ZCOORD, Int256Math.NUM_WORDS);
+			Int256Math.copy(toInt256(cs[4]), 0, expect, CurvePointMath.XCOORD);
+			Int256Math.copy(toInt256(cs[5]), 0, expect, CurvePointMath.YCOORD);
+			Int256Math.copy(Int256Math.ONE , 0, expect, CurvePointMath.ZCOORD);
 			assertArrayEquals(expect, Arrays.copyOfRange(arr, pOff, pOff + CurvePointMath.POINT_WORDS));
 		}
 	}
@@ -211,9 +211,9 @@ public final class CurvePointMathTest {
 				expect = CurvePointMath.ZERO_POINT;
 			else {
 				expect = new int[CurvePointMath.POINT_WORDS];
-				System.arraycopy(toInt256(cs[1]), 0, expect, CurvePointMath.XCOORD, Int256Math.NUM_WORDS);
-				System.arraycopy(toInt256(cs[2]), 0, expect, CurvePointMath.YCOORD, Int256Math.NUM_WORDS);
-				System.arraycopy(Int256Math.ONE , 0, expect, CurvePointMath.ZCOORD, Int256Math.NUM_WORDS);
+				Int256Math.copy(toInt256(cs[1]), 0, expect, CurvePointMath.XCOORD);
+				Int256Math.copy(toInt256(cs[2]), 0, expect, CurvePointMath.YCOORD);
+				Int256Math.copy(Int256Math.ONE , 0, expect, CurvePointMath.ZCOORD);
 			}
 			assertArrayEquals(expect, Arrays.copyOfRange(arr, pOff, pOff + CurvePointMath.POINT_WORDS));
 		}
@@ -819,7 +819,7 @@ public final class CurvePointMathTest {
 			// Copy values
 			Int256Math.hexToUint(cs[1], arr, pOff + CurvePointMath.XCOORD);
 			Int256Math.hexToUint(cs[2], arr, pOff + CurvePointMath.YCOORD);
-			System.arraycopy(Int256Math.ONE, 0, arr, pOff + CurvePointMath.ZCOORD, Int256Math.NUM_WORDS);
+			Int256Math.copy(Int256Math.ONE, 0, arr, pOff + CurvePointMath.ZCOORD);
 			
 			// Do computation
 			assertEquals(Integer.parseInt(cs[0]), CurvePointMath.isOnCurve(arr, pOff, tempOff));

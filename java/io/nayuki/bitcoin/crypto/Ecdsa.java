@@ -51,8 +51,8 @@ public final class Ecdsa {
 		int tempOff = 5 * NUM_WORDS;
 		int nonceOff = 0 * NUM_WORDS;  // Uint256
 		int orderOff = 1 * NUM_WORDS;  // Uint256
-		System.arraycopy(nonce, 0, val, nonceOff, NUM_WORDS);
-		System.arraycopy(CurvePointMath.ORDER, 0, val, orderOff, NUM_WORDS);
+		Int256Math.copy(nonce, 0, val, nonceOff);
+		Int256Math.copy(CurvePointMath.ORDER, 0, val, orderOff);
 		if (Int256Math.isZero(nonce, 0) == 1 || Int256Math.lessThan(val, nonceOff, orderOff) == 0)
 			return false;
 		
@@ -69,7 +69,7 @@ public final class Ecdsa {
 		
 		int sOff = pOff + CurvePointMath.YCOORD;  // Uint256, reuses space
 		int zOff = pOff + CurvePointMath.ZCOORD;  // Uint256, reuses space
-		System.arraycopy(val, rOff, val, sOff, NUM_WORDS);
+		Int256Math.copy(val, rOff, val, sOff);
 		Arrays.fill(val, zOff, zOff + NUM_WORDS, 0);
 		Int256Math.bytesToUint(msgHash.toBytes(), val, zOff);
 		multiplyModOrder(val, sOff, privateKey, 0, tempOff);
@@ -85,8 +85,8 @@ public final class Ecdsa {
 		int negSOff = zOff;  // Uint256, reuses space
 		Int256Math.uintSubtract(val, orderOff, sOff, 1, negSOff);
 		Int256Math.replace(val, sOff, negSOff, Int256Math.lessThan(val, negSOff, sOff));  // To ensure low S values for BIP 62
-		System.arraycopy(val, rOff, outR, 0, NUM_WORDS);
-		System.arraycopy(val, sOff, outS, 0, NUM_WORDS);
+		Int256Math.copy(val, rOff, outR, 0);
+		Int256Math.copy(val, sOff, outS, 0);
 		return true;
 	}
 	
@@ -141,12 +141,12 @@ public final class Ecdsa {
 		int[] val = new int[9 * NUM_WORDS + CurvePointMath.MULTIPLY_TEMP_WORDS];
 		int tempOff  = 9 * NUM_WORDS;
 		int orderOff = 0 * NUM_WORDS;  // Uint256
-		System.arraycopy(CurvePointMath.ORDER, 0, val, orderOff, NUM_WORDS);
+		Int256Math.copy(CurvePointMath.ORDER, 0, val, orderOff);
 		
 		int rOff = 1 * NUM_WORDS;  // Uint256
 		int sOff = 2 * NUM_WORDS;  // Uint256
-		System.arraycopy(r, 0, val, rOff, NUM_WORDS);
-		System.arraycopy(s, 0, val, sOff, NUM_WORDS);
+		Int256Math.copy(r, 0, val, rOff);
+		Int256Math.copy(s, 0, val, sOff);
 		if (    Int256Math.isZero(r, 0) == 1 || Int256Math.lessThan(val, rOff, orderOff) == 0 ||
 		        Int256Math.isZero(s, 0) == 1 || Int256Math.lessThan(val, sOff, orderOff) == 0)
 			return false;
@@ -154,7 +154,7 @@ public final class Ecdsa {
 		int qOff   = 3 * NUM_WORDS;  // CurvePoint
 		int oneOff = 6 * NUM_WORDS;  // Uint256
 		System.arraycopy(publicKey, 0, val, qOff, CurvePointMath.POINT_WORDS);
-		System.arraycopy(Int256Math.ONE, 0, val, oneOff, NUM_WORDS);
+		Int256Math.copy(Int256Math.ONE, 0, val, oneOff);
 		if (CurvePointMath.isZero(publicKey, 0) == 1 || Int256Math.equalTo(val, qOff + CurvePointMath.ZCOORD, oneOff) == 0
 				|| CurvePointMath.isOnCurve(val, qOff, tempOff) == 0)
 			return false;
@@ -169,7 +169,7 @@ public final class Ecdsa {
 		int u2Off = 2 * NUM_WORDS;  // Uint256, reuses space
 		int zOff  = 4 * NUM_WORDS;  // Uint256, reuses space
 		Int256Math.bytesToUint(msgHash.toBytes(), val, zOff);
-		System.arraycopy(val, wOff, val, u1Off, NUM_WORDS);
+		Int256Math.copy(val, wOff, val, u1Off);
 		multiplyModOrder(val, u1Off, val, zOff, tempOff);
 		multiplyModOrder(val, u2Off, r, 0, tempOff);
 		
@@ -207,8 +207,8 @@ public final class Ecdsa {
 		 */
 		int modOff = tempOff + 0 * NUM_WORDS;
 		int zOff   = tempOff + 1 * NUM_WORDS;
-		System.arraycopy(CurvePointMath.ORDER, 0, x, modOff, NUM_WORDS);
-		System.arraycopy(Int256Math.ZERO, 0, x, zOff, NUM_WORDS);
+		Int256Math.copy(CurvePointMath.ORDER, 0, x, modOff);
+		Int256Math.copy(Int256Math.ZERO, 0, x, zOff);
 		assert Int256Math.lessThan(x, xOff, modOff) == 1;
 		
 		for (int i = Int256Math.NUM_WORDS * 32 - 1; i >= 0; i--) {
@@ -221,7 +221,7 @@ public final class Ecdsa {
 			Int256Math.uintSubtract(x, zOff, modOff, c | (Int256Math.lessThan(x, zOff, modOff) ^ 1), zOff);
 			assert Int256Math.lessThan(x, zOff, modOff) == 1;
 		}
-		System.arraycopy(x, zOff, x, xOff, NUM_WORDS);
+		Int256Math.copy(x, zOff, x, xOff);
 	}
 	
 	

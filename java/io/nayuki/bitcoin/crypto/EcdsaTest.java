@@ -566,7 +566,7 @@ public final class EcdsaTest {
 			int exponentOff  = 3 * Int256Math.NUM_WORDS;
 			int tempOff      = 4 * Int256Math.NUM_WORDS;
 			System.arraycopy(CurvePointMath.BASE_POINT, 0, arr, publicKeyOff, CurvePointMath.POINT_WORDS);
-			System.arraycopy(privateKey, 0, arr, exponentOff, Int256Math.NUM_WORDS);
+			Int256Math.copy(privateKey, 0, arr, exponentOff);
 			CurvePointMath.multiply(arr, publicKeyOff, exponentOff, tempOff);
 			CurvePointMath.normalize(arr, publicKeyOff, tempOff);
 			int[] publicKey = Arrays.copyOf(arr, CurvePointMath.POINT_WORDS);
@@ -626,7 +626,7 @@ public final class EcdsaTest {
 			int exponentOff  = 3 * Int256Math.NUM_WORDS;
 			int tempOff      = 4 * Int256Math.NUM_WORDS;
 			System.arraycopy(CurvePointMath.BASE_POINT, 0, arr, publicKeyOff, CurvePointMath.POINT_WORDS);
-			System.arraycopy(privateKey, 0, arr, exponentOff, Int256Math.NUM_WORDS);
+			Int256Math.copy(privateKey, 0, arr, exponentOff);
 			CurvePointMath.multiply(arr, publicKeyOff, exponentOff, tempOff);
 			CurvePointMath.normalize(arr, publicKeyOff, tempOff);
 			int[] publicKey = Arrays.copyOf(arr, CurvePointMath.POINT_WORDS);
@@ -1707,7 +1707,7 @@ public final class EcdsaTest {
 			int[] publicKey = new int[CurvePointMath.POINT_WORDS];
 			Int256Math.hexToUint(testCase[1], publicKey, CurvePointMath.XCOORD);
 			Int256Math.hexToUint(testCase[2], publicKey, CurvePointMath.YCOORD);
-			System.arraycopy(Int256Math.ONE, 0, publicKey, CurvePointMath.ZCOORD, Int256Math.NUM_WORDS);
+			Int256Math.copy(Int256Math.ONE, 0, publicKey, CurvePointMath.ZCOORD);
 			
 			Sha256Hash msgHash = new Sha256Hash(testCase[3]);
 			int[] r = toUint256(testCase[4]);
